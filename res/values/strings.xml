@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Hello World, NetSpoof!</string>
+    <string name="app_name">Network Spoofer</string>
+    <string name="setup">Setup &amp; Install</string>
+    <string name="start">Start</string>
+    <string name="setupt1">Please press Start to begin downloading necessary files. This is quite a big download, so you may want to connect to Wifi first.</string>
+    <string name="startdl">Start Download</string>
+    <string name="dlnotrunning">Download currently not running.</string>
+    <string name="dlStarted">Download Started</string>
+</resources>
