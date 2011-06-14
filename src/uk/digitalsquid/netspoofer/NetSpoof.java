@@ -28,6 +28,7 @@ public class NetSpoof extends Activity implements OnClickListener {
 	static final int DIALOG_W_SD = 2;
 	static final int DIALOG_ROOT = 3;
 
+	@SuppressWarnings("unused")
 	private SharedPreferences prefs;
 	/** Called when the activity is first created. */
 	@Override

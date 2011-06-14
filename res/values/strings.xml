@@ -8,4 +8,5 @@
     <string name="startdl">Start Download</string>
     <string name="dlnotrunning">Download currently not running.</string>
     <string name="dlStarted">Download Started</string>
+    <string name="dlStarting">Download Starting</string>
 </resources>
