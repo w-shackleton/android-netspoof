@@ -3,7 +3,6 @@ package uk.digitalsquid.netspoofer;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -17,11 +16,12 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.IBinder;
-import android.widget.Toast;
+import android.util.Log;
 
 public class InstallService extends Service implements Config {
 	public static final String INTENT_EXTRA_STATUS = "uk.digitalsquid.netspoofer.InstallService.status";
 	public static final String INTENT_EXTRA_DLPROGRESS = "uk.digitalsquid.netspoofer.InstallService.dlprogress";
+	public static final String INTENT_EXTRA_DLSTATE = "uk.digitalsquid.netspoofer.InstallService.dlprogress";
 	public static final String INTENT_STATUSUPDATE = "uk.digitalsquid.netspoofer.config.ConfigChecker.StatusUpdate";
 	public static final int STATUS_STARTED = 0;
 	public static final int STATUS_DOWNLOADING = 1;
@@ -72,6 +72,7 @@ public class InstallService extends Service implements Config {
 			intent.putExtra(INTENT_EXTRA_DLPROGRESS, dlProgress);
 			break;
 		case STATUS_FINISHED:
+			intent.putExtra(INTENT_EXTRA_DLSTATE, dlstatus);
 			break;
 		}
 		sendBroadcast(intent);
@@ -90,7 +91,19 @@ public class InstallService extends Service implements Config {
 		public int getBytesTotal() {
 			return bytesTotal;
 		}
-		private final int bytesDone, bytesTotal;
+		public void setBytesDone(int bytes) {
+			bytesDone = bytes;
+		}
+		public void setBytesTotal(int bytes) {
+			bytesTotal = bytes;
+		}
+		public int getKBytesDone() {
+			return bytesDone / 1024;
+		}
+		public int getKBytesTotal() {
+			return bytesTotal / 1024;
+		}
+		private int bytesDone, bytesTotal;
 	}
 	
 	private final AsyncTask<String, DLProgress, Integer> downloadTask = new AsyncTask<String, DLProgress, Integer>() {
@@ -102,24 +115,17 @@ public class InstallService extends Service implements Config {
 				downloadURL = new URL(params[0]);
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
-				Toast.makeText(
-						InstallService.this,
-						"Couldn't locate download file '" + params[0] + "'. Please report this as a bug.",
-						Toast.LENGTH_LONG).show();
 				return STATUS_DL_FAIL_MALFORMED_FILE;
 			}
 			GZIPInputStream unzippedData;
 			InputStream response;
+			URLConnection connection;
 			try {
-				URLConnection connection = downloadURL.openConnection();
+				connection = downloadURL.openConnection();
 				response = connection.getInputStream();
 				unzippedData = new GZIPInputStream(response, 0x40000); // Change buffer size?
 			} catch (IOException e) {
 				e.printStackTrace();
-				Toast.makeText(
-						InstallService.this,
-						"Couldn't download file. Are you connected to the internet?",
-						Toast.LENGTH_LONG).show();
 				return STATUS_DL_FAIL_IOERROR;
 			}
 			
@@ -129,10 +135,6 @@ public class InstallService extends Service implements Config {
 				debian.createNewFile();
 			} catch (IOException e) {
 				e.printStackTrace();
-				Toast.makeText(
-						InstallService.this,
-						"Couldn't open file for writing on SD card",
-						Toast.LENGTH_LONG).show();
 				return STATUS_DL_FAIL_SDERROR;
 			}
 			
@@ -144,16 +146,17 @@ public class InstallService extends Service implements Config {
 			}
 			byte[] dlData = new byte[0x40000];
 			int bytesRead = 0;
+			int bytesDone = 0;
+			DLProgress progress = new DLProgress(0, DEB_IMG_URL_SIZE);
 			try {
 				while((bytesRead = unzippedData.read(dlData)) != 0) {
+					bytesDone += bytesRead;
 					debWriter.write(dlData, 0, bytesRead);
+					progress.setBytesDone(bytesDone);
+					publishProgress(progress);
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
-				Toast.makeText(
-						InstallService.this,
-						"An error ocurred whilst downloading the file. Please try again",
-						Toast.LENGTH_LONG).show();
 				try {
 					debWriter.close();
 					unzippedData.close();
@@ -171,10 +174,28 @@ public class InstallService extends Service implements Config {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			
+			File version = new File(sd.getAbsolutePath() + "/" + DEB_VERSION_FILE);
+			try {
+				version.createNewFile(); // Make sure exists
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
+				FileOutputStream versionWriter = new FileOutputStream(version);
+				versionWriter.write(("" + Config.DEB_VERSION_FILE).getBytes());
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+				Log.e(TAG, "Couldn't write version file");
+			}
+			
 			return STATUS_DL_SUCCESS;
 		}
 		protected void onProgressUpdate(DLProgress... progress) {
 			status = STATUS_DOWNLOADING;
+			dlProgress = progress[0];
 			broadcastStatus();
 		}
 		protected void onPostExecute(Integer result) {

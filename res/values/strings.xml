@@ -9,4 +9,8 @@
     <string name="dlnotrunning">Download currently not running.</string>
     <string name="dlStarted">Download Started</string>
     <string name="dlStarting">Download Starting</string>
+    <string name="redownload">Redownload</string>
+    <string name="redownloadnotify">The latest version is already installed. Are you sure you wish to redownload?</string>
+    <string name="ellipsis">...</string>
+    <string name="dlCancel">Cancel download</string>
 </resources>
