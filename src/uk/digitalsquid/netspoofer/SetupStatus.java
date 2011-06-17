@@ -48,6 +48,7 @@ public class SetupStatus extends Activity implements OnClickListener, LogConf {
 		} else { // Things for not running
 			if(ConfigChecker.checkInstalledLatest(getApplicationContext())) {
 				findViewById(R.id.redlconfirm).setVisibility(View.VISIBLE);
+				dlButton.setText(R.string.redownload);
 			}
 		}
 	}
@@ -60,8 +61,11 @@ public class SetupStatus extends Activity implements OnClickListener, LogConf {
 				startService(new Intent(getApplicationContext(), InstallService.class));
 				status.setText(R.string.dlStarting);
 				dlButton.setEnabled(false);
+				serviceRunning = true;
 			} else {
-				
+				stopService(new Intent(getApplicationContext(), InstallService.class));
+				setWinStatus(false);
+				serviceRunning = false;
 			}
 			break;
 		}
@@ -84,7 +88,8 @@ public class SetupStatus extends Activity implements OnClickListener, LogConf {
 					dlProgress.setProgress(progress.getKBytesDone());
 					float mbDone = (float)progress.getKBytesDone() / 1024;
 					float mbTotal = (float)progress.getKBytesTotal() / 1024;
-					dlProgressText.setText(String.format("%.1f / %.0fMB", mbDone, mbTotal));
+					float mbDlTotal = (float)progress.getKBytesDownloadTotal() / 1024;
+					dlProgressText.setText(String.format("%.1f / %.0fMB\nCompressed download is %.0fMB.", mbDone, mbTotal, mbDlTotal));
 				}
 				break;
 			case InstallService.STATUS_FINISHED:
@@ -114,6 +119,15 @@ public class SetupStatus extends Activity implements OnClickListener, LogConf {
 							Toast.LENGTH_LONG).show();
 					break;
 				case InstallService.STATUS_DL_SUCCESS:
+					setWinStatus(false);
+					finish();
+					break;
+				case InstallService.STATUS_DL_CANCEL:
+					Toast.makeText(
+							SetupStatus.this,
+							"Cancelled",
+							Toast.LENGTH_LONG).show();
+					setWinStatus(false);
 					break;
 				}
 				break;
@@ -143,11 +157,20 @@ public class SetupStatus extends Activity implements OnClickListener, LogConf {
 			status.setText(R.string.dlStarted);
 			dlProgress.setVisibility(View.VISIBLE);
 			dlProgressText.setVisibility(View.VISIBLE);
+			dlButton.setEnabled(true);
 		} else {
 			dlButton.setText(R.string.startdl);
 			status.setText(R.string.dlnotrunning);
 			dlProgress.setVisibility(View.GONE);
 			dlProgressText.setVisibility(View.GONE);
+			dlButton.setEnabled(true);
+		}
+		if(ConfigChecker.checkInstalledLatest(getApplicationContext())) {
+			findViewById(R.id.redlconfirm).setVisibility(View.VISIBLE);
+			dlButton.setText(R.string.redownload);
+		} else {
+			findViewById(R.id.redlconfirm).setVisibility(View.GONE);
+			dlButton.setText(R.string.startdl);
 		}
 	}
 }

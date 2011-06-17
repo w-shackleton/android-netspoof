@@ -43,7 +43,12 @@ public final class ConfigChecker implements Config {
 				return false;
 			}
 			if(ver != null) {
+				try {
 				if(Integer.parseInt(ver) >= DEB_IMG_URL_VERSION) return true;
+				} catch(NumberFormatException e) {
+					e.printStackTrace();
+					return false;
+				}
 			}
 		}
 		return false;

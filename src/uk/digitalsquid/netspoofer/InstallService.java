@@ -17,6 +17,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 public class InstallService extends Service implements Config {
 	public static final String INTENT_EXTRA_STATUS = "uk.digitalsquid.netspoofer.InstallService.status";
@@ -32,6 +33,7 @@ public class InstallService extends Service implements Config {
 	public static final int STATUS_DL_FAIL_IOERROR = 2;
 	public static final int STATUS_DL_FAIL_SDERROR = 3;
 	public static final int STATUS_DL_FAIL_DLERROR = 4;
+	public static final int STATUS_DL_CANCEL = 5;
 	
 	private int status = STATUS_STARTED;
 	private int dlstatus = STATUS_DL_SUCCESS;
@@ -78,6 +80,11 @@ public class InstallService extends Service implements Config {
 		sendBroadcast(intent);
 	}
 	
+	@Override
+	public void onDestroy() {
+		downloadTask.cancel(false);
+	}
+	
 	public static final class DLProgress implements Serializable {
 		private static final long serialVersionUID = -5366348392979726959L;
 		
@@ -103,7 +110,16 @@ public class InstallService extends Service implements Config {
 		public int getKBytesTotal() {
 			return bytesTotal / 1024;
 		}
-		private int bytesDone, bytesTotal;
+		public void setBytesDownloadTotal(int bytesDownload) {
+			this.bytesDownloadTotal = bytesDownload;
+		}
+		public int getBytesDownloadTotal() {
+			return bytesDownloadTotal;
+		}
+		public int getKBytesDownloadTotal() {
+			return bytesDownloadTotal / 1024;
+		}
+		private int bytesDone, bytesTotal, bytesDownloadTotal;
 	}
 	
 	private final AsyncTask<String, DLProgress, Integer> downloadTask = new AsyncTask<String, DLProgress, Integer>() {
@@ -138,6 +154,10 @@ public class InstallService extends Service implements Config {
 				return STATUS_DL_FAIL_SDERROR;
 			}
 			
+			// Delete version file
+			File oldversion = new File(sd.getAbsolutePath() + "/" + DEB_VERSION_FILE);
+			oldversion.delete();
+			
 			FileOutputStream debWriter = null;
 			try {
 				debWriter = new FileOutputStream(debian);
@@ -148,12 +168,25 @@ public class InstallService extends Service implements Config {
 			int bytesRead = 0;
 			int bytesDone = 0;
 			DLProgress progress = new DLProgress(0, DEB_IMG_URL_SIZE);
+			progress.setBytesDownloadTotal(connection.getContentLength());
 			try {
-				while((bytesRead = unzippedData.read(dlData)) != 0) {
+				while((bytesRead = unzippedData.read(dlData)) != -1) {
 					bytesDone += bytesRead;
 					debWriter.write(dlData, 0, bytesRead);
 					progress.setBytesDone(bytesDone);
 					publishProgress(progress);
+					
+					if(isCancelled()) {
+						debWriter.close();
+						unzippedData.close();
+						response.close();
+						// Remove old files
+						File delversion = new File(sd.getAbsolutePath() + "/" + DEB_VERSION_FILE);
+						delversion.delete();
+						File deldebian = new File(sd.getAbsolutePath() + "/" + DEB_IMG);
+						deldebian.delete();
+						return STATUS_DL_CANCEL;
+					}
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -183,7 +216,8 @@ public class InstallService extends Service implements Config {
 			}
 			try {
 				FileOutputStream versionWriter = new FileOutputStream(version);
-				versionWriter.write(("" + Config.DEB_VERSION_FILE).getBytes());
+				versionWriter.write(("" + Config.DEB_IMG_URL_VERSION).getBytes());
+				versionWriter.close();
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -191,6 +225,7 @@ public class InstallService extends Service implements Config {
 				Log.e(TAG, "Couldn't write version file");
 			}
 			
+			Log.i(TAG, "Finished download");
 			return STATUS_DL_SUCCESS;
 		}
 		protected void onProgressUpdate(DLProgress... progress) {
@@ -202,6 +237,12 @@ public class InstallService extends Service implements Config {
 			status = STATUS_FINISHED;
 			dlstatus = result;
 			broadcastStatus();
+			onFinish();
 		}
 	};
+	
+	void onFinish() {
+		Toast.makeText(getApplicationContext(), "Finished downloading!", Toast.LENGTH_LONG).show();
+		stopSelf();
+	}
 }

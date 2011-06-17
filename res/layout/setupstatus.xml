@@ -9,5 +9,5 @@
     <Button android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/dlButton" android:text="@string/startdl" android:layout_gravity="center_horizontal"></Button>
     <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/dlStatus" android:text="@string/dlnotrunning" android:layout_gravity="center_horizontal"></TextView>
     <ProgressBar style="?android:attr/progressBarStyleHorizontal" android:layout_height="wrap_content" android:layout_width="match_parent" android:id="@+id/dlprogress" android:visibility="gone"></ProgressBar>
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/dlprogresstext" android:text="@string/ellipsis" android:textStyle="bold|normal" android:layout_gravity="right" android:visibility="gone"></TextView>
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/dlprogresstext" android:text="@string/ellipsis" android:textStyle="bold|normal" android:layout_gravity="right" android:visibility="gone" android:gravity="right"></TextView>
 </LinearLayout>
