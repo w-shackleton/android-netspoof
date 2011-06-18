@@ -17,7 +17,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
 public class InstallService extends Service implements Config {
 	public static final String INTENT_EXTRA_STATUS = "uk.digitalsquid.netspoofer.InstallService.status";
@@ -123,6 +122,10 @@ public class InstallService extends Service implements Config {
 	}
 	
 	private final AsyncTask<String, DLProgress, Integer> downloadTask = new AsyncTask<String, DLProgress, Integer>() {
+		private GZIPInputStream unzippedData;
+		private InputStream response;
+		private URLConnection connection;
+		
 		@Override
 		protected Integer doInBackground(String... params) {
 			if(params.length != 1) throw new IllegalArgumentException("Please specify 1 parameter");
@@ -133,9 +136,6 @@ public class InstallService extends Service implements Config {
 				e.printStackTrace();
 				return STATUS_DL_FAIL_MALFORMED_FILE;
 			}
-			GZIPInputStream unzippedData;
-			InputStream response;
-			URLConnection connection;
 			try {
 				connection = downloadURL.openConnection();
 				response = connection.getInputStream();
@@ -239,10 +239,21 @@ public class InstallService extends Service implements Config {
 			broadcastStatus();
 			onFinish();
 		}
+		
+		@Override
+		protected void onCancelled() {
+			try {
+				unzippedData.close();
+				response.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (NullPointerException e) {
+				e.printStackTrace();
+			}
+		}
 	};
 	
 	void onFinish() {
-		Toast.makeText(getApplicationContext(), "Finished downloading!", Toast.LENGTH_LONG).show();
 		stopSelf();
 	}
 }

@@ -60,7 +60,7 @@ public class SetupStatus extends Activity implements OnClickListener, LogConf {
 			if(!serviceRunning) {
 				startService(new Intent(getApplicationContext(), InstallService.class));
 				status.setText(R.string.dlStarting);
-				dlButton.setEnabled(false);
+				dlButton.setText(R.string.dlCancel);
 				serviceRunning = true;
 			} else {
 				stopService(new Intent(getApplicationContext(), InstallService.class));
@@ -119,7 +119,6 @@ public class SetupStatus extends Activity implements OnClickListener, LogConf {
 							Toast.LENGTH_LONG).show();
 					break;
 				case InstallService.STATUS_DL_SUCCESS:
-					setWinStatus(false);
 					finish();
 					break;
 				case InstallService.STATUS_DL_CANCEL:
@@ -127,9 +126,10 @@ public class SetupStatus extends Activity implements OnClickListener, LogConf {
 							SetupStatus.this,
 							"Cancelled",
 							Toast.LENGTH_LONG).show();
-					setWinStatus(false);
 					break;
 				}
+				setWinStatus(false);
+				serviceRunning = false;
 				break;
 			}
 		}
@@ -164,13 +164,16 @@ public class SetupStatus extends Activity implements OnClickListener, LogConf {
 			dlProgress.setVisibility(View.GONE);
 			dlProgressText.setVisibility(View.GONE);
 			dlButton.setEnabled(true);
+			if(ConfigChecker.checkInstalledLatest(getApplicationContext())) {
+				dlButton.setText(R.string.redownload);
+			} else {
+				dlButton.setText(R.string.startdl);
+			}
 		}
 		if(ConfigChecker.checkInstalledLatest(getApplicationContext())) {
 			findViewById(R.id.redlconfirm).setVisibility(View.VISIBLE);
-			dlButton.setText(R.string.redownload);
 		} else {
 			findViewById(R.id.redlconfirm).setVisibility(View.GONE);
-			dlButton.setText(R.string.startdl);
 		}
 	}
 }

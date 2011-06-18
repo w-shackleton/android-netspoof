@@ -2,8 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    >
-    <Button android:id="@+id/setupButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/setup"></Button>
-    <Button android:id="@+id/startButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/start" android:enabled="false"></Button>
+    android:gravity="center_horizontal" android:layout_height="wrap_content">
+    <ImageView android:id="@+id/imageView1" android:layout_height="wrap_content" android:layout_width="match_parent" android:src="@drawable/bg1"></ImageView>
+    <LinearLayout android:id="@+id/linearLayout1" android:orientation="vertical" android:gravity="center_horizontal" android:background="@drawable/bg2" android:layout_width="wrap_content" android:layout_height="wrap_content">
+        <Button android:layout_width="wrap_content" android:id="@+id/setupButton" android:text="@string/setup" android:layout_height="wrap_content"></Button>
+        <Button android:layout_width="wrap_content" android:enabled="false" android:id="@+id/startButton" android:text="@string/start" android:layout_height="wrap_content"></Button>
+    </LinearLayout>
 </LinearLayout>
