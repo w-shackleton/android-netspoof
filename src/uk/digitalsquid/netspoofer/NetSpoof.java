@@ -8,13 +8,17 @@ import uk.digitalsquid.netspoofer.config.ConfigChecker;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.Toast;
 
 public class NetSpoof extends Activity implements OnClickListener {
@@ -27,6 +31,8 @@ public class NetSpoof extends Activity implements OnClickListener {
 	 */
 	static final int DIALOG_W_SD = 2;
 	static final int DIALOG_ROOT = 3;
+	
+	private Button startButton, setupButton;
 
 	@SuppressWarnings("unused")
 	private SharedPreferences prefs;
@@ -37,8 +43,10 @@ public class NetSpoof extends Activity implements OnClickListener {
 		setContentView(R.layout.main);
 
 		if(ConfigChecker.checkInstalled(getApplicationContext())) findViewById(R.id.startButton).setEnabled(true);
-		findViewById(R.id.startButton).setOnClickListener(this);
-		findViewById(R.id.setupButton).setOnClickListener(this);
+		startButton = (Button) findViewById(R.id.startButton);
+		startButton.setOnClickListener(this);
+		setupButton = (Button) findViewById(R.id.setupButton);
+		setupButton.setOnClickListener(this);
 
 		prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
@@ -50,6 +58,18 @@ public class NetSpoof extends Activity implements OnClickListener {
 			}
 			firstTimeSetup();
 		}
+		startButton.setEnabled(ConfigChecker.checkInstalled(getApplicationContext()));
+		
+	    statusFilter = new IntentFilter();
+	    statusFilter.addAction(InstallService.INTENT_STATUSUPDATE);
+		
+		registerReceiver(statusReceiver, statusFilter);
+	}
+	
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		unregisterReceiver(statusReceiver);
 	}
 
 	private void firstTimeSetup() {
@@ -59,10 +79,9 @@ public class NetSpoof extends Activity implements OnClickListener {
 
 		Process p;  
 		try {
-			// Preform su to get root privledges  
+			// Run su to get root privledges  
 			p = Runtime.getRuntime().exec("su");   
 
-			// Attempt to write a file to a root-only  
 			DataOutputStream os = new DataOutputStream(p.getOutputStream());  
 
 			// Close the terminal  
@@ -91,6 +110,7 @@ public class NetSpoof extends Activity implements OnClickListener {
 				startActivity(new Intent(this, SetupStatus.class));
 				break;
 			case R.id.startButton:
+				startActivity(new Intent(this, HackSelector.class));
 				break;
 		}
 	}
@@ -133,4 +153,23 @@ public class NetSpoof extends Activity implements OnClickListener {
 		}
 		return dialog;
 	}
+	
+	private IntentFilter statusFilter;
+	private final BroadcastReceiver statusReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			switch(intent.getIntExtra(InstallService.INTENT_EXTRA_STATUS, InstallService.STATUS_FINISHED)) {
+			case InstallService.STATUS_FINISHED:
+				switch(intent.getIntExtra(InstallService.INTENT_EXTRA_DLSTATE, InstallService.STATUS_DL_FAIL_DLERROR)) {
+				case InstallService.STATUS_DL_SUCCESS:
+					startButton.setEnabled(true);
+					break;
+				default:
+					startButton.setEnabled(false);
+					break;
+				}
+				break;
+			}
+		}
+	};
 }

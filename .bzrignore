@@ -2,3 +2,6 @@ bin/android-netspoof.apk
 bin/classes.dex
 bin/resources.ap_
 bin/uk
+bglarge.png
+bgmedium.png
+bgsmall.png

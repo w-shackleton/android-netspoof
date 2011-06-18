@@ -13,4 +13,5 @@
     <string name="redownloadnotify">The latest version is already installed. Are you sure you wish to redownload?</string>
     <string name="ellipsis">...</string>
     <string name="dlCancel">Cancel download</string>
+    <string name="selecthack">Select Hack to use</string>
 </resources>

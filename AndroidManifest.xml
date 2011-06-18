@@ -9,7 +9,7 @@
 
     <application android:icon="@drawable/icon" android:label="@string/app_name">
         <activity android:name=".NetSpoof"
-                  android:label="@string/app_name">
+                  android:label="@string/app_name" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -17,6 +17,8 @@
         </activity>
         <activity android:label="Setup Status" android:name="SetupStatus"></activity>
         <service android:name="InstallService" android:label="Installer Service"></service>
+        <activity android:name="HackSelector" android:label="@string/selecthack"></activity>
+        <service android:name="NetSpoofService"></service>
 
     </application>
 </manifest>
