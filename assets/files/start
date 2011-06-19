@@ -1,0 +1,26 @@
+#!/system/bin/sh
+
+. /sdcard/android-netspoof/config || (echo "Couldn't find config file! Please check installation."; exit 1)
+
+# Create folder
+mkdir -p $DEB
+
+echo "Loading FS..."
+
+deb-mount
+mount -t devpts devpts $DEB/dev/pts
+mount -t proc proc $DEB/proc
+mount -t sysfs sysfs $DEB/sys
+
+echo 1 > /proc/sys/net/ipv4/ip_forward
+
+echo "Starting environment"
+chroot $DEB /bin/bash
+
+echo "Closing environment"
+umount $DEB/dev/pts
+umount $DEB/proc   
+umount $DEB/sys 
+deb-umount
+
+echo "Done."

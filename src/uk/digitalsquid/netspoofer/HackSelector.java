@@ -13,10 +13,12 @@ public class HackSelector extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+        startService(new Intent(this, NetSpoofService.class));
 	}
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+        stopService(new Intent(this, NetSpoofService.class));
 	}
 
     @Override

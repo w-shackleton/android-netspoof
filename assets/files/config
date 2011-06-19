@@ -1,0 +1,23 @@
+export LOOPDEV=/dev/block/loop2000
+export LOOPNUM=2000
+
+export DEB=/data/local/mnt
+export DEBIMG=/sdcard/android-netspoof/debian.img
+
+export PATH=/usr/local/bin:/usr/bin:/usr/sbin:/bin:$PATH
+export TERM=linux
+export HOME=/root
+
+deb-mount ()
+{
+mknod $LOOPDEV b 7 $LOOPNUM
+losetup $LOOPDEV $DEBIMG
+mount -o loop $LOOPDEV $DEB
+}
+
+deb-umount ()
+{
+umount $LOOPDEV
+losetup -d $LOOPDEV
+rm $LOOPDEV
+}

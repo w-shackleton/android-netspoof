@@ -80,27 +80,24 @@ public class NetSpoof extends Activity implements OnClickListener {
 		Process p;  
 		try {
 			// Run su to get root privledges  
-			p = Runtime.getRuntime().exec("su");   
+			p = Runtime.getRuntime().exec("su");
 
-			DataOutputStream os = new DataOutputStream(p.getOutputStream());  
+			DataOutputStream os = new DataOutputStream(p.getOutputStream());
 
-			// Close the terminal  
-			os.writeBytes("exit\n");  
-			os.flush();  
-			try {  
-				p.waitFor();  
-				if (p.exitValue() != 255) {  
-					// TODO Code to run on success  
-				}  
-				else {  
+			os.writeBytes("exit\n");
+			os.flush();
+			try {
+				p.waitFor();
+				if (p.exitValue() != 255) { }
+				else {
 					showDialog(DIALOG_ROOT);
-				}  
-			} catch (InterruptedException e) {  
+				}
+			} catch (InterruptedException e) {
 				showDialog(DIALOG_ROOT);
-			}  
-		} catch (IOException e) {  
+			}
+		} catch (IOException e) {
 			showDialog(DIALOG_ROOT);
-		}  
+		}
 	}
 
 	@Override
