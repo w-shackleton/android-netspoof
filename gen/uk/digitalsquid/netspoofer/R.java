@@ -36,6 +36,7 @@ public final class R {
         public static final int dlnotrunning=0x7f040006;
         public static final int ellipsis=0x7f04000b;
         public static final int hello=0x7f040000;
+        public static final int loading=0x7f04000e;
         public static final int redownload=0x7f040009;
         public static final int redownloadnotify=0x7f04000a;
         public static final int selecthack=0x7f04000d;

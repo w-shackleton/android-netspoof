@@ -14,4 +14,5 @@
     <string name="ellipsis">...</string>
     <string name="dlCancel">Cancel download</string>
     <string name="selecthack">Select Hack to use</string>
+    <string name="loading">Loading...</string>
 </resources>

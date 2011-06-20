@@ -1,10 +1,10 @@
 package uk.digitalsquid.netspoofer;
 
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.IOException;
+import java.io.FileNotFoundException;
 
 import uk.digitalsquid.netspoofer.config.ConfigChecker;
+import uk.digitalsquid.netspoofer.config.FileFinder;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -31,6 +31,7 @@ public class NetSpoof extends Activity implements OnClickListener {
 	 */
 	static final int DIALOG_W_SD = 2;
 	static final int DIALOG_ROOT = 3;
+	static final int DIALOG_BB = 4;
 	
 	private Button startButton, setupButton;
 
@@ -76,27 +77,16 @@ public class NetSpoof extends Activity implements OnClickListener {
 		final File sd = getExternalFilesDir(null);
 		File imgDir = new File(sd, "img");
 		if(!imgDir.exists()) if(!imgDir.mkdir()) Toast.makeText(this, "Couldn't create 'img' folder.", Toast.LENGTH_LONG).show();
-
-		Process p;  
+		
 		try {
-			// Run su to get root privledges  
-			p = Runtime.getRuntime().exec("su");
-
-			DataOutputStream os = new DataOutputStream(p.getOutputStream());
-
-			os.writeBytes("exit\n");
-			os.flush();
-			try {
-				p.waitFor();
-				if (p.exitValue() != 255) { }
-				else {
-					showDialog(DIALOG_ROOT);
-				}
-			} catch (InterruptedException e) {
+			FileFinder.initialise();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			if(e.getMessage().equals("su")) {
 				showDialog(DIALOG_ROOT);
+			} else if(e.getMessage().equals("busybox")) {
+				showDialog(DIALOG_BB);
 			}
-		} catch (IOException e) {
-			showDialog(DIALOG_ROOT);
 		}
 	}
 
@@ -138,7 +128,18 @@ public class NetSpoof extends Activity implements OnClickListener {
 				break;
 			case DIALOG_ROOT:
 				builder = new AlertDialog.Builder(this);
-				builder.setMessage("Please root your phone before using this application. Search the internet for instructions on how to do this for your phone.")
+				builder.setMessage("Please root your phone before using this application. Search the internet for instructions on how to do this for your phone.\nA custom firmware (such as CyanogenMod) is also recommended.")
+					.setCancelable(false)
+					.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int id) {
+							NetSpoof.this.finish();
+						}
+					});
+				dialog = builder.create();
+				break;
+			case DIALOG_BB:
+				builder = new AlertDialog.Builder(this);
+				builder.setMessage("Please install Busybox (either manually or from the Android Market) before using this application.  Search the internet for instructions on how to do this for your phone.")
 					.setCancelable(false)
 					.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int id) {
