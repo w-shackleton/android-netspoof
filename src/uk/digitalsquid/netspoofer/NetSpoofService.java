@@ -10,6 +10,7 @@ import uk.digitalsquid.netspoofer.config.LogConf;
 import uk.digitalsquid.netspoofer.servicemsg.ServiceMsg;
 import uk.digitalsquid.netspoofer.servicestatus.InitialiseStatus;
 import uk.digitalsquid.netspoofer.servicestatus.ServiceStatus;
+import uk.digitalsquid.netspoofer.servicestatus.SpoofList;
 import android.app.Service;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -25,7 +26,9 @@ public class NetSpoofService extends Service implements LogConf {
 	public static final int STATUS_FAILED = 4;
 	
 	public static final String INTENT_STATUSUPDATE = "uk.digitalsquid.netspoofer.NetSpoofService.StatusUpdate";
+	public static final String INTENT_SPOOFLIST = "uk.digitalsquid.netspoofer.NetSpoofService.SpoofList";
 	public static final String INTENT_EXTRA_STATUS = "uk.digitalsquid.netspoofer.NetSpoofService.status";
+	public static final String INTENT_EXTRA_SPOOFLIST = "uk.digitalsquid.netspoofer.NetSpoofService.spooflist";
 	
 	public class NetSpoofServiceBinder extends Binder {
         NetSpoofService getService() {
@@ -93,6 +96,12 @@ public class NetSpoofService extends Service implements LogConf {
     	}
     }
     
+    private void sendSpoofList(SpoofList spoofs) {
+		Intent intent = new Intent(INTENT_SPOOFLIST);
+		intent.putExtra(INTENT_EXTRA_SPOOFLIST, spoofs);
+		sendBroadcast(intent);
+    }
+    
 	private final BlockingQueue<ServiceMsg> tasks = new LinkedBlockingQueue<ServiceMsg>();
     
     private final AsyncTask<ChrootConfig, ServiceStatus, Void> mainLoopManager = new AsyncTask<ChrootConfig, ServiceStatus, Void>() {
@@ -132,6 +141,8 @@ public class NetSpoofService extends Service implements LogConf {
 						running = false;
 						break;
 					case ServiceMsg.MESSAGE_GETSPOOFS:
+						SpoofList list = new SpoofList(chroot.getSpoofList());
+						publishProgress(list);
 						break;
 					}
 				} catch (InterruptedException e) {
@@ -157,6 +168,8 @@ public class NetSpoofService extends Service implements LogConf {
 					setStatus(STATUS_FAILED);
 					break;
 				}
+			} else if(s instanceof SpoofList) {
+				sendSpoofList((SpoofList)s);
 			}
 		}
 		protected void onPostExecute(Void result) {

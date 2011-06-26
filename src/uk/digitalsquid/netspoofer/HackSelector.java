@@ -1,6 +1,7 @@
 package uk.digitalsquid.netspoofer;
 
 import uk.digitalsquid.netspoofer.NetSpoofService.NetSpoofServiceBinder;
+import uk.digitalsquid.netspoofer.servicestatus.SpoofList;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
@@ -16,6 +17,10 @@ import android.view.KeyEvent;
 
 public class HackSelector extends Activity {
 	ProgressDialog startingProgress;
+	
+	boolean haveSpoofList = false;
+	boolean gettingSpoofList = false;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -23,6 +28,7 @@ public class HackSelector extends Activity {
         
 	    statusFilter = new IntentFilter();
 	    statusFilter.addAction(NetSpoofService.INTENT_STATUSUPDATE);
+	    statusFilter.addAction(NetSpoofService.INTENT_SPOOFLIST);
 		registerReceiver(statusReceiver, statusFilter);
 		
 	}
@@ -58,8 +64,16 @@ public class HackSelector extends Activity {
 			NetSpoofServiceBinder binder = (NetSpoofServiceBinder) service;
             HackSelector.this.service = binder.getService();
             
-            if(HackSelector.this.service.getStatus() == NetSpoofService.STATUS_LOADING) {
+            switch(HackSelector.this.service.getStatus()) {
+            case NetSpoofService.STATUS_LOADING:
             	showStartingDialog();
+            	break;
+            case NetSpoofService.STATUS_LOADED:
+            	if(!gettingSpoofList) {
+            		gettingSpoofList = true;
+            		HackSelector.this.service.requestSpoofs();
+            	}
+            	break;
             }
 		}
 		
@@ -73,21 +87,28 @@ public class HackSelector extends Activity {
 	private final BroadcastReceiver statusReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			switch(intent.getIntExtra(NetSpoofService.INTENT_EXTRA_STATUS, NetSpoofService.STATUS_STOPPED)) {
-			case NetSpoofService.STATUS_LOADING:
-				showStartingDialog();
-				break;
-			case NetSpoofService.STATUS_LOADED:
-				if(startingDialog != null) startingDialog.cancel();
-				break;
-			case NetSpoofService.STATUS_STARTED:
-				break;
-			case NetSpoofService.STATUS_STOPPED:
-				break;
-			case NetSpoofService.STATUS_FAILED:
-				break;
+			if(intent.getAction().equals(NetSpoofService.INTENT_STATUSUPDATE)) {
+				switch(intent.getIntExtra(NetSpoofService.INTENT_EXTRA_STATUS, NetSpoofService.STATUS_STOPPED)) {
+				case NetSpoofService.STATUS_LOADING:
+					showStartingDialog();
+					break;
+				case NetSpoofService.STATUS_LOADED:
+					if(startingDialog != null) startingDialog.cancel();
+	            	if(!gettingSpoofList) {
+	            		gettingSpoofList = true;
+	            		HackSelector.this.service.requestSpoofs();
+	            	}
+					break;
+				case NetSpoofService.STATUS_STARTED:
+					break;
+				case NetSpoofService.STATUS_STOPPED:
+					break;
+				case NetSpoofService.STATUS_FAILED:
+					break;
+				}
+			} else if(intent.getAction().equals(NetSpoofService.INTENT_SPOOFLIST)) {
+				SpoofList spoofs = (SpoofList) intent.getSerializableExtra(NetSpoofService.INTENT_EXTRA_SPOOFLIST);
 			}
-			
 		}
 	};
 	

@@ -1,17 +1,23 @@
 package uk.digitalsquid.netspoofer.config;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map.Entry;
 
+import uk.digitalsquid.netspoofer.spoofs.Spoof;
+import uk.digitalsquid.netspoofer.spoofs.SquidScriptSpoof;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Log;
 
 public class ChrootManager implements Config {
+	@SuppressWarnings("unused")
 	private final Context context;
 	private final ChrootConfig config;
 	
@@ -32,22 +38,6 @@ public class ChrootManager implements Config {
 	BufferedReader cout;
 	BufferedReader cerr;
 	OutputStreamWriter cin;
-	
-	/**
-	 * Reads a whole file from is, and closes the stream.
-	 * @param is
-	 * @return
-	 * @throws IOException
-	 */
-	private static final String readFileContents(InputStream is) throws IOException {
-		StringBuffer out = new StringBuffer();
-		byte[] b = new byte[256];
-		for (int n; (n = is.read(b)) != -1;) {
-			out.append(new String(b, 0, n));
-		}
-		is.close();
-		return out.toString();
-	}
 	
 	private final void flushOutputs(boolean waitForCatchup) {
 		flushOutputs(true, true, false, waitForCatchup);
@@ -119,7 +109,7 @@ public class ChrootManager implements Config {
 		}
 		// Enter SU.
 		// Settings loaded, load config script.
-		String configFile = readFileContents(am.open(FILESET_DIR + "/" + FILE_CONFIG));
+		String configFile = IOHelpers.readFileContents(am.open(FILESET_DIR + "/" + FILE_CONFIG));
 		cin.write(configFile);
 		cin.write("\n");
 		cin.flush();
@@ -130,7 +120,7 @@ public class ChrootManager implements Config {
 		cin.flush();
 		flushOutputs(true, true);
 		
-		configFile = readFileContents(am.open(FILESET_DIR + "/" + FILE_START));
+		configFile = IOHelpers.readFileContents(am.open(FILESET_DIR + "/" + FILE_START));
 		cin.write(configFile);
 		cin.write("\n");
 		cin.flush();
@@ -170,5 +160,33 @@ public class ChrootManager implements Config {
 			return su.waitFor();
 		} catch (InterruptedException e) { }
 		return 1;
+	}
+	
+	public ArrayList<Spoof> getSpoofList() {
+		Log.i(TAG, "Searching for spoofs to use...");
+		final ArrayList<Spoof> spoofs = new ArrayList<Spoof>();
+		
+		// 1. Scan squid rewriters
+		File rewriteDir = new File(config.getDebianMount() + "/rewriters");
+		for(String file : rewriteDir.list(new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String filename) {
+				return filename.endsWith(".txt");
+			}
+		})) {
+			Log.v(TAG, "Spoof: " + file);
+			try {
+				List<String> lines = IOHelpers.readFileToLines(rewriteDir.getAbsolutePath() + "/" + file);
+				if(lines.size() < 2) {
+					Log.e(TAG, "Malformed description file for " + file + ".");
+					continue;
+				}
+				spoofs.add(new SquidScriptSpoof(lines.get(1), lines.get(0)));
+			} catch (IOException e) {
+				e.printStackTrace();
+				Log.e(TAG, "Couldn't read info for spoof " + file + ".");
+			}
+		}
+		return spoofs;
 	}
 }
