@@ -12,7 +12,7 @@ import android.preference.PreferenceManager;
  * @author william
  *
  */
-public class ChrootConfig {
+public final class ChrootConfig {
 	static ChrootConfig DEFAULTS = null;
 	
 	private final String loopdev;

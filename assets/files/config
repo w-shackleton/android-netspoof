@@ -1,8 +1,8 @@
-export LOOPDEV=/dev/block/loop2000
-export LOOPNUM=2000
+# export LOOPDEV=/dev/block/loop2000
+# export LOOPNUM=2000
 
-export DEB=/data/local/mnt
-export DEBIMG=/sdcard/android-netspoof/debian.img
+# export DEB=/data/local/mnt
+# export DEBIMG=/sdcard/android-netspoof/debian.img
 
 export PATH=/usr/local/bin:/usr/bin:/usr/sbin:/bin:$PATH
 export TERM=linux
@@ -10,14 +10,29 @@ export HOME=/root
 
 deb-mount ()
 {
-mknod $LOOPDEV b 7 $LOOPNUM
-losetup $LOOPDEV $DEBIMG
-mount -o loop $LOOPDEV $DEB
+	# Create folder
+	mkdir -p $DEB
+
+	echo "Loading FS..."
+
+	mknod $LOOPDEV b 7 $LOOPNUM
+	losetup $LOOPDEV $DEBIMG
+	mount -o loop $LOOPDEV $DEB
+
+	mount -t devpts devpts $DEB/dev/pts
+	mount -t proc proc $DEB/proc
+	mount -t sysfs sysfs $DEB/sys
 }
 
 deb-umount ()
 {
-umount $LOOPDEV
-losetup -d $LOOPDEV
-rm $LOOPDEV
+	echo "Closing environment"
+	umount $DEB/dev/pts
+	umount $DEB/proc   
+	umount $DEB/sys 
+
+	umount $LOOPDEV
+	losetup -d $LOOPDEV
+	rm $LOOPDEV
+	echo "Done."
 }

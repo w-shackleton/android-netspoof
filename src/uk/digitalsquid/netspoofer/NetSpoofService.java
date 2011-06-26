@@ -1,10 +1,13 @@
 package uk.digitalsquid.netspoofer;
 
 import java.io.IOException;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import uk.digitalsquid.netspoofer.config.ChrootConfig;
 import uk.digitalsquid.netspoofer.config.ChrootManager;
 import uk.digitalsquid.netspoofer.config.LogConf;
+import uk.digitalsquid.netspoofer.servicemsg.ServiceMsg;
 import uk.digitalsquid.netspoofer.servicestatus.InitialiseStatus;
 import uk.digitalsquid.netspoofer.servicestatus.ServiceStatus;
 import android.app.Service;
@@ -77,16 +80,27 @@ public class NetSpoofService extends Service implements LogConf {
     @Override
     public void onDestroy() {
     	Toast.makeText(getApplicationContext(), "Stopping chroot", Toast.LENGTH_LONG).show();
+    	mainLoopManager.cancel(false);
+    	tasks.add(new ServiceMsg(ServiceMsg.MESSAGE_STOP));
     	super.onDestroy();
     }
+    
+    public final void requestSpoofs() {
+    	try {
+	    	tasks.add(new ServiceMsg(ServiceMsg.MESSAGE_GETSPOOFS));
+    	} catch(IllegalStateException e) {
+    		e.printStackTrace();
+    	}
+    }
+    
+	private final BlockingQueue<ServiceMsg> tasks = new LinkedBlockingQueue<ServiceMsg>();
     
     private final AsyncTask<ChrootConfig, ServiceStatus, Void> mainLoopManager = new AsyncTask<ChrootConfig, ServiceStatus, Void>() {
 
 		@Override
 		protected Void doInBackground(ChrootConfig... params) {
-			Log.i(TAG, "Setting up chroot files...");
+			Log.i(TAG, "Setting up chroot...");
 			final ChrootManager chroot = new ChrootManager(NetSpoofService.this, params[0]);
-	    	chroot.createFileSet();
 	    	
 			Log.i(TAG, "Starting chroot...");
 			try {
@@ -99,9 +113,35 @@ public class NetSpoofService extends Service implements LogConf {
 				return null;
 			}
 			publishProgress(new InitialiseStatus(InitialiseStatus.INIT_COMPLETE));
+			if(isCancelled()) {
+				Log.i(TAG, "Stop initiated, stopping...");
+				chroot.stop();
+				Log.i(TAG, "Done.");
+				return null;
+			}
+			
+			// Main point. Process requests from task list.
+			boolean running = true;
+			while(running || !isCancelled()) {
+				try {
+					ServiceMsg task = tasks.take();
+					switch(task.getMessage()) {
+					case ServiceMsg.MESSAGE_OTHER:
+						break;
+					case ServiceMsg.MESSAGE_STOP:
+						running = false;
+						break;
+					case ServiceMsg.MESSAGE_GETSPOOFS:
+						break;
+					}
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
 	
 			Log.i(TAG, "Stopping chroot...");
 			chroot.stop();
+			Log.i(TAG, "Done.");
 			return null;
 		}
     	
@@ -120,6 +160,8 @@ public class NetSpoofService extends Service implements LogConf {
 			}
 		}
 		protected void onPostExecute(Void result) {
+			setStatus(STATUS_STOPPED);
+			stopSelf();
 		}
     };
 }

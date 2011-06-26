@@ -6,11 +6,13 @@ import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.view.KeyEvent;
 
 public class HackSelector extends Activity {
 	ProgressDialog startingProgress;
@@ -76,7 +78,7 @@ public class HackSelector extends Activity {
 				showStartingDialog();
 				break;
 			case NetSpoofService.STATUS_LOADED:
-				startingDialog.cancel();
+				if(startingDialog != null) startingDialog.cancel();
 				break;
 			case NetSpoofService.STATUS_STARTED:
 				break;
@@ -92,10 +94,20 @@ public class HackSelector extends Activity {
 	private ProgressDialog startingDialog;
 	
 	private void showStartingDialog() {
+		if(startingDialog != null) if(startingDialog.isShowing()) return;
 		startingDialog = new ProgressDialog(this);
 		startingDialog.setTitle(R.string.loading);
 		startingDialog.setMessage("Starting environment... This should take a few seconds");
 		startingDialog.setCancelable(false);
+		startingDialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
+		    @Override
+		    public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+		        if (keyCode == KeyEvent.KEYCODE_SEARCH && event.getRepeatCount() == 0) {
+		            return true;
+		        }
+		        return false;
+		    }
+		});
 		startingDialog.show();
 	}
 }

@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 
 public final class FileFinder {
 	private FileFinder() { }
+	private static boolean initialised = false;
 	
 	public static String SU = "";
 	public static String BUSYBOX = "";
@@ -39,6 +40,10 @@ public final class FileFinder {
 	}
 	
 	public static final void initialise() throws FileNotFoundException {
+		if(initialised) {
+			return;
+		}
+		initialised = true;
 		BUSYBOX = findBusybox();
 		if(BUSYBOX.equals("")) {
 			throw new FileNotFoundException("busybox");
