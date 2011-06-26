@@ -1,7 +1,11 @@
 package uk.digitalsquid.netspoofer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import uk.digitalsquid.netspoofer.NetSpoofService.NetSpoofServiceBinder;
 import uk.digitalsquid.netspoofer.servicestatus.SpoofList;
+import uk.digitalsquid.netspoofer.spoofs.Spoof;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
@@ -14,9 +18,17 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
 
 public class HackSelector extends Activity {
 	ProgressDialog startingProgress;
+	
+	private ListView spoofList;
 	
 	boolean haveSpoofList = false;
 	boolean gettingSpoofList = false;
@@ -24,7 +36,11 @@ public class HackSelector extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.hackselector);
         startService(new Intent(this, NetSpoofService.class));
+        
+        spoofList = (ListView) findViewById(R.id.spoofList);
+        spoofList.setAdapter(null);
         
 	    statusFilter = new IntentFilter();
 	    statusFilter.addAction(NetSpoofService.INTENT_STATUSUPDATE);
@@ -108,6 +124,7 @@ public class HackSelector extends Activity {
 				}
 			} else if(intent.getAction().equals(NetSpoofService.INTENT_SPOOFLIST)) {
 				SpoofList spoofs = (SpoofList) intent.getSerializableExtra(NetSpoofService.INTENT_EXTRA_SPOOFLIST);
+				HackSelector.this.spoofs = spoofs.getSpoofs();
 			}
 		}
 	};
@@ -131,4 +148,59 @@ public class HackSelector extends Activity {
 		});
 		startingDialog.show();
 	}
+	
+	private ArrayList<Spoof> spoofs;
+	
+	private final SpoofListAdapter spoofListAdapter = new SpoofListAdapter();
+	
+	private class SpoofListAdapter extends BaseAdapter {
+		private final LayoutInflater inflater;
+		
+		private List<Spoof> spoofs;
+		
+		public SpoofListAdapter() {
+			inflater = LayoutInflater.from(HackSelector.this);
+		}
+		
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                convertView = inflater.inflate(R.layout.spoofitem, null);
+            }
+            TextView title = (TextView) convertView.findViewById(R.id.spoofTitle);
+            TextView description = (TextView) convertView.findViewById(R.id.spoofDescription);
+            
+            if(spoofs == null) {
+            	title.setText(R.string.loading);
+            	description.setText("");
+            } else {
+            	title.setText(spoofs.get(position).getDescription());
+            	description.setText(spoofs.get(position).getDescription());
+            }
+
+            return convertView;
+		}
+		
+		@Override
+		public long getItemId(int position) {
+			return position;
+		}
+		
+		@Override
+		public Object getItem(int position) {
+			if(spoofs == null) return position;
+			return spoofs.get(position);
+		}
+		
+		@Override
+		public int getCount() {
+			if(spoofs == null) return 1;
+			return spoofs.size();
+		}
+		
+		public void setSpoofs(List<Spoof> spoofs) {
+			this.spoofs = spoofs;
+			notifyDataSetChanged();
+		}
+	};
 }
