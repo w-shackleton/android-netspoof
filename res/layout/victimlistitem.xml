@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:paddingLeft="15dip" android:paddingRight="6dip" android:paddingTop="6dip" android:paddingBottom="6dip" android:layout_height="wrap_content" android:orientation="vertical">
+    <TextView android:layout_width="wrap_content" android:text="Title" android:layout_height="wrap_content" 
+            android:textAppearance="?android:attr/textAppearanceLarge" android:id="@+id/victimIp"></TextView>
+    <TextView android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textAppearance="?android:attr/textAppearanceSmall"
+    android:maxLines="4" android:text="Description" android:id="@+id/victimExtraText"></TextView>
+</LinearLayout>

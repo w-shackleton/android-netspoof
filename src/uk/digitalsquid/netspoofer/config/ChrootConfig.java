@@ -21,10 +21,12 @@ public final class ChrootConfig {
 	private final String debianMount;
 	private final String debianImage;
 	
+	private final String iface;
+	
 	private final Map<String, String> values = new HashMap<String, String>();
 	
 	public ChrootConfig(Context context) {
-		if(DEFAULTS == null) DEFAULTS = new ChrootConfig("/dev/block/loop2000", 2000, "/data/local/mnt", context.getExternalFilesDir(null) + "/" + Config.DEB_IMG);
+		if(DEFAULTS == null) DEFAULTS = new ChrootConfig("/dev/block/loop2000", 2000, "/data/local/mnt", context.getExternalFilesDir(null) + "/" + Config.DEB_IMG, "eth0");
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		loopdev = prefs.getString("loopdev", DEFAULTS.loopdev);
 		values.put("LOOPDEV", loopdev);
@@ -34,17 +36,21 @@ public final class ChrootConfig {
 		values.put("DEB", debianMount);
 		debianImage = prefs.getString("debianImage", DEFAULTS.debianImage);
 		values.put("DEBIMG", debianImage);
+		iface = prefs.getString("iface", DEFAULTS.iface);
+		values.put("WLAN", iface);
 	}
 	
-	private ChrootConfig(String loopdev, int loopnum, String debianMount, String debianImage) {
+	private ChrootConfig(String loopdev, int loopnum, String debianMount, String debianImage, String iface) {
 		this.loopdev = loopdev;
 		this.loopnum = loopnum;
 		this.debianMount = debianMount;
 		this.debianImage = debianImage;
+		this.iface = iface;
 		values.put("LOOPDEV", loopdev);
 		values.put("LOOPNUM", "" + loopnum);
 		values.put("DEB", debianMount);
 		values.put("DEBIMG", debianImage);
+		values.put("WLAN", iface);
 	}
 
 	public String getLoopdev() {

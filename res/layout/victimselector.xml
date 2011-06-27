@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent" android:orientation="vertical">
+    <ListView android:layout_width="match_parent" android:id="@+id/victimList" android:layout_height="wrap_content" android:layout_weight="1"></ListView>
+    <LinearLayout android:layout_height="wrap_content" android:id="@+id/linearLayout2" android:layout_width="match_parent" android:gravity="center_vertical">
+        <ProgressBar android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/scanProgressBar"></ProgressBar>
+        <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="@string/scanning" android:layout_marginLeft="5dip" android:layout_weight="1" android:id="@+id/scanProgressText"></TextView>
+        <Button android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/scanProgressRefresh" android:text="@string/refresh" android:enabled="false"></Button>
+    </LinearLayout>
+</LinearLayout>

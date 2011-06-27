@@ -216,7 +216,7 @@ public class HackSelector extends Activity implements OnItemClickListener, LogCo
 
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View view, int position, long id) {
-		Spoof spoof = spoofListAdapter.getItem(position);
+		final Spoof spoof = spoofListAdapter.getItem(position);
 		if(spoof == null) return;
 		
 		// Start processing spoof etc.
@@ -225,6 +225,7 @@ public class HackSelector extends Activity implements OnItemClickListener, LogCo
 			public void onDone() {
 				Log.d(TAG, "Dialog done, continuing");
 				Intent intent = new Intent(HackSelector.this, RouterSelector.class);
+				intent.putExtra(RouterSelector.EXTRA_SPOOF, spoof);
 				startActivity(intent);
 			}
 		};

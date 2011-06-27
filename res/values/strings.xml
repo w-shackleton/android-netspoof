@@ -22,4 +22,12 @@
     <string name="routerIp">Router IP Address:</string>
     <string name="deviceIf">Wifi interface name:\n(usually eth0)</string>
     <string name="customIpSettings">Custom IP Settings</string>
+    <string name="selectvictim">Select Victim</string>
+    <string name="scanning">Scanning for devices...</string>
+    <string name="subnet">Subnet Mask:</string>
+    <string name="allDevices">All Devices</string>
+    <string name="allDevicesDesc">Run spoof on everything on the network. May slow down the phone a lot and cause the battery to melt.</string>
+    <string name="otherDevice">Other</string>
+    <string name="otherDeviceDesc">Enter an IP address of someone to spoof not seen in this list.</string>
+    <string name="refresh">Refresh</string>
 </resources>

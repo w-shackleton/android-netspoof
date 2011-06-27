@@ -22,6 +22,7 @@
         <activity android:name="HackSelector" android:label="@string/selecthack"></activity>
         <service android:name="NetSpoofService"></service>
         <activity android:name="RouterSelector" android:label="@string/selectgateway"></activity>
+        <activity android:label="@string/selectvictim" android:name="VictimSelector"></activity>
 
     </application>
 </manifest>

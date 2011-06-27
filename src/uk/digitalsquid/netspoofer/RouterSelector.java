@@ -6,6 +6,9 @@ import java.net.UnknownHostException;
 
 import uk.digitalsquid.netspoofer.config.LogConf;
 import uk.digitalsquid.netspoofer.config.NetHelpers;
+import uk.digitalsquid.netspoofer.config.NetHelpers.GatewayData;
+import uk.digitalsquid.netspoofer.spoofs.Spoof;
+import uk.digitalsquid.netspoofer.spoofs.SpoofData;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -22,6 +25,7 @@ import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -35,17 +39,27 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class RouterSelector extends Activity implements OnClickListener, LogConf {
+	public static final String EXTRA_SPOOF = "uk.digitalsquid.netspoofer.RouterSelector.SPOOF";
+	
+	private Spoof spoof;
+	
 	private WifiManager wm;
 	private WifiLock wL;
 	
 	private NetworkInterface wifiIface;
 	private InetAddress wifiIP;
-	private InetAddress wifiGateway;
+	private GatewayData wifiGateway;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.routerselector);
+		
+		spoof = (Spoof) getIntent().getSerializableExtra(EXTRA_SPOOF);
+		if(spoof == null) {
+			Log.e(TAG, "No spoof given in intent, finishing");
+			finish();
+		}
 		
 		gatewayListAdapter = new GatewayListAdapter();
 		ListView gatewayList = (ListView) findViewById(R.id.routerList);
@@ -169,7 +183,7 @@ public class RouterSelector extends Activity implements OnClickListener, LogConf
 		public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
 			switch(position) {
 			case ITEM_DEFAULT:
-				goToNextStep(RouterSelector.this.wifiIP.getHostAddress(), RouterSelector.this.wifiGateway.getHostAddress(), RouterSelector.this.wifiIface.getDisplayName());
+				goToNextStep(RouterSelector.this.wifiIP.getHostAddress(), RouterSelector.this.wifiGateway.getSubnet(), RouterSelector.this.wifiGateway.getGateway().getHostAddress(), RouterSelector.this.wifiIface.getDisplayName());
 				break;
 			case ITEM_OTHER:
 				showDialog(DIALOG_CUSTOMIP);
@@ -191,6 +205,7 @@ public class RouterSelector extends Activity implements OnClickListener, LogConf
 			
 			final EditText
 				myIp = (EditText) findViewById(R.id.myIpText),
+				subnetMask = (EditText) findViewById(R.id.subnetMaskText),
 				routerIp = (EditText) findViewById(R.id.routerIpText),
 				myIf = (EditText) findViewById(R.id.myIfText);
 			
@@ -201,6 +216,7 @@ public class RouterSelector extends Activity implements OnClickListener, LogConf
 					String sMyIp = myIp.getText().toString();
 					String sMyIf = myIf.getText().toString();
 					String sRouterIp = routerIp.getText().toString();
+					String sSubnetMask = subnetMask.getText().toString();
 					
 					// Check if valid
 					try {
@@ -211,7 +227,7 @@ public class RouterSelector extends Activity implements OnClickListener, LogConf
 						Toast.makeText(getBaseContext(), "Invalid IP addresses entered. Please enter valid information.", Toast.LENGTH_LONG).show();
 						return;
 					}
-					goToNextStep(sMyIp, sRouterIp, sMyIf);
+					goToNextStep(sMyIp, sSubnetMask, sRouterIp, sMyIf);
 				}
 			}).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
 				@Override
@@ -244,7 +260,7 @@ public class RouterSelector extends Activity implements OnClickListener, LogConf
 			wifiIP = NetHelpers.inetFromInt(ip);
 			wifiIface = NetHelpers.getIface(wifiIP);
 			wifiGateway = NetHelpers.getDefaultGateway(wifiIface);
-			gatewayListAdapter.setWifiGateway(wifiGateway.getHostAddress());
+			gatewayListAdapter.setWifiGateway(wifiGateway.getGateway().getHostAddress());
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 			Toast.makeText(getBaseContext(), "Error getting wifi info. Please see log for more info.", Toast.LENGTH_LONG).show();
@@ -254,7 +270,16 @@ public class RouterSelector extends Activity implements OnClickListener, LogConf
 		}
 	}
 	
-	private void goToNextStep(String myIp, String gatewayIp, String wifiIface) {
-		
+	private void goToNextStep(String myIp, String mySubnet, String gatewayIp, String wifiIface) {
+		Intent intent = new Intent(this, VictimSelector.class);
+		try {
+			intent.putExtra(VictimSelector.EXTRA_SPOOFDATA, new SpoofData(spoof, myIp, mySubnet, wifiIface, gatewayIp));
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+			Log.e(TAG, "Couldn't decode IP addresses.");
+			Toast.makeText(this, "Error decoding IP addresses given. Perhaps you mistyped something or aren't connected to Wifi?", Toast.LENGTH_LONG).show();
+			return;
+		}
+		startActivity(intent);
 	}
 }
