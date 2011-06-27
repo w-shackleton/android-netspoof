@@ -8,8 +8,8 @@ public class SquidScriptSpoof extends Spoof {
 	
 	private final String scriptName;
 	
-	public SquidScriptSpoof(String description, String scriptName) {
-		super(description);
+	public SquidScriptSpoof(String title, String description, String scriptName) {
+		super(title, description);
 		this.scriptName = scriptName;
 	}
 

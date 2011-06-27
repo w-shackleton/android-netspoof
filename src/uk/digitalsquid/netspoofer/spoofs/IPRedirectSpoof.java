@@ -14,16 +14,27 @@ import android.widget.Toast;
 
 public class IPRedirectSpoof extends Spoof {
 	private static final long serialVersionUID = -7780822391880161592L;
+	public static final String KITTENWAR = "205.196.209.62";
 	
 	private InetAddress host;
 	
-	public IPRedirectSpoof(String description, String hostTo) throws UnknownHostException {
-		super(description);
+	public IPRedirectSpoof(String title, String description, String hostTo) throws UnknownHostException {
+		super(title, description);
 		if(hostTo == null) {
 			host = null;
 			return;
 		}
 		host = InetAddress.getByName(hostTo);
+	}
+	
+	/**
+	 * Constructor that leaves host undefined, and shows dialog later.
+	 * @param title
+	 * @param description
+	 */
+	public IPRedirectSpoof(String title, String description) {
+		super(title, description);
+		host = null;
 	}
 	
 	/**
@@ -58,12 +69,13 @@ public class IPRedirectSpoof extends Spoof {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					try {
+						if(input.getText().toString().equals("")) throw new UnknownHostException("Blank host");
 						host = InetAddress.getByName(input.getText().toString());
 					} catch (UnknownHostException e) {
 						e.printStackTrace();
 						Toast.makeText(context, "Couldn't find specified website, using kittenwar.", Toast.LENGTH_LONG).show();
 						try {
-							host = Inet4Address.getByName("205.196.209.62"); // Kittenwar
+							host = Inet4Address.getByName(KITTENWAR);
 						} catch (UnknownHostException e1) {
 							e1.printStackTrace();
 						}

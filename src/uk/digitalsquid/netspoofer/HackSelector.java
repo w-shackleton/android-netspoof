@@ -1,12 +1,14 @@
 package uk.digitalsquid.netspoofer;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import uk.digitalsquid.netspoofer.NetSpoofService.NetSpoofServiceBinder;
+import uk.digitalsquid.netspoofer.config.LogConf;
 import uk.digitalsquid.netspoofer.servicestatus.SpoofList;
 import uk.digitalsquid.netspoofer.spoofs.Spoof;
+import uk.digitalsquid.netspoofer.spoofs.Spoof.OnExtraDialogDoneListener;
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -17,15 +19,18 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class HackSelector extends Activity {
+public class HackSelector extends Activity implements OnItemClickListener, LogConf {
 	ProgressDialog startingProgress;
 	
 	private ListView spoofList;
@@ -39,8 +44,10 @@ public class HackSelector extends Activity {
 		setContentView(R.layout.hackselector);
         startService(new Intent(this, NetSpoofService.class));
         
+        spoofListAdapter = new SpoofListAdapter();
         spoofList = (ListView) findViewById(R.id.spoofList);
-        spoofList.setAdapter(null);
+        spoofList.setAdapter(spoofListAdapter);
+        spoofList.setOnItemClickListener(this);
         
 	    statusFilter = new IntentFilter();
 	    statusFilter.addAction(NetSpoofService.INTENT_STATUSUPDATE);
@@ -124,7 +131,7 @@ public class HackSelector extends Activity {
 				}
 			} else if(intent.getAction().equals(NetSpoofService.INTENT_SPOOFLIST)) {
 				SpoofList spoofs = (SpoofList) intent.getSerializableExtra(NetSpoofService.INTENT_EXTRA_SPOOFLIST);
-				HackSelector.this.spoofs = spoofs.getSpoofs();
+				spoofListAdapter.setSpoofs(spoofs.getSpoofs());
 			}
 		}
 	};
@@ -149,9 +156,7 @@ public class HackSelector extends Activity {
 		startingDialog.show();
 	}
 	
-	private ArrayList<Spoof> spoofs;
-	
-	private final SpoofListAdapter spoofListAdapter = new SpoofListAdapter();
+	private SpoofListAdapter spoofListAdapter;
 	
 	private class SpoofListAdapter extends BaseAdapter {
 		private final LayoutInflater inflater;
@@ -164,18 +169,23 @@ public class HackSelector extends Activity {
 		
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-            if (convertView == null) {
-                convertView = inflater.inflate(R.layout.spoofitem, null);
-            }
-            TextView title = (TextView) convertView.findViewById(R.id.spoofTitle);
-            TextView description = (TextView) convertView.findViewById(R.id.spoofDescription);
-            
             if(spoofs == null) {
-            	title.setText(R.string.loading);
-            	description.setText("");
+		        if (convertView == null) {
+		            convertView = inflater.inflate(R.layout.listloadingitem, null);
+		            convertView.setEnabled(false);
+		        }
             } else {
-            	title.setText(spoofs.get(position).getDescription());
-            	description.setText(spoofs.get(position).getDescription());
+		        if (convertView != null) {
+		        	if(convertView.findViewById(R.id.spoofTitle) == null) // Must be other view
+			            convertView = inflater.inflate(R.layout.spoofitem, null);
+		        } else {
+		            convertView = inflater.inflate(R.layout.spoofitem, null);
+		        }
+		        TextView title = (TextView) convertView.findViewById(R.id.spoofTitle);
+		        TextView description = (TextView) convertView.findViewById(R.id.spoofDescription);
+		        
+	        	title.setText(spoofs.get(position).getTitle());
+	        	description.setText(spoofs.get(position).getDescription());
             }
 
             return convertView;
@@ -187,8 +197,8 @@ public class HackSelector extends Activity {
 		}
 		
 		@Override
-		public Object getItem(int position) {
-			if(spoofs == null) return position;
+		public Spoof getItem(int position) {
+			if(spoofs == null) return null;
 			return spoofs.get(position);
 		}
 		
@@ -202,5 +212,27 @@ public class HackSelector extends Activity {
 			this.spoofs = spoofs;
 			notifyDataSetChanged();
 		}
-	};
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> arg0, View view, int position, long id) {
+		Spoof spoof = spoofListAdapter.getItem(position);
+		if(spoof == null) return;
+		
+		// Start processing spoof etc.
+		final OnExtraDialogDoneListener onDone = new OnExtraDialogDoneListener() {
+			@Override
+			public void onDone() {
+				Log.d(TAG, "Dialog done, continuing");
+				Intent intent = new Intent(HackSelector.this, RouterSelector.class);
+				startActivity(intent);
+			}
+		};
+		Dialog optDialog = spoof.displayExtraDialog(this, onDone);
+		if(optDialog == null) { // Null, so execute onDone now.
+			onDone.onDone();
+		} else { // Let dialog do so.
+			optDialog.show();
+		}
+	}
 }

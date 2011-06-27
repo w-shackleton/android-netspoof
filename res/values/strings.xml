@@ -15,4 +15,11 @@
     <string name="dlCancel">Cancel download</string>
     <string name="selecthack">Select Hack to use</string>
     <string name="loading">Loading...</string>
+    <string name="selectgateway">Select gateway</string>
+    <string name="wifiSettings">Change Wifi Settings</string>
+    <string name="blank"></string>
+    <string name="deviceIp">My IP Address:</string>
+    <string name="routerIp">Router IP Address:</string>
+    <string name="deviceIf">Wifi interface name:\n(usually eth0)</string>
+    <string name="customIpSettings">Custom IP Settings</string>
 </resources>

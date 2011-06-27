@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +44,26 @@ public final class IOHelpers {
 		}
 		br.close();
 		reader.close();
+		return lines;
+	}
+	
+	public static final List<String> runProcessOutputToLines(List<String> args) throws IOException {
+		ProcessBuilder pb = new ProcessBuilder(args);
+		
+		pb.redirectErrorStream(true);
+		Process proc = pb.start();
+		BufferedReader cout = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+		try {
+			proc.waitFor();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		List<String> lines = new ArrayList<String>();
+		String line;
+		while((line = cout.readLine()) != null) {
+			lines.add(line);
+		}
+		cout.close();
 		return lines;
 	}
 }

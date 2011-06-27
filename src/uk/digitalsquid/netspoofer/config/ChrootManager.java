@@ -6,18 +6,20 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
+import uk.digitalsquid.netspoofer.spoofs.IPRedirectSpoof;
 import uk.digitalsquid.netspoofer.spoofs.Spoof;
 import uk.digitalsquid.netspoofer.spoofs.SquidScriptSpoof;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Log;
+import android.widget.Toast;
 
 public class ChrootManager implements Config {
-	@SuppressWarnings("unused")
 	private final Context context;
 	private final ChrootConfig config;
 	
@@ -181,12 +183,22 @@ public class ChrootManager implements Config {
 					Log.e(TAG, "Malformed description file for " + file + ".");
 					continue;
 				}
-				spoofs.add(new SquidScriptSpoof(lines.get(1), lines.get(0)));
+				// FIXME: Add proper title to objects here!
+				spoofs.add(new SquidScriptSpoof(lines.get(0), lines.get(1), lines.get(0)));
 			} catch (IOException e) {
 				e.printStackTrace();
 				Log.e(TAG, "Couldn't read info for spoof " + file + ".");
 			}
 		}
+		
+		// IP Redirect spoofs.
+		try {
+			spoofs.add(new IPRedirectSpoof("All sites -> kittenwar", "Redirect all websites to kittenwar.com", IPRedirectSpoof.KITTENWAR));
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+			Toast.makeText(context, "Couldn't load kittenwar webaddress", Toast.LENGTH_LONG).show();
+		}
+		spoofs.add(new IPRedirectSpoof("All sites -> other website", "Redirect all websites to another website"));
 		return spoofs;
 	}
 }

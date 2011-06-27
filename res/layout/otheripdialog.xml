@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent" android:layout_height="wrap_content">
+    <TableLayout android:id="@+id/tableLayout1" android:layout_width="match_parent" android:padding="5dip" android:layout_height="wrap_content">
+        <TableRow android:layout_width="wrap_content" android:id="@+id/tableRow1" android:layout_height="wrap_content">
+            <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="@string/deviceIp" android:id="@+id/myIp"></TextView>
+            <EditText android:layout_height="wrap_content" android:id="@+id/myIpText" android:layout_width="wrap_content" android:layout_weight="1" android:text="@string/blank"></EditText>
+        </TableRow>
+        <TableRow android:layout_width="wrap_content" android:id="@+id/TableRow01" android:layout_height="wrap_content">
+            <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/routerIp" android:text="@string/routerIp"></TextView>
+            <EditText android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_weight="1" android:text="@string/blank" android:id="@+id/routerIpText"></EditText>
+        </TableRow>
+        <TableRow android:layout_width="wrap_content" android:id="@+id/TableRow02" android:layout_height="wrap_content">
+            <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/myIf" android:text="@string/deviceIf"></TextView>
+            <EditText android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_weight="1" android:text="@string/blank" android:id="@+id/myIfText"></EditText>
+        </TableRow>
+    </TableLayout>
+</LinearLayout>
