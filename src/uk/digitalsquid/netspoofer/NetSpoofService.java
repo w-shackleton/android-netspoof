@@ -8,9 +8,11 @@ import uk.digitalsquid.netspoofer.config.ChrootConfig;
 import uk.digitalsquid.netspoofer.config.ChrootManager;
 import uk.digitalsquid.netspoofer.config.LogConf;
 import uk.digitalsquid.netspoofer.servicemsg.ServiceMsg;
+import uk.digitalsquid.netspoofer.servicemsg.SpoofStarter;
 import uk.digitalsquid.netspoofer.servicestatus.InitialiseStatus;
 import uk.digitalsquid.netspoofer.servicestatus.ServiceStatus;
 import uk.digitalsquid.netspoofer.servicestatus.SpoofList;
+import uk.digitalsquid.netspoofer.spoofs.SpoofData;
 import android.app.Service;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -21,9 +23,11 @@ import android.widget.Toast;
 public class NetSpoofService extends Service implements LogConf {
 	public static final int STATUS_LOADING = 0;
 	public static final int STATUS_LOADED = 1;
-	public static final int STATUS_STARTED = 2;
-	public static final int STATUS_STOPPED = 3;
-	public static final int STATUS_FAILED = 4;
+	public static final int STATUS_STARTING = 2;
+	public static final int STATUS_STARTED = 3;
+	public static final int STATUS_STOPPING = 4;
+	public static final int STATUS_STOPPED = 5;
+	public static final int STATUS_FAILED = 6;
 	
 	public static final String INTENT_STATUSUPDATE = "uk.digitalsquid.netspoofer.NetSpoofService.StatusUpdate";
 	public static final String INTENT_SPOOFLIST = "uk.digitalsquid.netspoofer.NetSpoofService.SpoofList";
@@ -102,6 +106,14 @@ public class NetSpoofService extends Service implements LogConf {
 		sendBroadcast(intent);
     }
     
+    public void startSpoof(SpoofData spoof) {
+    	try {
+	    	tasks.add(new SpoofStarter(spoof));
+    	} catch(IllegalStateException e) {
+    		e.printStackTrace();
+    	}
+    }
+    
 	private final BlockingQueue<ServiceMsg> tasks = new LinkedBlockingQueue<ServiceMsg>();
     
     private final AsyncTask<ChrootConfig, ServiceStatus, Void> mainLoopManager = new AsyncTask<ChrootConfig, ServiceStatus, Void>() {
@@ -136,6 +148,10 @@ public class NetSpoofService extends Service implements LogConf {
 					ServiceMsg task = tasks.take();
 					switch(task.getMessage()) {
 					case ServiceMsg.MESSAGE_OTHER:
+						if(task instanceof SpoofStarter) {
+							SpoofStarter starter = (SpoofStarter) task;
+							spoofLoop(chroot, starter.getSpoof());
+						}
 						break;
 					case ServiceMsg.MESSAGE_STOP:
 						running = false;
@@ -154,6 +170,48 @@ public class NetSpoofService extends Service implements LogConf {
 			chroot.stop();
 			Log.i(TAG, "Done.");
 			return null;
+		}
+		
+		private void spoofLoop(final ChrootManager chroot, SpoofData spoof) {
+			publishProgress(new InitialiseStatus(STATUS_STARTING));
+			try {
+				chroot.startSpoof(spoof);
+			} catch (IOException e) {
+				e.printStackTrace();
+				Log.e(TAG, "Failed to start spoof.");
+				publishProgress(new InitialiseStatus(STATUS_STOPPED));
+			}
+			publishProgress(new InitialiseStatus(STATUS_STARTED));
+			
+			boolean running = true;
+			while(running) {
+				ServiceMsg task = tasks.poll();
+				switch(task.getMessage()) {
+				case ServiceMsg.MESSAGE_STOPSPOOF:
+					finishSpoof(chroot, spoof);
+					running = false;
+					break;
+				}
+				
+				if(isCancelled()) {
+					finishSpoof(chroot, spoof);
+					break;
+				}
+				
+			}
+		}
+		
+		private void finishSpoof(ChrootManager chroot, SpoofData spoof) {
+			publishProgress(new InitialiseStatus(STATUS_STOPPING));
+			try {
+				chroot.stopSpoof(spoof);
+			} catch (IOException e) {
+				e.printStackTrace();
+				Log.e(TAG, "Failed to stop spoof.");
+				publishProgress(new InitialiseStatus(STATUS_STARTED));
+				return;
+			}
+			publishProgress(new InitialiseStatus(STATUS_STOPPED));
 		}
     	
 		protected void onProgressUpdate(ServiceStatus... progress) {

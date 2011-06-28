@@ -1,6 +1,7 @@
 package uk.digitalsquid.netspoofer;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -11,6 +12,9 @@ import uk.digitalsquid.netspoofer.config.LogConf;
 import uk.digitalsquid.netspoofer.config.NetHelpers;
 import uk.digitalsquid.netspoofer.spoofs.SpoofData;
 import android.app.Activity;
+import android.app.AlertDialog.Builder;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -24,9 +28,11 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class VictimSelector extends Activity implements OnClickListener, LogConf {
 	public static final String EXTRA_SPOOFDATA = "uk.digitalsquid.netspoofer.VictimSelector.SPOOFDATA";
@@ -67,7 +73,8 @@ public class VictimSelector extends Activity implements OnClickListener, LogConf
 	
 	private VictimListAdapter victimListAdapter;
 	
-	public static class Victim implements Comparable<Victim> {
+	public static class Victim implements Comparable<Victim>, Serializable {
+		private static final long serialVersionUID = -8815727249378333391L;
 		private final InetAddress ip;
 		
 		public Victim(InetAddress ip) {
@@ -151,7 +158,8 @@ public class VictimSelector extends Activity implements OnClickListener, LogConf
 	        	break;
         	default:
 	        	holder.vIp.setText(getItem(position).ip.getHostAddress());
-	        	holder.vText.setText(getItem(position).ip.getCanonicalHostName());
+	        	// holder.vText.setText(getItem(position).ip.getCanonicalHostName());
+	        	holder.vText.setText("");
         		break;
 	        }
 	        return convertView;
@@ -164,6 +172,21 @@ public class VictimSelector extends Activity implements OnClickListener, LogConf
 
 		@Override
 		public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+			Victim victim = getItem(position);
+			if(victim == null) {
+				switch(position) {
+				case ITEM_ALL:
+					// null means spoof everyone.
+					goToNextStep(null);
+					break;
+				case ITEM_OTHER:
+					showDialog(DIALOG_GETIP);
+					break;
+				default:
+					goToNextStep(victim);
+					break;
+				}
+			}
 		}
 		
 		@SuppressWarnings("unused")
@@ -287,5 +310,46 @@ public class VictimSelector extends Activity implements OnClickListener, LogConf
 			startScanners();
 			break;
 		}
+	}
+	
+	private static final int DIALOG_GETIP = 0;
+	
+	@Override
+	public Dialog onCreateDialog(int id, Bundle args) {
+		super.onCreateDialog(id, args);
+		switch(id) {
+		case DIALOG_GETIP:
+			LayoutInflater inflater = LayoutInflater.from(this);
+			Builder builder = new Builder(this);
+			View layout = inflater.inflate(R.layout.customip, null);
+			builder.setView(layout).setTitle(R.string.enterip);
+			final EditText ip = (EditText) layout.findViewById(R.id.ipBox);
+			builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					try {
+						goToNextStep(new Victim(InetAddress.getByName(ip.getText().toString())));
+					} catch (UnknownHostException e) {
+						e.printStackTrace();
+						Log.e(TAG, "Incorrect IP given.");
+						Toast.makeText(VictimSelector.this, "Please enter a valid IP address", Toast.LENGTH_LONG).show();
+					}
+				}
+			}).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) { }
+			});
+			
+			return builder.show();
+		default:
+			return null;
+		}
+	}
+	
+	private void goToNextStep(Victim victim) {
+		spoof.setVictim(victim);
+		Intent intent = new Intent(this, SpoofRunning.class); 
+		intent.putExtra(SpoofRunning.EXTRA_SPOOFDATA, spoof);
+		startActivity(intent);
 	}
 }

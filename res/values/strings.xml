@@ -30,4 +30,7 @@
     <string name="otherDevice">Other</string>
     <string name="otherDeviceDesc">Enter an IP address of someone to spoof not seen in this list.</string>
     <string name="refresh">Refresh</string>
+    <string name="enterip">Enter IP Address</string>
+    <string name="enteriptext">Please enter a custom IP address / hostname of victim to attack.</string>
+    <string name="spoofrunning">Spoof Running...</string>
 </resources>

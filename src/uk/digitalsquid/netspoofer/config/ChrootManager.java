@@ -13,6 +13,7 @@ import java.util.Map.Entry;
 
 import uk.digitalsquid.netspoofer.spoofs.IPRedirectSpoof;
 import uk.digitalsquid.netspoofer.spoofs.Spoof;
+import uk.digitalsquid.netspoofer.spoofs.SpoofData;
 import uk.digitalsquid.netspoofer.spoofs.SquidScriptSpoof;
 import android.content.Context;
 import android.content.res.AssetManager;
@@ -74,7 +75,7 @@ public class ChrootManager implements Config {
 					if(toLogcat && msg != null) {
 						Log.d(TAG, "cout: " + msg);
 					}
-					if(waitForCatchup || msg.equals(key)) break;
+					if(waitForCatchup && msg.equals(key)) break;
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -200,5 +201,63 @@ public class ChrootManager implements Config {
 		}
 		spoofs.add(new IPRedirectSpoof("All sites -> other website", "Redirect all websites to another website"));
 		return spoofs;
+	}
+	
+	public boolean isSpoofRunning() {
+		return spoofRunning;
+	}
+
+	private boolean spoofRunning = false;
+	private Object spoofLock = new Object();
+	
+	public void startSpoof(SpoofData spoof) throws IOException {
+		if(spoofRunning) throw new IllegalStateException("Spoof already running");
+		synchronized(spoofLock) {
+			spoofRunning = true;
+			cin.write(String.format("export WLAN=%s", spoof.getMyIface()));
+			cin.write(String.format("export IP=%s", spoof.getMyIp().getHostAddress()));
+			cin.write(String.format("export SUBNET=%s", spoof.getMySubnetBaseAddressString()));
+			cin.write(String.format("export MASK=%s", spoof.getMySubnetString()));
+			cin.write(String.format("export SHORTMASK=%s", spoof.getMySubnet()));
+			
+			cin.write(spoof.getSpoof().getSpoofCmd(spoof.getVictim().getIpString(), spoof.getRouterIpString())); // Should now be started.
+		}
+	}
+	
+	/**
+	 * Stops the current spoof.
+	 * @return The final list of output messages
+	 * @throws IOException
+	 */
+	public ArrayList<String> stopSpoof(SpoofData spoof) throws IOException {
+		if(!spoofRunning) return new ArrayList<String>(); // Don't do anything.
+		synchronized(spoofLock) {
+			cin.write(spoof.getSpoof().getStopCmd()); // All spoofs should stop themselves by waiting for a newline.
+			spoofRunning = false;
+			
+			return getNewSpoofOutput(true);
+		}
+	}
+	
+	public ArrayList<String> getNewSpoofOutput() throws IOException {
+		return getNewSpoofOutput(false);
+	}
+	
+	private synchronized ArrayList<String> getNewSpoofOutput(boolean waitForFinishLine) throws IOException {
+		cin.write("echo \"SPOOF FINISHED\"\n");
+		ArrayList<String> items = new ArrayList<String>();
+		
+		while(cerr.ready()) {
+			String line = cerr.readLine();
+			items.add(line);
+		}
+		while(waitForFinishLine || cout.ready()) {
+			String line = cout.readLine();
+			items.add(line);
+			if(waitForFinishLine && line.contains("SPOOF FINISHED")) {
+				break;
+			}
+		}
+		return items;
 	}
 }

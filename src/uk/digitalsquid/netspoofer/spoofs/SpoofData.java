@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import uk.digitalsquid.netspoofer.VictimSelector.Victim;
 import uk.digitalsquid.netspoofer.config.NetHelpers;
 
 public class SpoofData implements Serializable {
@@ -46,8 +47,13 @@ public class SpoofData implements Serializable {
 	private final Spoof spoof;
 	
 	private String myIf;
+	/**
+	 * NOTE: This isn't the full address, but rather the (CIDL?) notation of /24 etc.
+	 */
 	private int mySubnet = 24;
 	private InetAddress myIp, routerIp;
+	
+	private Victim victim;
 
 	public SpoofData(Spoof spoof, String myIp, String mySubnet, String myIf, String routerIp) throws UnknownHostException {
 		this.spoof = spoof;
@@ -77,6 +83,9 @@ public class SpoofData implements Serializable {
 	public InetAddress getRouterIp() {
 		return routerIp;
 	}
+	public String getRouterIpString() {
+		return routerIp.getHostAddress();
+	}
 	public int getRouterIpInt() {
 		return NetHelpers.inetFromByte(routerIp.getAddress());
 	}
@@ -93,5 +102,32 @@ public class SpoofData implements Serializable {
 	}
 	public String getMySubnetString() {
 		return SUBNETS[mySubnet];
+	}
+	
+	public int getMySubnetBaseAddressReverseInt() {
+		int ip = getMyIpReverseInt();
+		return ip & getMySubnetReverseInt(); // Bottom possble IP
+	}
+	
+	public String getMySubnetBaseAddressString() {
+		int baseIp = getMySubnetBaseAddressReverseInt();
+		try {
+			return NetHelpers.reverseInetFromInt(baseIp).getHostAddress();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public void setVictim(Victim victim) {
+		this.victim = victim;
+	}
+
+	public Victim getVictim() {
+		return victim;
+	}
+
+	public boolean isEveryoneVictim() {
+		return victim == null;
 	}
 }

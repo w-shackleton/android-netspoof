@@ -122,11 +122,8 @@ public class HackSelector extends Activity implements OnItemClickListener, LogCo
 	            		HackSelector.this.service.requestSpoofs();
 	            	}
 					break;
-				case NetSpoofService.STATUS_STARTED:
-					break;
-				case NetSpoofService.STATUS_STOPPED:
-					break;
 				case NetSpoofService.STATUS_FAILED:
+					// FIXME: Handle this.
 					break;
 				}
 			} else if(intent.getAction().equals(NetSpoofService.INTENT_SPOOFLIST)) {
