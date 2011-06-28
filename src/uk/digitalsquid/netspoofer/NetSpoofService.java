@@ -23,10 +23,10 @@ import android.widget.Toast;
 public class NetSpoofService extends Service implements LogConf {
 	public static final int STATUS_LOADING = 0;
 	public static final int STATUS_LOADED = 1;
-	public static final int STATUS_STARTING = 2;
-	public static final int STATUS_STARTED = 3;
-	public static final int STATUS_STOPPING = 4;
-	public static final int STATUS_STOPPED = 5;
+	public static final int STATUS_FINISHED = 2;
+	public static final int STATUS_STARTING = 3;
+	public static final int STATUS_STARTED = 4;
+	public static final int STATUS_STOPPING = 5;
 	public static final int STATUS_FAILED = 6;
 	
 	public static final String INTENT_STATUSUPDATE = "uk.digitalsquid.netspoofer.NetSpoofService.StatusUpdate";
@@ -114,6 +114,14 @@ public class NetSpoofService extends Service implements LogConf {
     	}
     }
     
+    public void stopSpoof() {
+    	try {
+	    	tasks.add(new ServiceMsg(ServiceMsg.MESSAGE_STOPSPOOF));
+    	} catch(IllegalStateException e) {
+    		e.printStackTrace();
+    	}
+    }
+    
 	private final BlockingQueue<ServiceMsg> tasks = new LinkedBlockingQueue<ServiceMsg>();
     
     private final AsyncTask<ChrootConfig, ServiceStatus, Void> mainLoopManager = new AsyncTask<ChrootConfig, ServiceStatus, Void>() {
@@ -179,7 +187,7 @@ public class NetSpoofService extends Service implements LogConf {
 			} catch (IOException e) {
 				e.printStackTrace();
 				Log.e(TAG, "Failed to start spoof.");
-				publishProgress(new InitialiseStatus(STATUS_STOPPED));
+				publishProgress(new InitialiseStatus(STATUS_LOADED));
 			}
 			publishProgress(new InitialiseStatus(STATUS_STARTED));
 			
@@ -211,7 +219,7 @@ public class NetSpoofService extends Service implements LogConf {
 				publishProgress(new InitialiseStatus(STATUS_STARTED));
 				return;
 			}
-			publishProgress(new InitialiseStatus(STATUS_STOPPED));
+			publishProgress(new InitialiseStatus(STATUS_LOADED));
 		}
     	
 		protected void onProgressUpdate(ServiceStatus... progress) {
@@ -231,7 +239,7 @@ public class NetSpoofService extends Service implements LogConf {
 			}
 		}
 		protected void onPostExecute(Void result) {
-			setStatus(STATUS_STOPPED);
+			setStatus(STATUS_FINISHED);
 			stopSelf();
 		}
     };

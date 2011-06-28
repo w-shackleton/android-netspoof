@@ -111,7 +111,7 @@ public class HackSelector extends Activity implements OnItemClickListener, LogCo
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			if(intent.getAction().equals(NetSpoofService.INTENT_STATUSUPDATE)) {
-				switch(intent.getIntExtra(NetSpoofService.INTENT_EXTRA_STATUS, NetSpoofService.STATUS_STOPPED)) {
+				switch(intent.getIntExtra(NetSpoofService.INTENT_EXTRA_STATUS, NetSpoofService.STATUS_FINISHED)) {
 				case NetSpoofService.STATUS_LOADING:
 					showStartingDialog();
 					break;

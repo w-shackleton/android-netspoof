@@ -1,6 +1,7 @@
 package uk.digitalsquid.netspoofer;
 
 import uk.digitalsquid.netspoofer.NetSpoofService.NetSpoofServiceBinder;
+import uk.digitalsquid.netspoofer.config.LogConf;
 import uk.digitalsquid.netspoofer.spoofs.SpoofData;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -11,20 +12,36 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.ScrollView;
+import android.widget.TextView;
 
-public class SpoofRunning extends Activity {
+public class SpoofRunning extends Activity implements OnClickListener, LogConf {
 	public static final String EXTRA_SPOOFDATA = "uk.digitalsquid.netspoofer.SpoofRunning.SPOOFDATA";
 	
 	private SpoofData spoof;
 	
+	private Button startButton;
+	private TextView logOutput;
+	private ScrollView logscroller;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.spoofrunning);
+		startButton = (Button) findViewById(R.id.startButton);
+		startButton.setOnClickListener(this);
+		logOutput = (Button) findViewById(R.id.logoutput);
+		logscroller = (ScrollView) findViewById(R.id.logscroller);
 		spoof = (SpoofData) getIntent().getSerializableExtra(EXTRA_SPOOFDATA);
 		if(spoof == null) {
-			
+			finish();
+		} else {
+	        bindService(new Intent(this, NetSpoofService.class), mConnection, Context.BIND_AUTO_CREATE);
 		}
-        bindService(new Intent(this, NetSpoofService.class), mConnection, Context.BIND_AUTO_CREATE);
+        
 	}
 	
 	@Override
@@ -57,12 +74,7 @@ public class SpoofRunning extends Activity {
 			NetSpoofServiceBinder binder = (NetSpoofServiceBinder) service;
             SpoofRunning.this.service = binder.getService();
             
-            switch(SpoofRunning.this.service.getStatus()) {
-            case NetSpoofService.STATUS_STARTED:
-            	break;
-            case NetSpoofService.STATUS_STOPPED:
-            	break;
-            }
+            updateStatus(SpoofRunning.this.service.getStatus());
 		}
 		
 		@Override
@@ -76,11 +88,45 @@ public class SpoofRunning extends Activity {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			if(intent.getAction().equals(NetSpoofService.INTENT_STATUSUPDATE)) {
-				switch(intent.getIntExtra(NetSpoofService.INTENT_EXTRA_STATUS, NetSpoofService.STATUS_STOPPED)) {
-				case NetSpoofService.STATUS_LOADING:
-					break;
-				}
+				updateStatus(intent.getIntExtra(NetSpoofService.INTENT_EXTRA_STATUS, NetSpoofService.STATUS_FINISHED));
 			}
 		}
 	};
+	
+	private void updateStatus(int status) {
+		switch(status) {
+        case NetSpoofService.STATUS_STARTING:
+        	startButton.setEnabled(false);
+        	logOutput.setText(R.string.spoofstarting);
+        	break;
+        case NetSpoofService.STATUS_STARTED:
+        	startButton.setEnabled(true);
+        	logOutput.setText(R.string.spoofstarted);
+        	break;
+        case NetSpoofService.STATUS_STOPPING:
+        	startButton.setEnabled(false);
+        	logOutput.setText(R.string.spoofstopping);
+        	break;
+        case NetSpoofService.STATUS_LOADED:
+        	startButton.setEnabled(true);
+        	logOutput.setText(R.string.spoofnotrunning);
+        	break;
+		}
+	}
+
+	@Override
+	public void onClick(View v) {
+		switch(v.getId()) {
+		case R.id.startButton:
+			switch(service.getStatus()) {
+			case NetSpoofService.STATUS_LOADED:
+				service.startSpoof(spoof);
+				break;
+			case NetSpoofService.STATUS_STARTED:
+				service.stopSpoof();
+				break;
+			}
+			break;
+		}
+	}
 }

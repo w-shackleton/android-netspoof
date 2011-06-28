@@ -33,4 +33,6 @@
     <string name="enterip">Enter IP Address</string>
     <string name="enteriptext">Please enter a custom IP address / hostname of victim to attack.</string>
     <string name="spoofrunning">Spoof Running...</string>
+    <string name="stop">Stop</string>
+    <string name="output">Output:</string>
 </resources>

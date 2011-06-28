@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="spoofnotrunning">Spoof not running</string>
+    <string name="spoofstarting">Starting...</string>
+    <string name="spoofstarted">Spoof running. Hide your phone to not look suspicious!</string>
+    <string name="spoofstopping">Stopping... This may take a while.</string>
+</resources>
