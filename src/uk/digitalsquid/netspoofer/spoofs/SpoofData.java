@@ -126,6 +126,11 @@ public class SpoofData implements Serializable {
 	public Victim getVictim() {
 		return victim;
 	}
+	
+	public String getVictimString() {
+		if(isEveryoneVictim()) return "*";
+		return victim.getIpString();
+	}
 
 	public boolean isEveryoneVictim() {
 		return victim == null;

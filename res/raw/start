@@ -1,7 +1,13 @@
 #!/system/bin/sh
 
+# First arg is always path to config file.
+. $1
+
 echo 1 > /proc/sys/net/ipv4/ip_forward
 
+# Get all args but first
+shift
+
 echo "Starting environment"
-chroot $DEB /bin/bash
+chroot $DEB $@
 echo "Environment done."

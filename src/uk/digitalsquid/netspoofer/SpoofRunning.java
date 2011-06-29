@@ -36,7 +36,7 @@ public class SpoofRunning extends Activity implements OnClickListener, LogConf {
 		setContentView(R.layout.spoofrunning);
 		startButton = (Button) findViewById(R.id.startButton);
 		startButton.setOnClickListener(this);
-		logOutput = (Button) findViewById(R.id.logoutput);
+		logOutput = (TextView) findViewById(R.id.logoutput);
 		logscroller = (ScrollView) findViewById(R.id.logscroller);
 		spoof = (SpoofData) getIntent().getSerializableExtra(EXTRA_SPOOFDATA);
 		if(spoof == null) {

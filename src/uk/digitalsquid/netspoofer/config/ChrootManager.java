@@ -2,6 +2,7 @@ package uk.digitalsquid.netspoofer.config;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,14 +10,15 @@ import java.io.OutputStreamWriter;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
+import java.util.Map;
 
+import uk.digitalsquid.netspoofer.R;
 import uk.digitalsquid.netspoofer.spoofs.IPRedirectSpoof;
 import uk.digitalsquid.netspoofer.spoofs.Spoof;
 import uk.digitalsquid.netspoofer.spoofs.SpoofData;
 import uk.digitalsquid.netspoofer.spoofs.SquidScriptSpoof;
 import android.content.Context;
-import android.content.res.AssetManager;
+import android.content.res.Resources.NotFoundException;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -24,74 +26,32 @@ public class ChrootManager implements Config {
 	private final Context context;
 	private final ChrootConfig config;
 	
+	FileInstaller fi;
+	
 	public ChrootManager(Context context, ChrootConfig config) {
 		this.context = context;
 		this.config = config;
 		
-		am = context.getAssets();
-	}
-	
-	private static final String FILE_START = "start";
-	private static final String FILE_CONFIG = "config";
-	private static final String FILESET_DIR = "files";
-	
-	private final AssetManager am;
-	
-	Process su;
-	BufferedReader cout;
-	BufferedReader cerr;
-	OutputStreamWriter cin;
-	
-	private final void flushOutputs(boolean waitForCatchup) {
-		flushOutputs(true, true, false, waitForCatchup);
-	}
-	private final void flushOutputs(boolean toLogcat, boolean waitForCatchup) {
-		flushOutputs(true, true, toLogcat, waitForCatchup);
-	}
-	
-	/**
-	 * The key here is to output something with echo, and wait for its response. This allows us to wait for everything else to finish.
-	 * @param fCout
-	 * @param fCerr
-	 * @param toLogcat
-	 * @param waitForCatchup
-	 */
-	private final void flushOutputs(boolean fCout, boolean fCerr, boolean toLogcat, boolean waitForCatchup) {
-		String key = "FIN" + System.currentTimeMillis(); // Just a simple key to test whether finished.
-		if(waitForCatchup) {
-			fCout = true;
-			try {
-				cin.write("echo \"" + key + "\"\n");
-				cin.flush();
-			} catch (IOException e1) {
-				e1.printStackTrace();
-				return;
-			}
+		try {
+			fi = new FileInstaller(context);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
 		}
-		if(fCout) {
-			try {
-				while(waitForCatchup || cout.ready()) {
-					String msg = cout.readLine();
-					if(toLogcat && msg != null) {
-						Log.d(TAG, "cout: " + msg);
-					}
-					if(waitForCatchup && msg.equals(key)) break;
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		if(fCerr) {
-			try {
-				while(cerr.ready()) {
-					String msg = cerr.readLine();
-					if(toLogcat && msg != null) {
-						Log.d(TAG, "cerr: " + msg);
-					}
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+	}
+	
+	private void installFiles() {
+		try {
+			fi.installScript("config", R.raw.config);
+			fi.installScript("start", R.raw.start);
+			fi.installScript("mount", R.raw.mount);
+			fi.installScript("umount", R.raw.umount);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (NotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+			Log.e(TAG, "Failed to install scripts.");
 		}
 	}
 	
@@ -100,69 +60,19 @@ public class ChrootManager implements Config {
 	 * @throws IOException 
 	 */
 	public synchronized void start() throws IOException {
-		ProcessBuilder pb = new ProcessBuilder(FileFinder.SU);
-		su = pb.start();
-		cout = new BufferedReader(new InputStreamReader(su.getInputStream()));
-		cerr = new BufferedReader(new InputStreamReader(su.getErrorStream()));
-		cin  = new OutputStreamWriter(su.getOutputStream());
-		
-		// Begin setting environment variables
-		for(Entry<String, String> variable : config.getValues().entrySet()) {
-			cin.write(String.format("export %s=%s\n", variable.getKey(), variable.getValue()));
-		}
-		// Enter SU.
-		// Settings loaded, load config script.
-		String configFile = IOHelpers.readFileContents(am.open(FILESET_DIR + "/" + FILE_CONFIG));
-		cin.write(configFile);
-		cin.write("\n");
-		cin.flush();
-		flushOutputs(true);
-		
-		// Mount DEB.
-		cin.write("deb-mount\n");
-		cin.flush();
-		flushOutputs(true, true);
-		
-		configFile = IOHelpers.readFileContents(am.open(FILESET_DIR + "/" + FILE_START));
-		cin.write(configFile);
-		cin.write("\n");
-		cin.flush();
-		flushOutputs(true, true);
+		installFiles();
+		Map<String, String> env = config.getValues();
+		// Setup & mount DEB.
+		ProcessRunner.runProcess(env, FileFinder.SU, "-c", fi.getScriptPath("mount") + " " + fi.getScriptPath("config")); // Pass config script as arg.
 	}
 	
 	/**
 	 * Stops the chroot.
 	 * @throws IOException 
 	 */
-	public synchronized int stop() {
-		try {
-			// TODO: Make this better?
-			cin.write("exit\n"); // Exit chroot
-			cin.write("deb-umount\n"); // Umount
-			cin.write("exit\n"); // Exit
-			cin.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		Log.v(TAG, "Remaining messages from command line:");
-		flushOutputs(true, true);
-		try { cin.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		try { cout.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		try { cerr.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		// Give a bit of time to close naturally.
-		try {
-			return su.waitFor();
-		} catch (InterruptedException e) { }
-		return 1;
+	public synchronized int stop() throws IOException {
+		Map<String, String> env = config.getValues();
+		return ProcessRunner.runProcess(env, FileFinder.SU, "-c", fi.getScriptPath("umount") + " " + fi.getScriptPath("config"));
 	}
 	
 	public ArrayList<Spoof> getSpoofList() {
@@ -210,17 +120,32 @@ public class ChrootManager implements Config {
 	private boolean spoofRunning = false;
 	private Object spoofLock = new Object();
 	
+	Process su;
+	BufferedReader cout;
+	BufferedReader cerr;
+	OutputStreamWriter cin;
+	
 	public void startSpoof(SpoofData spoof) throws IOException {
 		if(spoofRunning) throw new IllegalStateException("Spoof already running");
 		synchronized(spoofLock) {
 			spoofRunning = true;
-			cin.write(String.format("export WLAN=%s", spoof.getMyIface()));
-			cin.write(String.format("export IP=%s", spoof.getMyIp().getHostAddress()));
-			cin.write(String.format("export SUBNET=%s", spoof.getMySubnetBaseAddressString()));
-			cin.write(String.format("export MASK=%s", spoof.getMySubnetString()));
-			cin.write(String.format("export SHORTMASK=%s", spoof.getMySubnet()));
 			
-			cin.write(spoof.getSpoof().getSpoofCmd(spoof.getVictim().getIpString(), spoof.getRouterIpString())); // Should now be started.
+			ProcessBuilder pb = new ProcessBuilder(FileFinder.SU, "-c",
+					fi.getScriptPath("start") + " " + fi.getScriptPath("config") + " " + 
+					spoof.getSpoof().getSpoofCmd(spoof.getVictimString(), spoof.getRouterIpString())); // Pass config script as arg.
+			Map<String, String> env = pb.environment();
+			env.putAll(config.getValues());
+			
+			env.put("WLAN", spoof.getMyIface());
+			env.put("IP", spoof.getMyIp().getHostAddress());
+			env.put("SUBNET", spoof.getMySubnetBaseAddressString());
+			env.put("MASK", spoof.getMySubnetString());
+			env.put("SHORTMASK", String.valueOf(spoof.getMySubnet()));
+
+			su = pb.start();
+			cout = new BufferedReader(new InputStreamReader(su.getInputStream()));
+			cerr = new BufferedReader(new InputStreamReader(su.getErrorStream()));
+			cin  = new OutputStreamWriter(su.getOutputStream());
 		}
 	}
 	
@@ -232,18 +157,34 @@ public class ChrootManager implements Config {
 	public ArrayList<String> stopSpoof(SpoofData spoof) throws IOException {
 		if(!spoofRunning) return new ArrayList<String>(); // Don't do anything.
 		synchronized(spoofLock) {
-			cin.write(spoof.getSpoof().getStopCmd());
 			spoofRunning = false;
 			
-			return getNewSpoofOutput(true);
+			cin.write(spoof.getSpoof().getStopCmd());
+			cin.flush();
+			
+			try {
+				su.waitFor();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			
+			try {
+				cin.close();
+				cout.close();
+				cerr.close();
+			} catch (IOException e) {
+			}
+			
+			cin = null;
+			cout = null;
+			cerr = null;
+			su = null;
+			
+			return getNewSpoofOutput();
 		}
 	}
 	
-	public ArrayList<String> getNewSpoofOutput() throws IOException {
-		return getNewSpoofOutput(false);
-	}
-	
-	private synchronized ArrayList<String> getNewSpoofOutput(boolean waitForFinishLine) throws IOException {
+	public synchronized ArrayList<String> getNewSpoofOutput() throws IOException {
 		cin.write("echo \"SPOOF FINISHED\"\n");
 		ArrayList<String> items = new ArrayList<String>();
 		
@@ -251,12 +192,9 @@ public class ChrootManager implements Config {
 			String line = cerr.readLine();
 			items.add(line);
 		}
-		while(waitForFinishLine || cout.ready()) {
+		while(cout.ready()) {
 			String line = cout.readLine();
 			items.add(line);
-			if(waitForFinishLine && line.contains("SPOOF FINISHED")) {
-				break;
-			}
 		}
 		return items;
 	}
