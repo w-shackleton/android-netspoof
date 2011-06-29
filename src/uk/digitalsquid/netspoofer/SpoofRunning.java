@@ -1,7 +1,10 @@
 package uk.digitalsquid.netspoofer;
 
+import java.util.ArrayList;
+
 import uk.digitalsquid.netspoofer.NetSpoofService.NetSpoofServiceBinder;
 import uk.digitalsquid.netspoofer.config.LogConf;
+import uk.digitalsquid.netspoofer.servicestatus.NewLogOutput;
 import uk.digitalsquid.netspoofer.spoofs.SpoofData;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -83,12 +86,27 @@ public class SpoofRunning extends Activity implements OnClickListener, LogConf {
 		}
 	};
 	
+	private ArrayList<String> logList = new ArrayList<String>();
+	private static final int LOG_LENGTH = 20;
+	
 	private IntentFilter statusFilter;
 	private final BroadcastReceiver statusReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			if(intent.getAction().equals(NetSpoofService.INTENT_STATUSUPDATE)) {
 				updateStatus(intent.getIntExtra(NetSpoofService.INTENT_EXTRA_STATUS, NetSpoofService.STATUS_FINISHED));
+			} else if(intent.getAction().equals(NetSpoofService.INTENT_NEWLOGOUTPUT)) {
+				NewLogOutput newLog = (NewLogOutput) intent.getSerializableExtra(NetSpoofService.INTENT_EXTRA_LOGOUTPUT);
+				assert newLog != null;
+				logList.addAll(newLog.getLogLines());
+				logList.subList(0, logList.size() - LOG_LENGTH).clear();
+				StringBuilder sb = new StringBuilder();
+				for(String entry : logList) {
+					sb.append(entry);
+					sb.append("\n");
+				}
+				logOutput.setText(sb);
+				logscroller.fullScroll(ScrollView.FOCUS_DOWN);
 			}
 		}
 	};

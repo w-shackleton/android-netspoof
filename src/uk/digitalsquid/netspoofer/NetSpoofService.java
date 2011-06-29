@@ -10,6 +10,7 @@ import uk.digitalsquid.netspoofer.config.LogConf;
 import uk.digitalsquid.netspoofer.servicemsg.ServiceMsg;
 import uk.digitalsquid.netspoofer.servicemsg.SpoofStarter;
 import uk.digitalsquid.netspoofer.servicestatus.InitialiseStatus;
+import uk.digitalsquid.netspoofer.servicestatus.NewLogOutput;
 import uk.digitalsquid.netspoofer.servicestatus.ServiceStatus;
 import uk.digitalsquid.netspoofer.servicestatus.SpoofList;
 import uk.digitalsquid.netspoofer.spoofs.SpoofData;
@@ -31,8 +32,10 @@ public class NetSpoofService extends Service implements LogConf {
 	
 	public static final String INTENT_STATUSUPDATE = "uk.digitalsquid.netspoofer.NetSpoofService.StatusUpdate";
 	public static final String INTENT_SPOOFLIST = "uk.digitalsquid.netspoofer.NetSpoofService.SpoofList";
+	public static final String INTENT_NEWLOGOUTPUT = "uk.digitalsquid.netspoofer.NetSpoofService.NewLogOutput";
 	public static final String INTENT_EXTRA_STATUS = "uk.digitalsquid.netspoofer.NetSpoofService.status";
 	public static final String INTENT_EXTRA_SPOOFLIST = "uk.digitalsquid.netspoofer.NetSpoofService.spooflist";
+	public static final String INTENT_EXTRA_LOGOUTPUT = "uk.digitalsquid.netspoofer.NetSpoofService.logoutput";
 	
 	public class NetSpoofServiceBinder extends Binder {
         NetSpoofService getService() {
@@ -122,6 +125,12 @@ public class NetSpoofService extends Service implements LogConf {
     	}
     }
     
+    private void sendLogOutput(NewLogOutput logOutput) {
+		Intent intent = new Intent(INTENT_NEWLOGOUTPUT);
+		intent.putExtra(INTENT_EXTRA_LOGOUTPUT, logOutput);
+		sendBroadcast(intent);
+    }
+    
 	private final BlockingQueue<ServiceMsg> tasks = new LinkedBlockingQueue<ServiceMsg>();
     
     private final AsyncTask<ChrootConfig, ServiceStatus, Void> mainLoopManager = new AsyncTask<ChrootConfig, ServiceStatus, Void>() {
@@ -136,12 +145,12 @@ public class NetSpoofService extends Service implements LogConf {
 				chroot.start();
 			} catch (IOException e) {
 				Log.e(TAG, "Chroot failed to load!");
-				publishProgress(new InitialiseStatus(InitialiseStatus.INIT_FAIL));
+				publishProgress(new InitialiseStatus(STATUS_FAILED));
 				e.printStackTrace();
 				chroot.stop();
 				return null;
 			}
-			publishProgress(new InitialiseStatus(InitialiseStatus.INIT_COMPLETE));
+			publishProgress(new InitialiseStatus(STATUS_LOADED));
 			if(isCancelled()) {
 				Log.i(TAG, "Stop initiated, stopping...");
 				chroot.stop();
@@ -194,25 +203,35 @@ public class NetSpoofService extends Service implements LogConf {
 			boolean running = true;
 			while(running) {
 				ServiceMsg task = tasks.poll();
-				switch(task.getMessage()) {
-				case ServiceMsg.MESSAGE_STOPSPOOF:
+				if(task != null) {
+					switch(task.getMessage()) {
+					case ServiceMsg.MESSAGE_STOPSPOOF:
+						finishSpoof(chroot, spoof);
+						running = false;
+						break;
+					}
+				}
+				
+				if(isCancelled()) {
 					finishSpoof(chroot, spoof);
 					running = false;
 					break;
 				}
 				
-				if(isCancelled()) {
-					finishSpoof(chroot, spoof);
-					break;
+				try {
+					publishProgress(new NewLogOutput(chroot.getNewSpoofOutput())); // Send log back to anything listening.
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
 				
+				try { Thread.sleep(100); } catch (InterruptedException e) {}
 			}
 		}
 		
 		private void finishSpoof(ChrootManager chroot, SpoofData spoof) {
 			publishProgress(new InitialiseStatus(STATUS_STOPPING));
 			try {
-				chroot.stopSpoof(spoof);
+				publishProgress(new NewLogOutput(chroot.stopSpoof(spoof))); // Also send final output.
 			} catch (IOException e) {
 				e.printStackTrace();
 				Log.e(TAG, "Failed to stop spoof.");
@@ -226,16 +245,11 @@ public class NetSpoofService extends Service implements LogConf {
 			ServiceStatus s = progress[0];
 			if(s instanceof InitialiseStatus) {
 				InitialiseStatus is = (InitialiseStatus) s;
-				switch(is.status) {
-				case InitialiseStatus.INIT_COMPLETE:
-					setStatus(STATUS_LOADED);
-					break;
-				case InitialiseStatus.INIT_FAIL:
-					setStatus(STATUS_FAILED);
-					break;
-				}
+				setStatus(is.status);
 			} else if(s instanceof SpoofList) {
 				sendSpoofList((SpoofList)s);
+			} else if(s instanceof NewLogOutput) {
+				sendLogOutput((NewLogOutput) s);
 			}
 		}
 		protected void onPostExecute(Void result) {

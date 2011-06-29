@@ -232,7 +232,7 @@ public class ChrootManager implements Config {
 	public ArrayList<String> stopSpoof(SpoofData spoof) throws IOException {
 		if(!spoofRunning) return new ArrayList<String>(); // Don't do anything.
 		synchronized(spoofLock) {
-			cin.write(spoof.getSpoof().getStopCmd()); // All spoofs should stop themselves by waiting for a newline.
+			cin.write(spoof.getSpoof().getStopCmd());
 			spoofRunning = false;
 			
 			return getNewSpoofOutput(true);

@@ -248,6 +248,7 @@ public class VictimSelector extends Activity implements OnClickListener, LogConf
 		
 		@Override
 		protected void onPostExecute(Void ret) {
+			Log.d(TAG, String.format("Finished scanning IPs %d to %d.", ipFrom, ipTo));
 			running = false;
 			onScannerFinish();
 		}
