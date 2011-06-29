@@ -27,7 +27,7 @@ public class SpoofRunning extends Activity implements OnClickListener, LogConf {
 	private SpoofData spoof;
 	
 	private Button startButton;
-	private TextView logOutput;
+	private TextView logOutput, spoofStatus;
 	private ScrollView logscroller;
 	
 	@Override
@@ -36,7 +36,8 @@ public class SpoofRunning extends Activity implements OnClickListener, LogConf {
 		setContentView(R.layout.spoofrunning);
 		startButton = (Button) findViewById(R.id.startButton);
 		startButton.setOnClickListener(this);
-		logOutput = (Button) findViewById(R.id.logoutput);
+		logOutput = (TextView) findViewById(R.id.logoutput);
+		spoofStatus = (TextView) findViewById(R.id.spoofstatus);
 		logscroller = (ScrollView) findViewById(R.id.logscroller);
 		spoof = (SpoofData) getIntent().getSerializableExtra(EXTRA_SPOOFDATA);
 		if(spoof == null) {
@@ -60,6 +61,9 @@ public class SpoofRunning extends Activity implements OnClickListener, LogConf {
     @Override
     protected void onStart() {
         super.onStart();
+	    statusFilter = new IntentFilter();
+	    statusFilter.addAction(NetSpoofService.INTENT_STATUSUPDATE);
+	    statusFilter.addAction(NetSpoofService.INTENT_NEWLOGOUTPUT);
 		registerReceiver(statusReceiver, statusFilter);
     }
 
@@ -99,7 +103,7 @@ public class SpoofRunning extends Activity implements OnClickListener, LogConf {
 				NewLogOutput newLog = (NewLogOutput) intent.getSerializableExtra(NetSpoofService.INTENT_EXTRA_LOGOUTPUT);
 				assert newLog != null;
 				logList.addAll(newLog.getLogLines());
-				logList.subList(0, logList.size() - LOG_LENGTH).clear();
+				logList.subList(0, logList.size() < LOG_LENGTH ? 0 : (logList.size() - LOG_LENGTH)).clear();
 				StringBuilder sb = new StringBuilder();
 				for(String entry : logList) {
 					sb.append(entry);
@@ -115,19 +119,23 @@ public class SpoofRunning extends Activity implements OnClickListener, LogConf {
 		switch(status) {
         case NetSpoofService.STATUS_STARTING:
         	startButton.setEnabled(false);
-        	logOutput.setText(R.string.spoofstarting);
+        	startButton.setText(R.string.stop);
+        	spoofStatus.setText(R.string.spoofstarting);
         	break;
         case NetSpoofService.STATUS_STARTED:
         	startButton.setEnabled(true);
-        	logOutput.setText(R.string.spoofstarted);
+        	startButton.setText(R.string.stop);
+        	spoofStatus.setText(R.string.spoofstarted);
         	break;
         case NetSpoofService.STATUS_STOPPING:
         	startButton.setEnabled(false);
-        	logOutput.setText(R.string.spoofstopping);
+        	startButton.setText(R.string.start);
+        	spoofStatus.setText(R.string.spoofstopping);
         	break;
         case NetSpoofService.STATUS_LOADED:
         	startButton.setEnabled(true);
-        	logOutput.setText(R.string.spoofnotrunning);
+        	startButton.setText(R.string.start);
+        	spoofStatus.setText(R.string.spoofnotrunning);
         	break;
 		}
 	}

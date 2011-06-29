@@ -147,13 +147,21 @@ public class NetSpoofService extends Service implements LogConf {
 				Log.e(TAG, "Chroot failed to load!");
 				publishProgress(new InitialiseStatus(STATUS_FAILED));
 				e.printStackTrace();
-				chroot.stop();
+				try {
+					chroot.stop();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
 				return null;
 			}
 			publishProgress(new InitialiseStatus(STATUS_LOADED));
 			if(isCancelled()) {
 				Log.i(TAG, "Stop initiated, stopping...");
-				chroot.stop();
+				try {
+					chroot.stop();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 				Log.i(TAG, "Done.");
 				return null;
 			}
@@ -184,7 +192,13 @@ public class NetSpoofService extends Service implements LogConf {
 			}
 	
 			Log.i(TAG, "Stopping chroot...");
-			chroot.stop();
+			try {
+				chroot.stop();
+			} catch (IOException e) {
+				e.printStackTrace();
+				Log.e(TAG, "Chroot failed to stop.");
+				publishProgress(new InitialiseStatus(STATUS_FAILED));
+			}
 			Log.i(TAG, "Done.");
 			return null;
 		}
@@ -213,6 +227,12 @@ public class NetSpoofService extends Service implements LogConf {
 				}
 				
 				if(isCancelled()) {
+					finishSpoof(chroot, spoof);
+					running = false;
+					break;
+				}
+				
+				if(chroot.checkIfStoppedEarly()) {
 					finishSpoof(chroot, spoof);
 					running = false;
 					break;
