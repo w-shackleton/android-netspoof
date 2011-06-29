@@ -154,26 +154,27 @@ public class ChrootManager implements Config {
 	 * @return The final list of output messages
 	 * @throws IOException
 	 */
-	public ArrayList<String> stopSpoof(SpoofData spoof) throws IOException {
-		if(!spoofRunning) return new ArrayList<String>(); // Don't do anything.
+	public void stopSpoof(SpoofData spoof) throws IOException {
+		if(!spoofRunning) return; // Don't do anything.
 		synchronized(spoofLock) {
-			spoofRunning = false;
+			cin.write(spoof.getSpoof().getStopCmd());
+			cin.flush();
 			
-			checkIfStoppedEarly();
-			
-			if(!stoppedEarly) {
-				cin.write(spoof.getSpoof().getStopCmd());
-				cin.flush();
-				
-				try {
-					su.waitFor();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+			try {
+				su.waitFor();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
-			
-			stoppedEarly = false; // Reset for next time.
-			
+		}
+	}
+	
+	/**
+	 * Stops the current spoof.
+	 * @return The final list of output messages
+	 * @throws IOException
+	 */
+	public ArrayList<String> finishStopSpoof() throws IOException {
+		synchronized(spoofLock) {
 			ArrayList<String> finalOutput = getNewSpoofOutput();
 			
 			try {
@@ -188,26 +189,27 @@ public class ChrootManager implements Config {
 			cerr = null;
 			su = null;
 			
+			spoofRunning = false;
+			
 			return finalOutput;
 		}
 	}
 	
-	boolean stoppedEarly = false;
 	
 	/**
 	 * Checks if the process is stopped. Doesn't actually close anything, though.
 	 * stopSpoof must be called with onlyClosePipes true if this returns true.
 	 * @return
 	 */
-	public boolean checkIfStoppedEarly() {
+	public boolean checkIfStopped() {
 		if(!spoofRunning) return false;
+			
 		if(su == null) return false;
 		try {
 			su.exitValue();
 		} catch (IllegalThreadStateException e) {
 			return false;
 		}
-		stoppedEarly = true;
 		return true;
 	}
 	

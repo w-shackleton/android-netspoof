@@ -1,5 +1,6 @@
 package uk.digitalsquid.netspoofer.config;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.InetAddress;
@@ -88,6 +89,9 @@ public final class NetHelpers implements LogConf {
 	 */
 	public static final GatewayData getDefaultGateway(NetworkInterface iface) throws UnknownHostException {
 		if(iface == null) throw new IllegalArgumentException("iface is null");
+		
+		try { FileFinder.initialise(); } catch (FileNotFoundException e1) { }
+		
 		String ifacename = iface.getDisplayName();
 		List<String> routeArgs = new ArrayList<String>();
 		routeArgs.add(FileFinder.BUSYBOX);

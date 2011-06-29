@@ -220,19 +220,19 @@ public class NetSpoofService extends Service implements LogConf {
 				if(task != null) {
 					switch(task.getMessage()) {
 					case ServiceMsg.MESSAGE_STOPSPOOF:
-						finishSpoof(chroot, spoof);
+						stopSpoof(chroot, spoof);
 						running = false;
 						break;
 					}
 				}
 				
 				if(isCancelled()) {
-					finishSpoof(chroot, spoof);
+					stopSpoof(chroot, spoof);
 					running = false;
 					break;
 				}
 				
-				if(chroot.checkIfStoppedEarly()) {
+				if(chroot.checkIfStopped()) {
 					finishSpoof(chroot, spoof);
 					running = false;
 					break;
@@ -244,18 +244,28 @@ public class NetSpoofService extends Service implements LogConf {
 					e.printStackTrace();
 				}
 				
-				try { Thread.sleep(100); } catch (InterruptedException e) {}
+				try { Thread.sleep(600); } catch (InterruptedException e) {}
 			}
 		}
 		
-		private void finishSpoof(ChrootManager chroot, SpoofData spoof) {
+		private void stopSpoof(ChrootManager chroot, SpoofData spoof) {
 			publishProgress(new InitialiseStatus(STATUS_STOPPING));
 			try {
-				publishProgress(new NewLogOutput(chroot.stopSpoof(spoof))); // Also send final output.
+				chroot.stopSpoof(spoof);
 			} catch (IOException e) {
 				e.printStackTrace();
 				Log.e(TAG, "Failed to stop spoof.");
 				publishProgress(new InitialiseStatus(STATUS_STARTED));
+				return;
+			}
+		}
+		
+		private void finishSpoof(ChrootManager chroot, SpoofData spoof) {
+			try {
+				publishProgress(new NewLogOutput(chroot.finishStopSpoof())); // Also send final output.
+			} catch (IOException e) {
+				e.printStackTrace();
+				Log.e(TAG, "Failed to finish spoof.");
 				return;
 			}
 			publishProgress(new InitialiseStatus(STATUS_LOADED));
