@@ -159,14 +159,22 @@ public class ChrootManager implements Config {
 		synchronized(spoofLock) {
 			spoofRunning = false;
 			
-			cin.write(spoof.getSpoof().getStopCmd());
-			cin.flush();
+			checkIfStoppedEarly();
 			
-			try {
-				su.waitFor();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+			if(!stoppedEarly) {
+				cin.write(spoof.getSpoof().getStopCmd());
+				cin.flush();
+				
+				try {
+					su.waitFor();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
+			
+			stoppedEarly = false; // Reset for next time.
+			
+			ArrayList<String> finalOutput = getNewSpoofOutput();
 			
 			try {
 				cin.close();
@@ -180,12 +188,30 @@ public class ChrootManager implements Config {
 			cerr = null;
 			su = null;
 			
-			return getNewSpoofOutput();
+			return finalOutput;
 		}
 	}
 	
+	boolean stoppedEarly = false;
+	
+	/**
+	 * Checks if the process is stopped. Doesn't actually close anything, though.
+	 * stopSpoof must be called with onlyClosePipes true if this returns true.
+	 * @return
+	 */
+	public boolean checkIfStoppedEarly() {
+		if(!spoofRunning) return false;
+		if(su == null) return false;
+		try {
+			su.exitValue();
+		} catch (IllegalThreadStateException e) {
+			return false;
+		}
+		stoppedEarly = true;
+		return true;
+	}
+	
 	public synchronized ArrayList<String> getNewSpoofOutput() throws IOException {
-		cin.write("echo \"SPOOF FINISHED\"\n");
 		ArrayList<String> items = new ArrayList<String>();
 		
 		while(cerr.ready()) {

@@ -24,11 +24,11 @@ public final class R {
         public static final int dlprogress=0x7f06001c;
         public static final int dlprogresstext=0x7f06001d;
         public static final int ipBox=0x7f060001;
-        public static final int linearLayout1=0x7f060021;
+        public static final int linearLayout1=0x7f060022;
         public static final int linearLayout2=0x7f060016;
         public static final int loading=0x7f060003;
-        public static final int logoutput=0x7f060023;
-        public static final int logscroller=0x7f060020;
+        public static final int logoutput=0x7f060024;
+        public static final int logscroller=0x7f060021;
         public static final int myIf=0x7f06000e;
         public static final int myIfText=0x7f06000f;
         public static final int myIp=0x7f060008;
@@ -39,23 +39,24 @@ public final class R {
         public static final int routerIpText=0x7f06000c;
         public static final int routerList=0x7f060015;
         public static final int routerName=0x7f060013;
-        public static final int scanProgressBar=0x7f060027;
-        public static final int scanProgressRefresh=0x7f060029;
-        public static final int scanProgressText=0x7f060028;
+        public static final int scanProgressBar=0x7f060028;
+        public static final int scanProgressRefresh=0x7f06002a;
+        public static final int scanProgressText=0x7f060029;
         public static final int setupButton=0x7f060005;
         public static final int spoofDescription=0x7f06001f;
         public static final int spoofList=0x7f060002;
         public static final int spoofTitle=0x7f06001e;
+        public static final int spoofstatus=0x7f060020;
         public static final int startButton=0x7f060004;
         public static final int subnetMask=0x7f060011;
         public static final int subnetMaskText=0x7f060012;
         public static final int tableLayout1=0x7f060006;
         public static final int tableRow1=0x7f060007;
         public static final int textView1=0x7f060000;
-        public static final int textView2=0x7f060022;
-        public static final int victimExtraText=0x7f060025;
-        public static final int victimIp=0x7f060024;
-        public static final int victimList=0x7f060026;
+        public static final int textView2=0x7f060023;
+        public static final int victimExtraText=0x7f060026;
+        public static final int victimIp=0x7f060025;
+        public static final int victimList=0x7f060027;
         public static final int wifiSettings=0x7f060017;
     }
     public static final class layout {

@@ -232,6 +232,12 @@ public class NetSpoofService extends Service implements LogConf {
 					break;
 				}
 				
+				if(chroot.checkIfStoppedEarly()) {
+					finishSpoof(chroot, spoof);
+					running = false;
+					break;
+				}
+				
 				try {
 					publishProgress(new NewLogOutput(chroot.getNewSpoofOutput())); // Send log back to anything listening.
 				} catch (IOException e) {

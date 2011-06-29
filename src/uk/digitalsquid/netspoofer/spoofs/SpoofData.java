@@ -128,7 +128,7 @@ public class SpoofData implements Serializable {
 	}
 	
 	public String getVictimString() {
-		if(isEveryoneVictim()) return "*";
+		if(isEveryoneVictim()) return "all";
 		return victim.getIpString();
 	}
 
