@@ -173,19 +173,17 @@ public class VictimSelector extends Activity implements OnClickListener, LogConf
 		@Override
 		public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
 			Victim victim = getItem(position);
-			if(victim == null) {
-				switch(position) {
-				case ITEM_ALL:
-					// null means spoof everyone.
-					goToNextStep(null);
-					break;
-				case ITEM_OTHER:
-					showDialog(DIALOG_GETIP);
-					break;
-				default:
-					goToNextStep(victim);
-					break;
-				}
+			switch(position) {
+			case ITEM_ALL:
+				// null means spoof everyone.
+				goToNextStep(null);
+				break;
+			case ITEM_OTHER:
+				showDialog(DIALOG_GETIP);
+				break;
+			default:
+				goToNextStep(victim);
+				break;
 			}
 		}
 		

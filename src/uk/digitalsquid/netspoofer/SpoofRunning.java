@@ -91,7 +91,7 @@ public class SpoofRunning extends Activity implements OnClickListener, LogConf {
 	};
 	
 	private ArrayList<String> logList = new ArrayList<String>();
-	private static final int LOG_LENGTH = 20;
+	private static final int LOG_LENGTH = 10;
 	
 	private IntentFilter statusFilter;
 	private final BroadcastReceiver statusReceiver = new BroadcastReceiver() {
