@@ -35,4 +35,6 @@
     <string name="spoofrunning">Spoof Running...</string>
     <string name="stop">Stop</string>
     <string name="output">Output:</string>
+    <string name="downloading">Downloading Installation files...</string>
+    <string name="downloadingfiles">Downloading files needed to run...</string>
 </resources>

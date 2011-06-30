@@ -41,9 +41,9 @@ public class SetupStatus extends Activity implements OnClickListener, LogConf {
 		dlButton = (Button) findViewById(R.id.dlButton);
 		dlButton.setOnClickListener(this);
 		if(ConfigChecker.isInstallServiceRunning(getApplicationContext())) {
-			// 'Start' service again to receive broadcasted status.
 			setWinStatus(true);
-			startService(new Intent(getApplicationContext(), InstallService.class));
+			// 'Start' service again to receive broadcasted status.
+			// startService(new Intent(getApplicationContext(), InstallService.class));
 			serviceRunning = true;
 		} else { // Things for not running
 			if(ConfigChecker.checkInstalledLatest(getApplicationContext())) {

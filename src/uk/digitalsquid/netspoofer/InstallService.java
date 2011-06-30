@@ -12,11 +12,15 @@ import java.net.URLConnection;
 import java.util.zip.GZIPInputStream;
 
 import uk.digitalsquid.netspoofer.config.Config;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.RemoteViews;
 
 public class InstallService extends Service implements Config {
 	public static final String INTENT_EXTRA_STATUS = "uk.digitalsquid.netspoofer.InstallService.status";
@@ -34,8 +38,13 @@ public class InstallService extends Service implements Config {
 	public static final int STATUS_DL_FAIL_DLERROR = 4;
 	public static final int STATUS_DL_CANCEL = 5;
 	
+	private static final int DL_NOTIFY = 1;
+	
 	private int status = STATUS_STARTED;
 	private int dlstatus = STATUS_DL_SUCCESS;
+	
+	private NotificationManager notificationManager;
+	private Notification notification;
 	
 	boolean started = false;
 
@@ -57,6 +66,19 @@ public class InstallService extends Service implements Config {
 	}
 	
 	private void start(Intent intent) {
+		notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+		notification = new Notification(R.drawable.icon, getString(R.string.downloading), System.currentTimeMillis());
+		RemoteViews contentView = new RemoteViews(getPackageName(), R.layout.dl_notification);
+		notification.contentView = contentView;
+		notification.flags = notification.flags | Notification.FLAG_ONGOING_EVENT;
+		
+		Intent notificationIntent = new Intent(this, InstallService.class);
+		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+		notification.contentIntent = contentIntent;
+		
+		notificationManager.notify(DL_NOTIFY, notification);
+		
 		started = true;
 		downloadTask.execute(DEB_IMG_URL);
 	}
@@ -81,6 +103,7 @@ public class InstallService extends Service implements Config {
 	
 	@Override
 	public void onDestroy() {
+		notificationManager.cancel(DL_NOTIFY);
 		downloadTask.cancel(false);
 	}
 	
@@ -228,10 +251,20 @@ public class InstallService extends Service implements Config {
 			Log.i(TAG, "Finished download");
 			return STATUS_DL_SUCCESS;
 		}
+		int statusUpdate = 0;
+		int winUpdate = 0;
 		protected void onProgressUpdate(DLProgress... progress) {
 			status = STATUS_DOWNLOADING;
 			dlProgress = progress[0];
-			broadcastStatus();
+			if(statusUpdate++ > 71) {
+				statusUpdate = 0;
+				notification.contentView.setProgressBar(R.id.dlProgressBar, dlProgress.bytesTotal, dlProgress.bytesDone, false);
+				notificationManager.notify(DL_NOTIFY, notification);
+			}
+			if(winUpdate++ > 7) {
+				winUpdate = 0;
+				broadcastStatus();
+			}
 		}
 		protected void onPostExecute(Integer result) {
 			status = STATUS_FINISHED;
