@@ -14,6 +14,7 @@ import java.util.Map;
 
 import uk.digitalsquid.netspoofer.R;
 import uk.digitalsquid.netspoofer.spoofs.IPRedirectSpoof;
+import uk.digitalsquid.netspoofer.spoofs.SimpleScriptedSpoof;
 import uk.digitalsquid.netspoofer.spoofs.Spoof;
 import uk.digitalsquid.netspoofer.spoofs.SpoofData;
 import uk.digitalsquid.netspoofer.spoofs.SquidScriptSpoof;
@@ -95,12 +96,18 @@ public class ChrootManager implements Config {
 					continue;
 				}
 				// FIXME: Add proper title to objects here!
-				spoofs.add(new SquidScriptSpoof(lines.get(0), lines.get(1), lines.get(0)));
+				spoofs.add(new SquidScriptSpoof(lines.get(1), lines.get(2), lines.get(0)));
 			} catch (IOException e) {
 				e.printStackTrace();
 				Log.e(TAG, "Couldn't read info for spoof " + file + ".");
 			}
 		}
+		
+		// General spoof - only arpspoof.
+		spoofs.add(new SimpleScriptedSpoof(
+				"Redirect traffic through phone",
+				"Don't do anything to the traffic, only redirect other people's traffic through the phone. Useful in combination with 'Shark' app.",
+				"spoof %s %s 0", "\n"));
 		
 		// IP Redirect spoofs.
 		try {

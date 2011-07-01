@@ -14,6 +14,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
@@ -48,6 +49,10 @@ public class NetSpoof extends Activity implements OnClickListener {
 		startButton.setOnClickListener(this);
 		setupButton = (Button) findViewById(R.id.setupButton);
 		setupButton.setOnClickListener(this);
+		
+		if(!ConfigChecker.checkInstalledLatest(getApplicationContext())) {
+			setupButton.setTypeface(setupButton.getTypeface(), Typeface.BOLD);
+		}
 
 		prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
