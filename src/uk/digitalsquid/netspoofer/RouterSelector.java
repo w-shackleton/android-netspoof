@@ -25,6 +25,7 @@ import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -254,6 +255,8 @@ public class RouterSelector extends Activity implements OnClickListener, LogConf
 		}
 	}
 	
+	private boolean autoNextStepStarted = false;
+	
 	private void getAndSetWifiInfo() {
 		int ip = wm.getConnectionInfo().getIpAddress();
 		try {
@@ -261,6 +264,11 @@ public class RouterSelector extends Activity implements OnClickListener, LogConf
 			wifiIface = NetHelpers.getIface(wifiIP);
 			wifiGateway = NetHelpers.getDefaultGateway(wifiIface);
 			gatewayListAdapter.setWifiGateway(wifiGateway.getGateway().getHostAddress());
+			if(!autoNextStepStarted && PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("autoChooseRouter", false)) {
+				autoNextStepStarted = true;
+				// Auto start if user specified to.
+				goToNextStep(RouterSelector.this.wifiIP.getHostAddress(), RouterSelector.this.wifiGateway.getSubnet(), RouterSelector.this.wifiGateway.getGateway().getHostAddress(), RouterSelector.this.wifiIface.getDisplayName());
+			}
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 			Toast.makeText(getBaseContext(), "Error getting wifi info. Please see log for more info.", Toast.LENGTH_LONG).show();

@@ -18,6 +18,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,6 +55,12 @@ public class VictimSelector extends Activity implements OnClickListener, LogConf
 		if(spoof == null) {
 			Log.e(TAG, "Incorrect data given in intent, finishing");
 			finish();
+		}
+		
+		if(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("autoChooseVictim", false)) {
+			// Auto advance as user requested.
+			goToNextStep(null);
+			return;
 		}
 		
 		setContentView(R.layout.victimselector);
@@ -208,7 +215,7 @@ public class VictimSelector extends Activity implements OnClickListener, LogConf
 		}
 	}
 	
-	private final IPScanner[] scanners = new IPScanner[4]; // TODO: Configurable numbers?
+	private IPScanner[] scanners;
 	
 	private class IPScanner extends AsyncTask<Void, Victim, Void> {
 		
@@ -282,6 +289,17 @@ public class VictimSelector extends Activity implements OnClickListener, LogConf
 		 * is the opposite to the one used by Android functions (the non reverse ones). The difference
 		 * is the endianness.
 		 */
+		
+		// Create as many scanners as user asked.
+		int numScanners;
+		try {
+		numScanners = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("ipScanThreads", "4"));
+		} catch(NumberFormatException e) {
+			numScanners = 4;
+		}
+		if(numScanners < 1) numScanners = 1;
+		if(numScanners > 40) numScanners = 40;
+		scanners = new IPScanner[numScanners];
 		
 		int range = (topIp - baseIp) / scanners.length;
 		for(int i = 0; i < scanners.length - 1; i++) {

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+  xmlns:android="http://schemas.android.com/apk/res/android" android:title="@string/preferences">
+    <PreferenceCategory android:title="@string/programPrefs">
+        <EditTextPreference android:title="@string/pathToSu" android:key="pathToSu" android:summary="@string/pathToSuDesc"></EditTextPreference>
+        <EditTextPreference android:key="pathToBB" android:title="@string/pathToBB" android:summary="@string/pathToBBDesc"></EditTextPreference>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/automaticOptions">
+        <CheckBoxPreference android:title="@string/autoChooseRouter" android:key="autoChooseRouter" android:summary="@string/autoChooseRouterDesc"></CheckBoxPreference>
+        <CheckBoxPreference android:title="@string/autoChooseVictim" android:key="autoChooseVictim" android:summary="@string/autoChooseVictimDesc"></CheckBoxPreference>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/performance">
+        <EditTextPreference android:key="ipScanThreads" android:summary="@string/ipScanThreadsDesc" android:title="@string/ipScanThreads"></EditTextPreference>
+    </PreferenceCategory>
+</PreferenceScreen>

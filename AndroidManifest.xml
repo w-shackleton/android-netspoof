@@ -21,9 +21,10 @@
         <service android:name="InstallService" android:label="Installer Service"></service>
         <activity android:name="HackSelector" android:label="@string/selecthack"></activity>
         <service android:name="NetSpoofService"></service>
-        <activity android:name="RouterSelector" android:label="@string/selectgateway"></activity>
-        <activity android:label="@string/selectvictim" android:name="VictimSelector"></activity>
+        <activity android:name="RouterSelector" android:label="@string/selectgateway" android:noHistory="true"></activity>
+        <activity android:label="@string/selectvictim" android:name="VictimSelector" android:noHistory="true"></activity>
         <activity android:label="@string/spoofrunning" android:name="SpoofRunning" android:screenOrientation="portrait"></activity>
+        <activity android:label="@string/preferences" android:name="Preferences"></activity>
 
     </application>
 </manifest>

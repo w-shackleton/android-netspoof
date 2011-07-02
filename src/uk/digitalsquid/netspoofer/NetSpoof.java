@@ -17,6 +17,9 @@ import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -84,7 +87,7 @@ public class NetSpoof extends Activity implements OnClickListener {
 		if(!imgDir.exists()) if(!imgDir.mkdir()) Toast.makeText(this, "Couldn't create 'img' folder.", Toast.LENGTH_LONG).show();
 		
 		try {
-			FileFinder.initialise();
+			FileFinder.initialise(getApplicationContext());
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			if(e.getMessage().equals("su")) {
@@ -175,4 +178,22 @@ public class NetSpoof extends Activity implements OnClickListener {
 			}
 		}
 	};
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.netspoofmenu, menu);
+	    return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    switch (item.getItemId()) {
+	    case R.id.netSpoofMenuItemPrefs:
+	    	startActivity(new Intent(this, Preferences.class));
+	        return true;
+	    default:
+	        return super.onOptionsItemSelected(item);
+	    }
+	}
 }

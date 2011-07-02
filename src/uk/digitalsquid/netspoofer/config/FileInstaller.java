@@ -17,7 +17,7 @@ public final class FileInstaller implements LogConf {
 	
 	public FileInstaller(Context context) throws FileNotFoundException {
 		this.context = context;
-		FileFinder.initialise();
+		FileFinder.initialise(context);
 		new File(context.getFilesDir().getParent() + BIN_DIR).mkdir();
 	}
 	
