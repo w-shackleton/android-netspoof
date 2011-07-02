@@ -89,7 +89,7 @@ public class InstallService extends Service implements Config {
 	private void start(Intent intent) {
 		notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
-		notification = new Notification(R.drawable.icon, getString(R.string.downloading), System.currentTimeMillis());
+		notification = new Notification(R.drawable.status, getString(R.string.downloading), System.currentTimeMillis());
 		RemoteViews contentView = new RemoteViews(getPackageName(), R.layout.dl_notification);
 		notification.contentView = contentView;
 		notification.flags = notification.flags | Notification.FLAG_ONGOING_EVENT;
