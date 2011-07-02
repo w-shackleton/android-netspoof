@@ -37,4 +37,6 @@
     <string name="output">Output:</string>
     <string name="downloading">Downloading Installation files...</string>
     <string name="downloadingfiles">Downloading files needed to run...</string>
+    <string name="loadfailedtitle">Oops!</string>
+    <string name="loadfailed">Something went wrong whilst trying to load. Perhaps the SD card isn\'t plugged in, or you didn\'t accept the superuser command?\n\nCheck the log for more details.</string>
 </resources>

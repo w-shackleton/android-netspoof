@@ -100,6 +100,8 @@ public final class R {
         public static final int enterip=0x7f050022;
         public static final int enteriptext=0x7f050023;
         public static final int hello=0x7f050004;
+        public static final int loadfailed=0x7f05002a;
+        public static final int loadfailedtitle=0x7f050029;
         public static final int loading=0x7f050012;
         public static final int otherDevice=0x7f05001f;
         public static final int otherDeviceDesc=0x7f050020;

@@ -142,7 +142,10 @@ public class NetSpoofService extends Service implements LogConf {
 	    	
 			Log.i(TAG, "Starting chroot...");
 			try {
-				chroot.start();
+				if(!chroot.start()) {
+					Log.e(TAG, "Chroot start returned false, not mounted");
+					throw new IOException("Mounted chroot not found after start command executed.");
+				}
 			} catch (IOException e) {
 				Log.e(TAG, "Chroot failed to load!");
 				publishProgress(new InitialiseStatus(STATUS_FAILED));

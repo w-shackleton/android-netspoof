@@ -53,7 +53,7 @@ public class VictimSelector extends Activity implements OnClickListener, LogConf
 		spoof = (SpoofData) myStarter.getSerializableExtra(EXTRA_SPOOFDATA);
 		if(spoof == null) {
 			Log.e(TAG, "Incorrect data given in intent, finishing");
-			finish(); // TODO: Handle this better?
+			finish();
 		}
 		
 		setContentView(R.layout.victimselector);

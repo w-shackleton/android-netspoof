@@ -58,13 +58,17 @@ public class ChrootManager implements Config {
 	
 	/**
 	 * Sets up the shell's environment variables, mounts the image, and chroots into debian.
+	 * @return true of mount completed successfully.
 	 * @throws IOException 
 	 */
-	public synchronized void start() throws IOException {
+	public synchronized boolean start() throws IOException {
 		installFiles();
 		Map<String, String> env = config.getValues();
 		// Setup & mount DEB.
 		ProcessRunner.runProcess(env, FileFinder.SU, "-c", fi.getScriptPath("mount") + " " + fi.getScriptPath("config")); // Pass config script as arg.
+		
+		try { Thread.sleep(50); } catch (InterruptedException e) { e.printStackTrace(); }
+		return new File(config.getDebianMount() + "/rewriters").exists();
 	}
 	
 	/**
@@ -82,24 +86,25 @@ public class ChrootManager implements Config {
 		
 		// 1. Scan squid rewriters
 		File rewriteDir = new File(config.getDebianMount() + "/rewriters");
-		for(String file : rewriteDir.list(new FilenameFilter() {
-			@Override
-			public boolean accept(File dir, String filename) {
-				return filename.endsWith(".txt");
-			}
-		})) {
-			Log.v(TAG, "Spoof: " + file);
-			try {
-				List<String> lines = IOHelpers.readFileToLines(rewriteDir.getAbsolutePath() + "/" + file);
-				if(lines.size() < 2) {
-					Log.e(TAG, "Malformed description file for " + file + ".");
-					continue;
+		if(rewriteDir.exists()) {
+			for(String file : rewriteDir.list(new FilenameFilter() {
+				@Override
+				public boolean accept(File dir, String filename) {
+					return filename.endsWith(".txt");
 				}
-				// FIXME: Add proper title to objects here!
-				spoofs.add(new SquidScriptSpoof(lines.get(1), lines.get(2), lines.get(0)));
-			} catch (IOException e) {
-				e.printStackTrace();
-				Log.e(TAG, "Couldn't read info for spoof " + file + ".");
+			})) {
+				Log.v(TAG, "Spoof: " + file);
+				try {
+					List<String> lines = IOHelpers.readFileToLines(rewriteDir.getAbsolutePath() + "/" + file);
+					if(lines.size() < 2) {
+						Log.e(TAG, "Malformed description file for " + file + ".");
+						continue;
+					}
+					spoofs.add(new SquidScriptSpoof(lines.get(1), lines.get(2), lines.get(0)));
+				} catch (IOException e) {
+					e.printStackTrace();
+					Log.e(TAG, "Couldn't read info for spoof " + file + ".");
+				}
 			}
 		}
 		

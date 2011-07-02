@@ -8,6 +8,7 @@ import uk.digitalsquid.netspoofer.servicestatus.SpoofList;
 import uk.digitalsquid.netspoofer.spoofs.Spoof;
 import uk.digitalsquid.netspoofer.spoofs.Spoof.OnExtraDialogDoneListener;
 import android.app.Activity;
+import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
@@ -123,7 +124,8 @@ public class HackSelector extends Activity implements OnItemClickListener, LogCo
 	            	}
 					break;
 				case NetSpoofService.STATUS_FAILED:
-					// FIXME: Handle this.
+					if(startingDialog != null) startingDialog.cancel();
+					showDialog(DIALOG_FAIL_LOAD);
 					break;
 				}
 			} else if(intent.getAction().equals(NetSpoofService.INTENT_SPOOFLIST)) {
@@ -231,6 +233,27 @@ public class HackSelector extends Activity implements OnItemClickListener, LogCo
 			onDone.onDone();
 		} else { // Let dialog do so.
 			optDialog.show();
+		}
+	}
+	
+	private static final int DIALOG_FAIL_LOAD = 1;
+	
+	@Override
+	public Dialog onCreateDialog(int id, Bundle bundle) {
+		super.onCreateDialog(id, bundle);
+		switch(id) {
+		case DIALOG_FAIL_LOAD:
+			Builder builder = new Builder(this);
+			builder.setTitle(R.string.loadfailedtitle);
+			builder.setMessage(R.string.loadfailed);
+			builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					finish();
+				}
+			});
+			return builder.create();
+		default: return null;
 		}
 	}
 }
