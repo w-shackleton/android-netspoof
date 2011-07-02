@@ -36,6 +36,7 @@ public class NetSpoof extends Activity implements OnClickListener {
 	static final int DIALOG_W_SD = 2;
 	static final int DIALOG_ROOT = 3;
 	static final int DIALOG_BB = 4;
+	static final int DIALOG_ABOUT = 5;
 	
 	private Button startButton, setupButton;
 
@@ -155,6 +156,8 @@ public class NetSpoof extends Activity implements OnClickListener {
 						}
 					});
 				dialog = builder.create();
+			case DIALOG_ABOUT:
+				builder = new AlertDialog.Builder(this);
 				break;
 		}
 		return dialog;
@@ -192,6 +195,9 @@ public class NetSpoof extends Activity implements OnClickListener {
 	    case R.id.netSpoofMenuItemPrefs:
 	    	startActivity(new Intent(this, Preferences.class));
 	        return true;
+	    case R.id.netSpoofMenuItemAbout:
+	    	showDialog(DIALOG_ABOUT);
+	    	return true;
 	    default:
 	        return super.onOptionsItemSelected(item);
 	    }

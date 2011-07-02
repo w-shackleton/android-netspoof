@@ -54,4 +54,7 @@
     <string name="ipScanThreads">IP scanners</string>
     <string name="ipScanThreadsDesc">The number of simultaneous threads for scanning the local network - can make the process faster</string>
     <string name="about">About</string>
+    <string name="gotosite">Go to website</string>
+    <string name="aboutText1">Network Spoofer - Mess with other people\'s internet and modify webpages as they appear to someone else.</string>
+    <string name="aboutText2">DISCLAIMER: This application is not to be used for any purposes other than to demonstrate its functions, and must only be used on networks for which you have permission to do so. Any other use is not the responsibility of the developer.</string>
 </resources>
