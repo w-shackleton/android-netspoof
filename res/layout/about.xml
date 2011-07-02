@@ -5,12 +5,20 @@
   android:layout_height="match_parent" android:orientation="vertical">
     <LinearLayout android:id="@+id/linearLayout1" android:layout_width="match_parent" android:layout_height="wrap_content">
         <ImageView android:layout_height="wrap_content" android:id="@+id/imageView1" android:layout_width="wrap_content" android:src="@drawable/icon" android:layout_margin="10dip"></ImageView>
-        <Button android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_margin="10dip" android:id="@+id/website" android:text="@string/gotosite"></Button>
+	    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="10dip" android:layout_marginTop="10dip">
+	        <Button android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/website" android:text="@string/gotosite"></Button>
+	        <Button android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/devsite" android:text="@string/devsite"></Button>
+	    </LinearLayout>
     </LinearLayout>
     <ScrollView android:id="@+id/scrollView1" android:layout_height="wrap_content" android:layout_width="match_parent" android:layout_weight="1">
         <LinearLayout android:layout_width="match_parent" android:id="@+id/linearLayout2" android:layout_height="match_parent" android:orientation="vertical" android:padding="5dip">
             <TextView android:text="@string/aboutText1" android:textAppearance="?android:attr/textAppearanceMedium" android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/textView1"></TextView>
-            <TextView android:text="@string/aboutText2" android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/textView2"></TextView>
+            <LinearLayout android:layout_height="wrap_content" android:id="@+id/linearLayout3" android:layout_width="match_parent" android:layout_margin="4dip">
+                <Button android:layout_height="wrap_content" android:id="@+id/contactDev" android:layout_width="wrap_content" android:text="@string/contactdev"></Button>
+                <Button android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/reportBug" android:text="@string/reportBug"></Button>
+            </LinearLayout>
+            <TextView android:text="@string/aboutText2" android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/textView2" android:layout_marginBottom="4dip"></TextView>
+	        <TextView android:id="@+id/textView3" android:layout_width="match_parent" android:layout_height="match_parent" android:text="@string/gpl"></TextView>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
