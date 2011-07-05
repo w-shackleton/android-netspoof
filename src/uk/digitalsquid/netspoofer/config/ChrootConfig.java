@@ -36,13 +36,13 @@ import android.preference.PreferenceManager;
 public final class ChrootConfig {
 	static ChrootConfig DEFAULTS = null;
 	
-	private final String loopdev;
-	private final int loopnum;
+	private String loopdev;
+	private int loopnum;
 	
-	private final String debianMount;
-	private final String debianImage;
+	private String debianMount;
+	private String debianImage;
 	
-	private final String iface;
+	private String iface;
 	
 	private final Map<String, String> values = new HashMap<String, String>();
 	
@@ -50,14 +50,27 @@ public final class ChrootConfig {
 		if(DEFAULTS == null) DEFAULTS = new ChrootConfig("/dev/block/loop2000", 2000, "/data/local/mnt", context.getExternalFilesDir(null) + "/" + Config.DEB_IMG, "eth0");
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		loopdev = prefs.getString("loopdev", DEFAULTS.loopdev);
+		if(loopdev.equals("")) loopdev = DEFAULTS.loopdev;
 		values.put("LOOPDEV", loopdev);
-		loopnum = prefs.getInt("loopnum", DEFAULTS.loopnum);
+		
+		try {
+			loopnum = prefs.getInt("loopnum", DEFAULTS.loopnum);
+		} catch (NumberFormatException e) {
+			loopnum = DEFAULTS.loopnum;
+		}
+		if(prefs.getString("loopnum", "").equals("")) loopnum = DEFAULTS.loopnum;
 		values.put("LOOPNUM", "" + loopnum);
+		
 		debianMount = prefs.getString("debianMount", DEFAULTS.debianMount);
+		if(debianMount.equals("")) debianMount = DEFAULTS.debianMount;
 		values.put("DEB", debianMount);
+		
 		debianImage = prefs.getString("debianImage", DEFAULTS.debianImage);
+		if(debianImage.equals("")) debianImage = DEFAULTS.debianImage;
 		values.put("DEBIMG", debianImage);
+		
 		iface = prefs.getString("iface", DEFAULTS.iface);
+		if(iface.equals("")) iface = DEFAULTS.iface;
 		values.put("WLAN", iface);
 	}
 	

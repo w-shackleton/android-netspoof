@@ -101,6 +101,7 @@ public final class R {
         public static final int about=0x7f060039;
         public static final int aboutText1=0x7f06003b;
         public static final int aboutText2=0x7f06003c;
+        public static final int advanced=0x7f060043;
         public static final int allDevices=0x7f06001d;
         public static final int allDevicesDesc=0x7f06001e;
         public static final int app_name=0x7f060005;
@@ -114,6 +115,10 @@ public final class R {
         public static final int customIpSettings=0x7f060019;
         public static final int debImgUrl=0x7f060041;
         public static final int debImgUrlDesc=0x7f060042;
+        public static final int debianImage=0x7f06004a;
+        public static final int debianImageDesc=0x7f06004b;
+        public static final int debianMount=0x7f060048;
+        public static final int debianMountDesc=0x7f060049;
         public static final int deviceIf=0x7f060018;
         public static final int deviceIp=0x7f060016;
         public static final int devsite=0x7f06003d;
@@ -129,11 +134,17 @@ public final class R {
         public static final int gotosite=0x7f06003a;
         public static final int gpl=0x7f060040;
         public static final int hello=0x7f060004;
+        public static final int iface=0x7f06004c;
+        public static final int ifaceDesc=0x7f06004d;
         public static final int ipScanThreads=0x7f060037;
         public static final int ipScanThreadsDesc=0x7f060038;
         public static final int loadfailed=0x7f06002a;
         public static final int loadfailedtitle=0x7f060029;
         public static final int loading=0x7f060012;
+        public static final int loopDev=0x7f060044;
+        public static final int loopDevDesc=0x7f060045;
+        public static final int loopNum=0x7f060046;
+        public static final int loopNumDesc=0x7f060047;
         public static final int otherDevice=0x7f06001f;
         public static final int otherDeviceDesc=0x7f060020;
         public static final int output=0x7f060026;

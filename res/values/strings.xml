@@ -93,4 +93,15 @@
 	along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</string>
     <string name="debImgUrl">Download URL for environment</string>
     <string name="debImgUrlDesc">The URL to download the debian image used by Network Spoofer.</string>
+    <string name="advanced">Advanced</string>
+    <string name="loopDev">Linux loop device</string>
+    <string name="loopDevDesc">The loop device on which to mount the debian image. If the user has a lot of apps installed on the SD card, this may need changing.</string>
+    <string name="loopNum">Linux loop device number</string>
+    <string name="loopNumDesc">The loop device number with which to create the loop device. If the user has a lot of apps installed on the SD card, this may need changing (higher is better).</string>
+    <string name="debianMount">Image mount location</string>
+    <string name="debianMountDesc">A location on the phone\'s file system to mount the required image.</string>
+    <string name="debianImage">Debian image</string>
+    <string name="debianImageDesc">Path to the debian image. Note that setting this to a non-blank value will require you to download the images manually.</string>
+    <string name="iface">Wifi interface</string>
+    <string name="ifaceDesc">The Linux interface name of the adapter through which you will be running these spoofs.</string>
 </resources>
