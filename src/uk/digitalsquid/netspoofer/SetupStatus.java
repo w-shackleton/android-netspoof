@@ -22,7 +22,6 @@
 package uk.digitalsquid.netspoofer;
 
 import uk.digitalsquid.netspoofer.InstallService.DLProgress;
-import uk.digitalsquid.netspoofer.config.Config;
 import uk.digitalsquid.netspoofer.config.ConfigChecker;
 import uk.digitalsquid.netspoofer.config.LogConf;
 import android.app.Activity;
@@ -130,7 +129,7 @@ public class SetupStatus extends Activity implements OnClickListener, LogConf {
 				case InstallService.STATUS_DL_FAIL_MALFORMED_FILE:
 					Toast.makeText(
 							SetupStatus.this,
-							"Couldn't locate download file '" + Config.DEB_IMG_URL + "'. Please report this as a bug.",
+							"Couldn't locate download file. Please check download URL, or please report this as a bug.",
 							Toast.LENGTH_LONG).show();
 					break;
 				case InstallService.STATUS_DL_FAIL_SDERROR:

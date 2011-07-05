@@ -91,4 +91,6 @@
 	GNU General Public License for more details.
 	\nYou should have received a copy of the GNU General Public License
 	along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</string>
+    <string name="debImgUrl">Download URL for environment</string>
+    <string name="debImgUrlDesc">The URL to download the debian image used by Network Spoofer.</string>
 </resources>

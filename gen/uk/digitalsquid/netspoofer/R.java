@@ -112,6 +112,8 @@ public final class R {
         public static final int blank=0x7f060015;
         public static final int contactdev=0x7f06003e;
         public static final int customIpSettings=0x7f060019;
+        public static final int debImgUrl=0x7f060041;
+        public static final int debImgUrlDesc=0x7f060042;
         public static final int deviceIf=0x7f060018;
         public static final int deviceIp=0x7f060016;
         public static final int devsite=0x7f06003d;

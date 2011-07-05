@@ -38,8 +38,10 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.RemoteViews;
 
@@ -101,7 +103,10 @@ public class InstallService extends Service implements Config {
 		notificationManager.notify(DL_NOTIFY, notification);
 		
 		started = true;
-		downloadTask.execute(DEB_IMG_URL);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		String downloadUrl = prefs.getString("debImgUrl", DEB_IMG_URL);
+		if(downloadUrl.equals("")) downloadUrl = DEB_IMG_URL;
+		downloadTask.execute(downloadUrl);
 	}
 	
 	private DLProgress dlProgress = new DLProgress(0, 1024);
