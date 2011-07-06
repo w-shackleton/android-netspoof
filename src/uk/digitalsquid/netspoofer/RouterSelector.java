@@ -142,7 +142,8 @@ public class RouterSelector extends Activity implements OnClickListener, LogConf
 	private class GatewayListAdapter extends BaseAdapter implements OnItemClickListener {
 		private final LayoutInflater inflater;
 		public static final int ITEM_DEFAULT = 0;
-		public static final int ITEM_OTHER = 1;
+		public static final int ITEM_PASSIVE = 1;
+		public static final int ITEM_OTHER = 2;
 		
 		private boolean wifiReady = false;
 		private String wifiGateway = "";
@@ -159,7 +160,7 @@ public class RouterSelector extends Activity implements OnClickListener, LogConf
 
 		@Override
 		public int getCount() {
-			return 2;
+			return 3;
 		}
 
 		@Override
@@ -192,6 +193,11 @@ public class RouterSelector extends Activity implements OnClickListener, LogConf
 	        		convertView.setEnabled(false);
 	        	}
 	        	break;
+	        case ITEM_PASSIVE:
+	        	name.setText("Run passively");
+	        	description.setText("Run the spoof passively; run the process, but not for anyone. Choose this to test spoofs or if Wifi tethering. Some settings may not completely work like this.");
+        		convertView.setEnabled(true);
+	        	break;
 	        case ITEM_OTHER:
 	        	name.setText("Other");
 	        	description.setText("Choose custom IP addresses to use as the default gateway, IP and interface");
@@ -208,6 +214,9 @@ public class RouterSelector extends Activity implements OnClickListener, LogConf
 				if(view.isEnabled()) {
 					goToNextStep(RouterSelector.this.wifiIP.getHostAddress(), RouterSelector.this.wifiGateway.getSubnet(), RouterSelector.this.wifiGateway.getGateway().getHostAddress(), RouterSelector.this.wifiIface.getDisplayName());
 				}
+				break;
+			case ITEM_PASSIVE:
+					goToNextStep(true);
 				break;
 			case ITEM_OTHER:
 				showDialog(DIALOG_CUSTOMIP);
@@ -299,6 +308,12 @@ public class RouterSelector extends Activity implements OnClickListener, LogConf
 			e.printStackTrace();
 			Toast.makeText(getBaseContext(), "Error getting wifi info. Please see log for more info.", Toast.LENGTH_LONG).show();
 		}
+	}
+	
+	private void goToNextStep(boolean runningPassively) {
+		Intent intent = new Intent(this, SpoofRunning.class); 
+		intent.putExtra(SpoofRunning.EXTRA_SPOOFDATA, new SpoofData(spoof, true));
+		startActivity(intent);
 	}
 	
 	private void goToNextStep(String myIp, String mySubnet, String gatewayIp, String wifiIface) {

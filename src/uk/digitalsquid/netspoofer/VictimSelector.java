@@ -384,6 +384,10 @@ public class VictimSelector extends Activity implements OnClickListener, LogConf
 		}
 	}
 	
+	/**
+	 * Goes to the next step of the setup process. <code>null</code> means everyone.
+	 * @param victim
+	 */
 	private void goToNextStep(Victim victim) {
 		spoof.setVictim(victim);
 		Intent intent = new Intent(this, SpoofRunning.class); 

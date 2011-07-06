@@ -172,11 +172,13 @@ public class ChrootManager implements Config {
 				Map<String, String> env = pb.environment();
 				env.putAll(config.getValues());
 				
-				env.put("WLAN", spoof.getMyIface());
-				env.put("IP", spoof.getMyIp().getHostAddress());
-				env.put("SUBNET", spoof.getMySubnetBaseAddressString());
-				env.put("MASK", spoof.getMySubnetString());
-				env.put("SHORTMASK", String.valueOf(spoof.getMySubnet()));
+				if(!spoof.isRunningPassively()) {
+					env.put("WLAN", spoof.getMyIface());
+					env.put("IP", spoof.getMyIp().getHostAddress());
+					env.put("SUBNET", spoof.getMySubnetBaseAddressString());
+					env.put("MASK", spoof.getMySubnetString());
+					env.put("SHORTMASK", String.valueOf(spoof.getMySubnet()));
+				}
 	
 				su = pb.start();
 			} else {
@@ -186,11 +188,13 @@ public class ChrootManager implements Config {
 				combinedEnv.putAll(systemEnv);
 				combinedEnv.putAll(config.getValues());
 				
-				combinedEnv.put("WLAN", spoof.getMyIface());
-				combinedEnv.put("IP", spoof.getMyIp().getHostAddress());
-				combinedEnv.put("SUBNET", spoof.getMySubnetBaseAddressString());
-				combinedEnv.put("MASK", spoof.getMySubnetString());
-				combinedEnv.put("SHORTMASK", String.valueOf(spoof.getMySubnet()));
+				if(!spoof.isRunningPassively()) {
+					combinedEnv.put("WLAN", spoof.getMyIface());
+					combinedEnv.put("IP", spoof.getMyIp().getHostAddress());
+					combinedEnv.put("SUBNET", spoof.getMySubnetBaseAddressString());
+					combinedEnv.put("MASK", spoof.getMySubnetString());
+					combinedEnv.put("SHORTMASK", String.valueOf(spoof.getMySubnet()));
+				}
 				
 				String[] envArray = new String[combinedEnv.size()];
 				int i = 0;

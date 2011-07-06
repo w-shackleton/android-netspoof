@@ -75,6 +75,14 @@ public class SpoofData implements Serializable {
 	private InetAddress myIp, routerIp;
 	
 	private Victim victim;
+	
+	private boolean runningPassively = false;
+
+	public SpoofData(Spoof spoof, boolean runningPassively) {
+		if(!runningPassively) throw new IllegalStateException("Please use the other constructor");
+		this.spoof = spoof;
+		this.setRunningPassively(true);
+	}
 
 	public SpoofData(Spoof spoof, String myIp, String mySubnet, String myIf, String routerIp) throws UnknownHostException {
 		this.spoof = spoof;
@@ -105,6 +113,7 @@ public class SpoofData implements Serializable {
 		return routerIp;
 	}
 	public String getRouterIpString() {
+		if(routerIp == null) return "none";
 		return routerIp.getHostAddress();
 	}
 	public int getRouterIpInt() {
@@ -149,11 +158,20 @@ public class SpoofData implements Serializable {
 	}
 	
 	public String getVictimString() {
+		if(isRunningPassively()) return "none";
 		if(isEveryoneVictim()) return "all";
 		return victim.getIpString();
 	}
 
 	public boolean isEveryoneVictim() {
 		return victim == null;
+	}
+
+	public void setRunningPassively(boolean runningPassively) {
+		this.runningPassively = runningPassively;
+	}
+
+	public boolean isRunningPassively() {
+		return runningPassively;
 	}
 }
