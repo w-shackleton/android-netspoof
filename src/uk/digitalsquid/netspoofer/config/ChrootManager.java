@@ -30,6 +30,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -41,6 +42,7 @@ import uk.digitalsquid.netspoofer.spoofs.SpoofData;
 import uk.digitalsquid.netspoofer.spoofs.SquidScriptSpoof;
 import android.content.Context;
 import android.content.res.Resources.NotFoundException;
+import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -163,19 +165,44 @@ public class ChrootManager implements Config {
 		synchronized(spoofLock) {
 			spoofRunning = true;
 			
-			ProcessBuilder pb = new ProcessBuilder(FileFinder.SU, "-c",
-					fi.getScriptPath("start") + " " + fi.getScriptPath("config") + " " + 
-					spoof.getSpoof().getSpoofCmd(spoof.getVictimString(), spoof.getRouterIpString())); // Pass config script as arg.
-			Map<String, String> env = pb.environment();
-			env.putAll(config.getValues());
-			
-			env.put("WLAN", spoof.getMyIface());
-			env.put("IP", spoof.getMyIp().getHostAddress());
-			env.put("SUBNET", spoof.getMySubnetBaseAddressString());
-			env.put("MASK", spoof.getMySubnetString());
-			env.put("SHORTMASK", String.valueOf(spoof.getMySubnet()));
-
-			su = pb.start();
+			if(Build.VERSION.SDK_INT >= 9) { // 2.2 doesn't like this method
+				ProcessBuilder pb = new ProcessBuilder(FileFinder.SU, "-c",
+						fi.getScriptPath("start") + " " + fi.getScriptPath("config") + " " + 
+						spoof.getSpoof().getSpoofCmd(spoof.getVictimString(), spoof.getRouterIpString())); // Pass config script as arg.
+				Map<String, String> env = pb.environment();
+				env.putAll(config.getValues());
+				
+				env.put("WLAN", spoof.getMyIface());
+				env.put("IP", spoof.getMyIp().getHostAddress());
+				env.put("SUBNET", spoof.getMySubnetBaseAddressString());
+				env.put("MASK", spoof.getMySubnetString());
+				env.put("SHORTMASK", String.valueOf(spoof.getMySubnet()));
+	
+				su = pb.start();
+			} else {
+				Map<String, String> systemEnv = System.getenv(); // We also must include this
+				Map<String, String> combinedEnv = new HashMap<String, String>();
+				
+				combinedEnv.putAll(systemEnv);
+				combinedEnv.putAll(config.getValues());
+				
+				combinedEnv.put("WLAN", spoof.getMyIface());
+				combinedEnv.put("IP", spoof.getMyIp().getHostAddress());
+				combinedEnv.put("SUBNET", spoof.getMySubnetBaseAddressString());
+				combinedEnv.put("MASK", spoof.getMySubnetString());
+				combinedEnv.put("SHORTMASK", String.valueOf(spoof.getMySubnet()));
+				
+				String[] envArray = new String[combinedEnv.size()];
+				int i = 0;
+				for(String key : combinedEnv.keySet()) {
+					envArray[i++] = String.format("%s=%s", key, combinedEnv.get(key));
+				}
+				su = Runtime.getRuntime().exec(new String [] {
+						FileFinder.SU, "-c",
+						fi.getScriptPath("start") + " " + fi.getScriptPath("config") + " " + 
+						spoof.getSpoof().getSpoofCmd(spoof.getVictimString(), spoof.getRouterIpString()), // Pass config script as arg.
+				}, envArray);
+			}
 			cout = new BufferedReader(new InputStreamReader(su.getInputStream()));
 			cerr = new BufferedReader(new InputStreamReader(su.getErrorStream()));
 			cin  = new OutputStreamWriter(su.getOutputStream());
