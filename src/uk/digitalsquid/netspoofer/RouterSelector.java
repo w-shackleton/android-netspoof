@@ -205,7 +205,9 @@ public class RouterSelector extends Activity implements OnClickListener, LogConf
 		public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
 			switch(position) {
 			case ITEM_DEFAULT:
-				goToNextStep(RouterSelector.this.wifiIP.getHostAddress(), RouterSelector.this.wifiGateway.getSubnet(), RouterSelector.this.wifiGateway.getGateway().getHostAddress(), RouterSelector.this.wifiIface.getDisplayName());
+				if(view.isEnabled()) {
+					goToNextStep(RouterSelector.this.wifiIP.getHostAddress(), RouterSelector.this.wifiGateway.getSubnet(), RouterSelector.this.wifiGateway.getGateway().getHostAddress(), RouterSelector.this.wifiIface.getDisplayName());
+				}
 				break;
 			case ITEM_OTHER:
 				showDialog(DIALOG_CUSTOMIP);

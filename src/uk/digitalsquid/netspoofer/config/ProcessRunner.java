@@ -24,8 +24,10 @@ package uk.digitalsquid.netspoofer.config;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashMap;
 import java.util.Map;
 
+import android.os.Build;
 import android.util.Log;
 
 public final class ProcessRunner implements LogConf {
@@ -36,9 +38,28 @@ public final class ProcessRunner implements LogConf {
 	}
 
 	public static final int runProcess(Map<String, String> env, String... args) throws IOException {
-		ProcessBuilder pb = new ProcessBuilder(args);
-		if(env != null) pb.environment().putAll(env);
-		Process proc = pb.start();
+		Process proc;
+		if(Build.VERSION.SDK_INT >= 9) { // 2.2 doesn't like this method
+			ProcessBuilder pb = new ProcessBuilder(args);
+			if(env != null) pb.environment().putAll(env);
+			proc = pb.start();
+		} else {
+			if(env != null) {
+				Map<String, String> systemEnv = System.getenv(); // We also must include this
+				Map<String, String> combinedEnv = new HashMap<String, String>();
+				combinedEnv.putAll(env);
+				combinedEnv.putAll(systemEnv);
+				
+				String[] envArray = new String[combinedEnv.size()];
+				int i = 0;
+				for(String key : combinedEnv.keySet()) {
+					envArray[i++] = String.format("%s=%s", key, combinedEnv.get(key));
+				}
+				proc = Runtime.getRuntime().exec(args, envArray);
+			} else {
+				proc = Runtime.getRuntime().exec(args);
+			}
+		}
 		BufferedReader cout = new BufferedReader(new InputStreamReader(proc.getInputStream()));
 		BufferedReader cerr = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
 		boolean running = true;
