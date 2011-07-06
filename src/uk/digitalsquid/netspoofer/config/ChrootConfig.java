@@ -106,4 +106,15 @@ public final class ChrootConfig {
 	public Map<String, String> getValues() {
 		return values;
 	}
+
+	public String[] getExecValues() {
+		String[] vals = new String[values.size()];
+		
+		int i = 0;
+		for(String key : values.keySet()) {
+			vals[i++] = String.format("%s=%s", key, values.get(key));
+		}
+		
+		return vals;
+	}
 }
