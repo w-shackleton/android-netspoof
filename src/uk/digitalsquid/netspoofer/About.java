@@ -38,6 +38,8 @@ public class About extends Activity implements OnClickListener {
 		findViewById(R.id.devsite).setOnClickListener(this);
 		findViewById(R.id.contactDev).setOnClickListener(this);
 		findViewById(R.id.reportBug).setOnClickListener(this);
+		findViewById(R.id.udternet).setOnClickListener(this);
+		findViewById(R.id.squidscripts).setOnClickListener(this);
 	}
 
 	@Override
@@ -45,7 +47,7 @@ public class About extends Activity implements OnClickListener {
 		Intent intent;
 		switch(v.getId()) {
 		case R.id.website:
-			intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://digitalsquid.co.uk"));
+			intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://digitalsquid.co.uk/netspoof"));
 			startActivity(intent);
 			break;
 		case R.id.devsite:
@@ -58,6 +60,14 @@ public class About extends Activity implements OnClickListener {
 			break;
 		case R.id.reportBug:
 			intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://URLFORREPORTBUG/"));
+			startActivity(intent);
+			break;
+		case R.id.udternet:
+			intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.ex-parrot.com/pete/upside-down-ternet.html"));
+			startActivity(intent);
+			break;
+		case R.id.squidscripts:
+			intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://g0tmi1k.blogspot.com/2011/04/video-playing-with-traffic-squid.html"));
 			startActivity(intent);
 			break;
 		}

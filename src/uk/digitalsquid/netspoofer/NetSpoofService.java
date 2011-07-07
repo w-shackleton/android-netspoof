@@ -286,7 +286,7 @@ public class NetSpoofService extends Service implements LogConf {
 		
 		private void stopSpoof(ChrootManager chroot, SpoofData spoof) {
 			publishProgress(new InitialiseStatus(STATUS_STOPPING));
-			publishProgress(new Notifyer(NS_RUNNING, Notifyer.STATUS_SHOW));
+			publishProgress(new Notifyer(NS_RUNNING, Notifyer.STATUS_HIDE));
 			try {
 				chroot.stopSpoof(spoof);
 			} catch (IOException e) {

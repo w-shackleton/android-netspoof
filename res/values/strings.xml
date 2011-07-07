@@ -104,6 +104,9 @@
     <string name="debianImageDesc">Path to the debian image. Note that setting this to a non-blank value will require you to download the images manually.</string>
     <string name="iface">Wifi interface</string>
     <string name="ifaceDesc">The Linux interface name of the adapter through which you will be running these spoofs.</string>
-    <string name="spoofRunning">Running...</string>
+    <string name="spoofRunning">Spoofer running</string>
     <string name="spoofRunningDesc">Network Spoofer is running.</string>
+    <string name="udternet">Upside-down-ternet</string>
+    <string name="squidscripts">Squid - \'playing with traffic\'</string>
+    <string name="aboutTextRefs">Many thanks to the developer of the \'upside-down-ternet\' (see above link) and the writer of \'playing with traffic\' (also above) for the inspiration for this project.</string>
 </resources>
