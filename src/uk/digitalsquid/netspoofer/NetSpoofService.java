@@ -32,9 +32,13 @@ import uk.digitalsquid.netspoofer.servicemsg.ServiceMsg;
 import uk.digitalsquid.netspoofer.servicemsg.SpoofStarter;
 import uk.digitalsquid.netspoofer.servicestatus.InitialiseStatus;
 import uk.digitalsquid.netspoofer.servicestatus.NewLogOutput;
+import uk.digitalsquid.netspoofer.servicestatus.Notifyer;
 import uk.digitalsquid.netspoofer.servicestatus.ServiceStatus;
 import uk.digitalsquid.netspoofer.servicestatus.SpoofList;
 import uk.digitalsquid.netspoofer.spoofs.SpoofData;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -57,6 +61,11 @@ public class NetSpoofService extends Service implements LogConf {
 	public static final String INTENT_EXTRA_STATUS = "uk.digitalsquid.netspoofer.NetSpoofService.status";
 	public static final String INTENT_EXTRA_SPOOFLIST = "uk.digitalsquid.netspoofer.NetSpoofService.spooflist";
 	public static final String INTENT_EXTRA_LOGOUTPUT = "uk.digitalsquid.netspoofer.NetSpoofService.logoutput";
+	
+	private static final int NS_RUNNING = 1;
+	
+	private NotificationManager notificationManager;
+	private Notification notification;
 	
 	public class NetSpoofServiceBinder extends Binder {
         NetSpoofService getService() {
@@ -104,6 +113,8 @@ public class NetSpoofService extends Service implements LogConf {
     	
     	mainLoopManager.execute(new ChrootConfig(getBaseContext()));
     	setStatus(STATUS_LOADING);
+    	
+		notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     	
     	started = true;
     }
@@ -237,6 +248,7 @@ public class NetSpoofService extends Service implements LogConf {
 				publishProgress(new InitialiseStatus(STATUS_LOADED));
 			}
 			publishProgress(new InitialiseStatus(STATUS_STARTED));
+			publishProgress(new Notifyer(NS_RUNNING, Notifyer.STATUS_SHOW));
 			
 			boolean running = true;
 			while(running) {
@@ -274,6 +286,7 @@ public class NetSpoofService extends Service implements LogConf {
 		
 		private void stopSpoof(ChrootManager chroot, SpoofData spoof) {
 			publishProgress(new InitialiseStatus(STATUS_STOPPING));
+			publishProgress(new Notifyer(NS_RUNNING, Notifyer.STATUS_SHOW));
 			try {
 				chroot.stopSpoof(spoof);
 			} catch (IOException e) {
@@ -304,6 +317,28 @@ public class NetSpoofService extends Service implements LogConf {
 				sendSpoofList((SpoofList)s);
 			} else if(s instanceof NewLogOutput) {
 				sendLogOutput((NewLogOutput) s);
+			} else if(s instanceof Notifyer) {
+				Notifyer n = (Notifyer) s;
+				
+				switch(n.getStatus()) {
+				case Notifyer.STATUS_SHOW:
+					switch(n.getNotificationType()) {
+					case NS_RUNNING:
+						notification = new Notification(R.drawable.status, getString(R.string.spoofRunning), System.currentTimeMillis());
+						notification.flags = notification.flags | Notification.FLAG_ONGOING_EVENT;
+						
+						Intent notificationIntent = new Intent(NetSpoofService.this, NetSpoofService.class);
+						PendingIntent contentIntent = PendingIntent.getActivity(NetSpoofService.this, 0, notificationIntent, 0);
+						
+						notification.setLatestEventInfo(NetSpoofService.this, NetSpoofService.this.getString(R.string.spoofRunning), NetSpoofService.this.getString(R.string.spoofRunningDesc), contentIntent);
+						notificationManager.notify(NS_RUNNING, notification);
+						break;
+					}
+					break;
+				case Notifyer.STATUS_HIDE:
+						notificationManager.cancel(NS_RUNNING);
+					break;
+				}
 			}
 		}
 		protected void onPostExecute(Void result) {

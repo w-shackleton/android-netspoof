@@ -104,4 +104,6 @@
     <string name="debianImageDesc">Path to the debian image. Note that setting this to a non-blank value will require you to download the images manually.</string>
     <string name="iface">Wifi interface</string>
     <string name="ifaceDesc">The Linux interface name of the adapter through which you will be running these spoofs.</string>
+    <string name="spoofRunning">Running...</string>
+    <string name="spoofRunningDesc">Network Spoofer is running.</string>
 </resources>
