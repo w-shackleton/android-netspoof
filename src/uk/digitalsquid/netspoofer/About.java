@@ -51,7 +51,7 @@ public class About extends Activity implements OnClickListener {
 			startActivity(intent);
 			break;
 		case R.id.devsite:
-			intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://digitalsquid.co.uk"));
+			intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://digitalsquid.co.uk/"));
 			startActivity(intent);
 			break;
 		case R.id.contactDev:
@@ -59,7 +59,7 @@ public class About extends Activity implements OnClickListener {
 			startActivity(intent);
 			break;
 		case R.id.reportBug:
-			intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://URLFORREPORTBUG/"));
+			intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://bugs.launchpad.net/android-netspoof"));
 			startActivity(intent);
 			break;
 		case R.id.udternet:
