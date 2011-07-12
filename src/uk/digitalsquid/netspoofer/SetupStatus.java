@@ -144,8 +144,11 @@ public class SetupStatus extends Activity implements OnClickListener, Config {
 					dlProgress.setProgress(progress.getKBytesDone());
 					float mbDone = (float)progress.getKBytesDone() / 1024;
 					float mbTotal = (float)progress.getKBytesTotal() / 1024;
-					float mbDlTotal = (float)progress.getKBytesDownloadTotal() / 1024;
-					dlProgressText.setText(String.format("%.1f / %.0fMB\nCompressed download is %.0fMB.", mbDone, mbTotal, mbDlTotal));
+					if(!progress.isExtracting()) {
+						dlProgressText.setText(String.format("%.1f / %.0fMB\nDownloading", mbDone, mbTotal));
+					} else {
+						dlProgressText.setText(String.format("%.1f / %.0fMB\nExtracting", mbDone, mbTotal));
+					}
 				}
 				break;
 			case InstallService.STATUS_FINISHED:

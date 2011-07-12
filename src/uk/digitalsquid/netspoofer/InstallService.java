@@ -176,16 +176,7 @@ public class InstallService extends Service implements Config {
 		public int getKBytesTotal() {
 			return bytesTotal / 1024;
 		}
-		public void setBytesDownloadTotal(int bytesDownload) {
-			this.bytesDownloadTotal = bytesDownload;
-		}
-		public int getBytesDownloadTotal() {
-			return bytesDownloadTotal;
-		}
-		public int getKBytesDownloadTotal() {
-			return bytesDownloadTotal / 1024;
-		}
-		private int bytesDone, bytesTotal, bytesDownloadTotal;
+		private int bytesDone, bytesTotal;
 	}
 	
 	private final AsyncTask<String, DLProgress, Integer> downloadTask = new AsyncTask<String, DLProgress, Integer>() {
@@ -201,7 +192,7 @@ public class InstallService extends Service implements Config {
 		@Override
 		protected Integer doInBackground(String... params) {
 			sd = getExternalFilesDir(null);
-			debian = new File(sd.getAbsolutePath() + "/" + DEB_IMG);
+			debian = new File(sd.getAbsolutePath() + "/" + DEB_IMG_GZ);
 			try {
 				debian.createNewFile();
 			} catch (IOException e) {
@@ -300,11 +291,10 @@ public class InstallService extends Service implements Config {
 			connection.connect();
 			response = new BufferedInputStream(connection.getInputStream());
 			
-			byte[] dlData = new byte[0x80000];
+			byte[] dlData = new byte[0x8000];
 			int bytesRead = 0;
 			int bytesDone = 0;
 			DLProgress progress = new DLProgress(bytesSoFar, totalBytes);
-			progress.setBytesDownloadTotal(connection.getContentLength());
 			
 			int i = 0;
 			try {
@@ -323,7 +313,7 @@ public class InstallService extends Service implements Config {
 						// Remove old files
 						File delversion = new File(sd.getAbsolutePath() + "/" + DEB_VERSION_FILE);
 						delversion.delete();
-						File deldebian = new File(sd.getAbsolutePath() + "/" + DEB_IMG);
+						File deldebian = new File(sd.getAbsolutePath() + "/" + DEB_IMG_GZ);
 						deldebian.delete();
 						throw new CancellationException();
 					}
@@ -343,19 +333,18 @@ public class InstallService extends Service implements Config {
 		{
 		    InputStream gzipInputStream = new BufferedInputStream(new GZIPInputStream(new FileInputStream(inFile)));
 		 
-			DLProgress progress = new DLProgress(true, 0, (int) inFile.length());
-			progress.setBytesDownloadTotal(connection.getContentLength());
+			DLProgress progress = new DLProgress(true, 0, Config.DEB_IMG_URL_SIZE);
 		 
 		    String outFilePath = inFile.getAbsolutePath().replace(".gz", "");
 		    OutputStream out = new FileOutputStream(outFilePath);
 		    
-		    byte[] buf = new byte[0x10000];
+		    byte[] buf = new byte[0x8000];
 		    int len, total = 0;
 		    int i = 0;
 		    while ((len = gzipInputStream.read(buf)) > 0) {
 		    	total += len;
 		        out.write(buf, 0, len);
-		        if(i++ > 6) {
+		        if(i++ > 60) {
 		        	i = 0;
 					progress.setBytesDone(total);
 					publishProgress(progress);
@@ -371,7 +360,6 @@ public class InstallService extends Service implements Config {
 		}
 		
 		int statusUpdate = 0;
-		int winUpdate = 0;
 		protected void onProgressUpdate(DLProgress... progress) {
 			status = STATUS_DOWNLOADING;
 			dlProgress = progress[0];
@@ -380,10 +368,7 @@ public class InstallService extends Service implements Config {
 				notification.contentView.setProgressBar(R.id.dlProgressBar, dlProgress.bytesTotal, dlProgress.bytesDone, false);
 				notificationManager.notify(DL_NOTIFY, notification);
 			}
-			if(winUpdate++ > 7) {
-				winUpdate = 0;
-				broadcastStatus();
-			}
+			broadcastStatus();
 		}
 		protected void onPostExecute(Integer result) {
 			status = STATUS_FINISHED;

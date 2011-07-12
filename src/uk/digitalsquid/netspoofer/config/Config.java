@@ -33,7 +33,6 @@ public interface Config extends LogConf {
 	@Deprecated
 	public static final String DEB_IMG_URL = "http://digitalsquid.co.uk/download/android-netspoof/img/debian-0.3.img.gz";
 	public static final String SF_DEB_IMG_URL = "http://sourceforge.net/projects/netspoof/files/debian-images/debian-0.3.img.gz/download";
-	@Deprecated
 	public static final int DEB_IMG_URL_SIZE = 614400000;
 	public static final int DEB_IMG_URL_VERSION = 6;
 }
