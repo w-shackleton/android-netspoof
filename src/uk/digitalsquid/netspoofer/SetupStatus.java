@@ -21,27 +21,31 @@
 
 package uk.digitalsquid.netspoofer;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import uk.digitalsquid.netspoofer.InstallService.DLProgress;
+import uk.digitalsquid.netspoofer.config.Config;
 import uk.digitalsquid.netspoofer.config.ConfigChecker;
-import uk.digitalsquid.netspoofer.config.LogConf;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class SetupStatus extends Activity implements OnClickListener, LogConf {
-	
-	private boolean serviceRunning = false;
-	
+public class SetupStatus extends Activity implements OnClickListener, Config {
 	private Button dlButton;
 	
 	private ProgressBar dlProgress;
@@ -62,9 +66,6 @@ public class SetupStatus extends Activity implements OnClickListener, LogConf {
 		dlButton.setOnClickListener(this);
 		if(ConfigChecker.isInstallServiceRunning(getApplicationContext())) {
 			setWinStatus(true);
-			// 'Start' service again to receive broadcasted status.
-			// startService(new Intent(getApplicationContext(), InstallService.class));
-			serviceRunning = true;
 		} else { // Things for not running
 			if(ConfigChecker.checkInstalledLatest(getApplicationContext())) {
 				findViewById(R.id.redlconfirm).setVisibility(View.VISIBLE);
@@ -72,20 +73,55 @@ public class SetupStatus extends Activity implements OnClickListener, LogConf {
 			}
 		}
 	}
+	
+	private final List<String> possibleSfURLs = new LinkedList<String>();
+	
+	/**
+	 * Activates the WebView used to get the DL url from sourceforge, if needed.
+	 */
+	private void activateSFWV() {
+		final WebViewClient wvc = new WebViewClient() {
+        	@Override
+        	public void onLoadResource(WebView view, String url) {
+        		// Note to self: check this every now and then, as SF may change a bit once in a while.
+        		if(url.startsWith("http://downloads.sourceforge.net/project/netspoof/debian-images/debian-0.3.img.gz?r=")) {
+	        		Log.i("android-netspoof", "Found SF DL URL: " + url);
+					if(!ConfigChecker.isInstallServiceRunning(getApplicationContext())) {
+						startServiceForUrl(url);
+					}
+					else possibleSfURLs.add(url);
+        		}
+        	}
+		};
+		final WebView webView = (WebView)findViewById(R.id.sfWebView);
+		webView.setVisibility(View.VISIBLE);
+		webView.setWebViewClient(wvc);
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.loadUrl("http://sourceforge.net/projects/netspoof/files/debian-images/debian-0.3.img.gz/download");
+	}
+	
+	private void startServiceForUrl(String url) {
+		Intent intent = new Intent(getApplicationContext(), InstallService.class);
+		intent.putExtra(InstallService.INTENT_START_URL, url);
+		startService(intent);
+		status.setText(R.string.dlStarting);
+		dlButton.setText(R.string.dlCancel);
+	}
 
 	@Override
 	public void onClick(View v) {
 		switch(v.getId()) {
 		case R.id.dlButton:
-			if(!serviceRunning) {
-				startService(new Intent(getApplicationContext(), InstallService.class));
-				status.setText(R.string.dlStarting);
-				dlButton.setText(R.string.dlCancel);
-				serviceRunning = true;
+			if(!ConfigChecker.isInstallServiceRunning(getApplicationContext())) {
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+				String downloadUrl = prefs.getString("debImgUrl", "");
+				if(!downloadUrl.equals("")) {
+					startServiceForUrl(downloadUrl);
+				} else activateSFWV();
 			} else {
 				stopService(new Intent(getApplicationContext(), InstallService.class));
+				findViewById(R.id.sfWebView).setVisibility(View.GONE);
 				setWinStatus(false);
-				serviceRunning = false;
 			}
 			break;
 		}
@@ -148,8 +184,10 @@ public class SetupStatus extends Activity implements OnClickListener, LogConf {
 							Toast.LENGTH_LONG).show();
 					break;
 				}
-				setWinStatus(false);
-				serviceRunning = false;
+				if(possibleSfURLs.isEmpty()) { // Don't do anything
+					findViewById(R.id.sfWebView).setVisibility(View.GONE);
+					setWinStatus(false);
+				}
 				break;
 			}
 		}
@@ -158,10 +196,6 @@ public class SetupStatus extends Activity implements OnClickListener, LogConf {
 	@Override
 	protected void onResume() {
 		registerReceiver(statusReceiver, statusFilter);
-		
-		// Receive status again.
-		if(serviceRunning)
-			startService(new Intent(getApplicationContext(), InstallService.class));
 		super.onResume();
 	}
 

@@ -91,8 +91,8 @@
 	GNU General Public License for more details.
 	\nYou should have received a copy of the GNU General Public License
 	along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</string>
-    <string name="debImgUrl">Download URL for environment</string>
-    <string name="debImgUrlDesc">The URL to download the debian image used by Network Spoofer.</string>
+    <string name="debImgUrl">Custom  URL for environment</string>
+    <string name="debImgUrlDesc">Rather than download from SourceForge (recommended), use this URL to download the environment.</string>
     <string name="advanced">Advanced</string>
     <string name="loopDev">Linux loop device</string>
     <string name="loopDevDesc">The loop device on which to mount the debian image. If the user has a lot of apps installed on the SD card, this may need changing.</string>
