@@ -21,15 +21,19 @@
 
 package uk.digitalsquid.netspoofer;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.concurrent.CancellationException;
 import java.util.zip.GZIPInputStream;
 
 import uk.digitalsquid.netspoofer.config.Config;
@@ -38,10 +42,8 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.RemoteViews;
 
@@ -50,6 +52,7 @@ public class InstallService extends Service implements Config {
 	public static final String INTENT_EXTRA_DLPROGRESS = "uk.digitalsquid.netspoofer.InstallService.dlprogress";
 	public static final String INTENT_EXTRA_DLSTATE = "uk.digitalsquid.netspoofer.InstallService.dlprogress";
 	public static final String INTENT_STATUSUPDATE = "uk.digitalsquid.netspoofer.config.ConfigChecker.StatusUpdate";
+	public static final String INTENT_START_URL = "uk.digitalsquid.netspoofer.config.InstallStatus.URL";
 	public static final int STATUS_STARTED = 0;
 	public static final int STATUS_DOWNLOADING = 1;
 	public static final int STATUS_FINISHED = 2;
@@ -85,7 +88,7 @@ public class InstallService extends Service implements Config {
 	public int onStartCommand (Intent intent, int flags, int startId) {
 	    if(!started) start(intent);
 		broadcastStatus();
-		return START_STICKY;
+		return START_REDELIVER_INTENT;
 	}
 	
 	private void start(Intent intent) {
@@ -103,9 +106,11 @@ public class InstallService extends Service implements Config {
 		notificationManager.notify(DL_NOTIFY, notification);
 		
 		started = true;
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-		String downloadUrl = prefs.getString("debImgUrl", DEB_IMG_URL);
-		if(downloadUrl.equals("")) downloadUrl = DEB_IMG_URL;
+		// SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		// String downloadUrl = prefs.getString("debImgUrl", DEB_IMG_URL);
+		String downloadUrl = intent.getStringExtra(INTENT_START_URL);
+		if(downloadUrl == null) throw new IllegalArgumentException("Start URL was null");
+		// if(downloadUrl.equals("")) downloadUrl = DEB_IMG_URL;
 		downloadTask.execute(downloadUrl);
 	}
 	
@@ -136,10 +141,23 @@ public class InstallService extends Service implements Config {
 	public static final class DLProgress implements Serializable {
 		private static final long serialVersionUID = -5366348392979726959L;
 		
+		private final boolean extracting;
+		
 		public DLProgress(int bytesDone, int bytesTotal) {
 			this.bytesDone = bytesDone;
 			this.bytesTotal = bytesTotal;
+			extracting = false;
 		}
+		public DLProgress(boolean extracting, int bytesDone, int bytesTotal) {
+			this.bytesDone = bytesDone;
+			this.bytesTotal = bytesTotal;
+			this.extracting = extracting;
+		}
+		
+		public boolean isExtracting() {
+			return extracting;
+		}
+		
 		public int getBytesDone() {
 			return bytesDone;
 		}
@@ -158,44 +176,23 @@ public class InstallService extends Service implements Config {
 		public int getKBytesTotal() {
 			return bytesTotal / 1024;
 		}
-		public void setBytesDownloadTotal(int bytesDownload) {
-			this.bytesDownloadTotal = bytesDownload;
-		}
-		public int getBytesDownloadTotal() {
-			return bytesDownloadTotal;
-		}
-		public int getKBytesDownloadTotal() {
-			return bytesDownloadTotal / 1024;
-		}
-		private int bytesDone, bytesTotal, bytesDownloadTotal;
+		private int bytesDone, bytesTotal;
 	}
 	
 	private final AsyncTask<String, DLProgress, Integer> downloadTask = new AsyncTask<String, DLProgress, Integer>() {
-		private GZIPInputStream unzippedData;
 		private InputStream response;
 		private URLConnection connection;
 		
+		private File sd;
+		private File debian;
+		
+		private URL downloadURL;
+		private FileOutputStream debWriter;
+		
 		@Override
 		protected Integer doInBackground(String... params) {
-			if(params.length != 1) throw new IllegalArgumentException("Please specify 1 parameter");
-			URL downloadURL;
-			try {
-				downloadURL = new URL(params[0]);
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-				return STATUS_DL_FAIL_MALFORMED_FILE;
-			}
-			try {
-				connection = downloadURL.openConnection();
-				response = connection.getInputStream();
-				unzippedData = new GZIPInputStream(response, 0x40000); // Change buffer size?
-			} catch (IOException e) {
-				e.printStackTrace();
-				return STATUS_DL_FAIL_IOERROR;
-			}
-			
-			final File sd = getExternalFilesDir(null);
-			File debian = new File(sd.getAbsolutePath() + "/" + DEB_IMG);
+			sd = getExternalFilesDir(null);
+			debian = new File(sd.getAbsolutePath() + "/" + DEB_IMG_GZ);
 			try {
 				debian.createNewFile();
 			} catch (IOException e) {
@@ -207,78 +204,162 @@ public class InstallService extends Service implements Config {
 			File oldversion = new File(sd.getAbsolutePath() + "/" + DEB_VERSION_FILE);
 			oldversion.delete();
 			
-			FileOutputStream debWriter = null;
 			try {
 				debWriter = new FileOutputStream(debian);
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}
-			byte[] dlData = new byte[0x40000];
-			int bytesRead = 0;
-			int bytesDone = 0;
-			DLProgress progress = new DLProgress(0, DEB_IMG_URL_SIZE);
-			progress.setBytesDownloadTotal(connection.getContentLength());
+			
+			if(params.length != 1) throw new IllegalArgumentException("Please specify 1 parameter");
 			try {
-				while((bytesRead = unzippedData.read(dlData)) != -1) {
-					bytesDone += bytesRead;
-					debWriter.write(dlData, 0, bytesRead);
-					progress.setBytesDone(bytesDone);
-					publishProgress(progress);
-					
-					if(isCancelled()) {
-						debWriter.close();
-						unzippedData.close();
-						response.close();
-						// Remove old files
-						File delversion = new File(sd.getAbsolutePath() + "/" + DEB_VERSION_FILE);
-						delversion.delete();
-						File deldebian = new File(sd.getAbsolutePath() + "/" + DEB_IMG);
-						deldebian.delete();
-						return STATUS_DL_CANCEL;
-					}
-				}
-			} catch (IOException e) {
+				downloadURL = new URL(params[0]);
+			} catch (MalformedURLException e) {
 				e.printStackTrace();
-				try {
-					debWriter.close();
-					unzippedData.close();
-					response.close();
-				} catch (IOException e1) {
-					e1.printStackTrace();
+				return STATUS_DL_FAIL_MALFORMED_FILE;
+			}
+			
+			int fileSize = 0;
+			try {
+				connection = downloadURL.openConnection();
+				connection.connect();
+				fileSize = connection.getContentLength();
+			} catch (IOException e1) { }
+			
+			boolean done = true;
+			
+			int downloaded = 0;
+			while(downloaded < fileSize) {
+				if(isCancelled()) {
+					done = false;
+					break;
 				}
-				return STATUS_DL_FAIL_DLERROR;
+				try {
+					downloaded += tryDownload(downloaded, fileSize);
+				} catch (CancellationException e) {
+					done = false;
+					break;
+				} catch (IOException e) {
+					e.printStackTrace();
+					Log.w(TAG, "Download failed, trying to continue...");
+					try { Thread.sleep(300); } catch (InterruptedException e1) { }
+				}
 			}
 			
 			try {
 				debWriter.close();
-				unzippedData.close();
 				response.close();
 			} catch (IOException e) {
-				e.printStackTrace();
 			}
 			
-			File version = new File(sd.getAbsolutePath() + "/" + DEB_VERSION_FILE);
 			try {
-				version.createNewFile(); // Make sure exists
-			} catch (IOException e) {
-				e.printStackTrace();
+				unzip(debian);
+			} catch (IOException e1) {
+				e1.printStackTrace();
+				done = false;
 			}
-			try {
-				FileOutputStream versionWriter = new FileOutputStream(version);
-				versionWriter.write(("" + Config.DEB_IMG_URL_VERSION).getBytes());
-				versionWriter.close();
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-				Log.e(TAG, "Couldn't write version file");
+			
+			if(done) {
+				File version = new File(sd.getAbsolutePath() + "/" + DEB_VERSION_FILE);
+				try {
+					version.createNewFile(); // Make sure exists
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				try {
+					FileOutputStream versionWriter = new FileOutputStream(version);
+					versionWriter.write(("" + Config.DEB_IMG_URL_VERSION).getBytes());
+					versionWriter.close();
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+					Log.e(TAG, "Couldn't write version file");
+				}
 			}
 			
 			Log.i(TAG, "Finished download");
 			return STATUS_DL_SUCCESS;
 		}
+		
+		/**
+		 * 
+		 * @return the number of bytes downloaded
+		 */
+		private int tryDownload(final int bytesSoFar, final int totalBytes) throws IOException, CancellationException {
+			connection = downloadURL.openConnection();
+			connection.setRequestProperty("Range", "bytes=" + bytesSoFar + "-");
+			connection.connect();
+			response = new BufferedInputStream(connection.getInputStream());
+			
+			byte[] dlData = new byte[0x8000];
+			int bytesRead = 0;
+			int bytesDone = 0;
+			DLProgress progress = new DLProgress(bytesSoFar, totalBytes);
+			
+			int i = 0;
+			try {
+				while((bytesRead = response.read(dlData)) != -1) {
+					bytesDone += bytesRead;
+					debWriter.write(dlData, 0, bytesRead);
+					if(i++ > 6) {
+						i = 0;
+						progress.setBytesDone(bytesDone + bytesSoFar);
+						publishProgress(progress);
+					}
+					
+					if(isCancelled()) {
+						response.close();
+						debWriter.close();
+						// Remove old files
+						File delversion = new File(sd.getAbsolutePath() + "/" + DEB_VERSION_FILE);
+						delversion.delete();
+						File deldebian = new File(sd.getAbsolutePath() + "/" + DEB_IMG_GZ);
+						deldebian.delete();
+						throw new CancellationException();
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+				try {
+					response.close(); // Simply close, return number written.
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+			return bytesDone;
+		}
+		
+		private String unzip(File inFile) throws IOException
+		{
+		    InputStream gzipInputStream = new BufferedInputStream(new GZIPInputStream(new FileInputStream(inFile)));
+		 
+			DLProgress progress = new DLProgress(true, 0, Config.DEB_IMG_URL_SIZE);
+		 
+		    String outFilePath = inFile.getAbsolutePath().replace(".gz", "");
+		    OutputStream out = new FileOutputStream(outFilePath);
+		    
+		    byte[] buf = new byte[0x8000];
+		    int len, total = 0;
+		    int i = 0;
+		    while ((len = gzipInputStream.read(buf)) > 0) {
+		    	total += len;
+		        out.write(buf, 0, len);
+		        if(i++ > 60) {
+		        	i = 0;
+					progress.setBytesDone(total);
+					publishProgress(progress);
+		        }
+		    }
+		 
+		    gzipInputStream.close();
+		    out.close();
+		 
+		    inFile.delete();
+		 
+		    return outFilePath;
+		}
+		
 		int statusUpdate = 0;
-		int winUpdate = 0;
 		protected void onProgressUpdate(DLProgress... progress) {
 			status = STATUS_DOWNLOADING;
 			dlProgress = progress[0];
@@ -287,10 +368,7 @@ public class InstallService extends Service implements Config {
 				notification.contentView.setProgressBar(R.id.dlProgressBar, dlProgress.bytesTotal, dlProgress.bytesDone, false);
 				notificationManager.notify(DL_NOTIFY, notification);
 			}
-			if(winUpdate++ > 7) {
-				winUpdate = 0;
-				broadcastStatus();
-			}
+			broadcastStatus();
 		}
 		protected void onPostExecute(Integer result) {
 			status = STATUS_FINISHED;
@@ -302,7 +380,6 @@ public class InstallService extends Service implements Config {
 		@Override
 		protected void onCancelled() {
 			try {
-				unzippedData.close();
 				response.close();
 			} catch (IOException e) {
 				e.printStackTrace();

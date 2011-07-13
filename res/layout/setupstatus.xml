@@ -27,8 +27,12 @@
     >
     <TextView android:layout_height="wrap_content" android:text="@string/setupt1" android:layout_width="wrap_content" android:id="@+id/TextView01"></TextView>
     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/redownloadnotify" android:textStyle="bold" android:visibility="gone" android:id="@+id/redlconfirm"></TextView>
-    <Button android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/dlButton" android:text="@string/startdl" android:layout_gravity="center_horizontal"></Button>
+    <LinearLayout android:id="@+id/linearLayout1" android:layout_height="wrap_content" android:layout_width="match_parent" android:gravity="center_horizontal">
+        <Button android:layout_gravity="center_horizontal" android:id="@+id/dlButton" android:layout_height="wrap_content" android:text="@string/startdl" android:layout_width="wrap_content"></Button>
+        <Button android:layout_gravity="center_horizontal" android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/refreshWeb" android:text="@string/refresh" android:visibility="gone"></Button>
+    </LinearLayout>
     <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/dlStatus" android:text="@string/dlnotrunning" android:layout_gravity="center_horizontal"></TextView>
     <ProgressBar style="?android:attr/progressBarStyleHorizontal" android:layout_height="wrap_content" android:layout_width="match_parent" android:id="@+id/dlprogress" android:visibility="gone"></ProgressBar>
     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/dlprogresstext" android:text="@string/ellipsis" android:textStyle="bold|normal" android:layout_gravity="right" android:visibility="gone" android:gravity="right"></TextView>
+    <WebView android:layout_width="match_parent" android:layout_height="match_parent" android:id="@+id/sfWebView" android:visibility="gone" android:layout_margin="0dip" android:padding="0dip"></WebView>
 </LinearLayout>
