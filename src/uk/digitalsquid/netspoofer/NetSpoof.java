@@ -169,12 +169,10 @@ public class NetSpoof extends Activity implements OnClickListener {
 				break;
 			case DIALOG_BB:
 				builder = new AlertDialog.Builder(this);
-				builder.setMessage("Please install Busybox (either manually or from the Android Market) before using this application.  Search the internet for instructions on how to do this for your phone.")
+				builder.setMessage("Please install Busybox (either manually or from the Android Market) before using this application. Network Spoofer will try to run, but may be unstable as Busybox is missing.")
 					.setCancelable(false)
 					.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int id) {
-							NetSpoof.this.finish();
-						}
+						public void onClick(DialogInterface dialog, int id) { }
 					});
 				dialog = builder.create();
 				break;

@@ -1,8 +1,3 @@
-# export LOOPDEV=/dev/block/loop2000
-# export LOOPNUM=2000
-
-# export DEB=/data/local/mnt
-# export DEBIMG=/sdcard/android-netspoof/debian.img
 
 export PATH=/usr/local/bin:/usr/bin:/usr/sbin:/bin:$PATH
 export TERM=linux
@@ -10,29 +5,57 @@ export HOME=/root
 
 deb-mount ()
 {
+	echo "INFO: Mount data"
+	$BB mount
 	# Create folder
-	mkdir -p $DEB
+	# If no BB, then this will use builtins.
+	$BB mkdir -p $DEB || 
+	(
+		# Can't create dir, remount rw then try again
+		echo "Couldn't create mount directory, trying to remount filesystems RW"
+		
+		# Try everything
+		$BB mount -o remount,rw /data/local
+		$BB mount -o remount,rw /data
+		$BB mount -o remount,rw /
+		
+		echo "INFO: New mount data"
+		$BB mount
+		
+		# Try again
+		$BB mkdir -p $DEB
+	)
+	
+	ls -la $DEB
 
 	echo "Loading FS..."
 
-	mknod $LOOPDEV b 7 $LOOPNUM
-	losetup $LOOPDEV $DEBIMG
-	mount -o loop $LOOPDEV $DEB
+	$BB mknod $LOOPDEV b 7 $LOOPNUM
+	$BB losetup $LOOPDEV $DEBIMG
+	$BB mount -o loop $LOOPDEV $DEB
 
-	mount -t devpts devpts $DEB/dev/pts
-	mount -t proc proc $DEB/proc
-	mount -t sysfs sysfs $DEB/sys
+	$BB mount -t devpts devpts $DEB/dev/pts
+	$BB mount -t proc proc $DEB/proc
+	$BB mount -t sysfs sysfs $DEB/sys
+	
+	# Debug
+	ls -la $DEB
 }
 
 deb-umount ()
 {
 	echo "Closing environment"
-	umount $DEB/dev/pts
-	umount $DEB/proc   
-	umount $DEB/sys 
+	# Debug
+	ls -la $DEB
+	
+	$BB umount $DEB/dev/pts
+	$BB umount $DEB/proc   
+	$BB umount $DEB/sys 
 
-	umount $LOOPDEV
-	losetup -d $LOOPDEV
-	rm $LOOPDEV
+	$BB umount $LOOPDEV
+	$BB losetup -d $LOOPDEV
+	$BB rm $LOOPDEV
+	
+	ls -la $DEB
 	echo "Done."
 }

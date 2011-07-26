@@ -44,7 +44,10 @@ public final class FileInstaller implements LogConf {
 	
 	private void installFile(String filename, String permissions, int id) throws Resources.NotFoundException, IOException {
 		installFile(filename, id);
-		ProcessRunner.runProcess(FileFinder.BUSYBOX, "chmod", "a+rx", filename);
+		if(!FileFinder.BUSYBOX.equals("")) 
+			ProcessRunner.runProcess(FileFinder.BUSYBOX, "chmod", "a+rx", filename);
+		else
+			ProcessRunner.runProcess("chmod", "a+rx", filename); // Run non-bb version
 	}
 	
 	public void installScript(String scriptName, int id) throws Resources.NotFoundException, IOException {

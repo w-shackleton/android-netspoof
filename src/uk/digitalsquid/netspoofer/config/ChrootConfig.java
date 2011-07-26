@@ -47,7 +47,7 @@ public final class ChrootConfig {
 	private final Map<String, String> values = new HashMap<String, String>();
 	
 	public ChrootConfig(Context context) {
-		if(DEFAULTS == null) DEFAULTS = new ChrootConfig("/dev/block/loop2000", 2000, "/data/local/mnt", context.getExternalFilesDir(null) + "/" + Config.DEB_IMG, "eth0");
+		if(DEFAULTS == null) DEFAULTS = new ChrootConfig("/dev/block/loop2000", 250, "/data/local/mnt", context.getExternalFilesDir(null) + "/" + Config.DEB_IMG, "eth0");
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		loopdev = prefs.getString("loopdev", DEFAULTS.loopdev);
 		if(loopdev.equals("")) loopdev = DEFAULTS.loopdev;
@@ -102,12 +102,22 @@ public final class ChrootConfig {
 	public String getDebianImage() {
 		return debianImage;
 	}
+	
+	/**
+	 * Adds busybox to the values, as found in FileFinder.
+	 */
+	private void addBBToValues() {
+		if(!FileFinder.BUSYBOX.equals("")) // Leave undefined. This will cause the shell scripts to use the system utils instead, with dragons ahead.
+			values.put("BB", FileFinder.BUSYBOX);
+	}
 
 	public Map<String, String> getValues() {
+		addBBToValues();
 		return values;
 	}
 
 	public String[] getExecValues() {
+		addBBToValues();
 		String[] vals = new String[values.size()];
 		
 		int i = 0;

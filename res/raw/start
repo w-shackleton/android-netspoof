@@ -27,5 +27,5 @@ echo 1 > /proc/sys/net/ipv4/ip_forward
 shift
 
 echo "Starting environment"
-chroot $DEB $@
+$BB chroot $DEB $@
 echo "Environment done."

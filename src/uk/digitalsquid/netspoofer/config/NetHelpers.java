@@ -115,7 +115,8 @@ public final class NetHelpers implements LogConf {
 		
 		String ifacename = iface.getDisplayName();
 		List<String> routeArgs = new ArrayList<String>();
-		routeArgs.add(FileFinder.BUSYBOX);
+		// If not using BB, don't add it.
+		if(!FileFinder.BUSYBOX.equals("")) routeArgs.add(FileFinder.BUSYBOX);
 		routeArgs.add("route");
 		routeArgs.add("-n");
 		
