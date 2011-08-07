@@ -56,6 +56,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -234,13 +235,13 @@ public class RouterSelector extends Activity implements OnClickListener, LogConf
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			
 			LayoutInflater inflater = LayoutInflater.from(this);
-			View view = inflater.inflate(R.layout.otheripdialog, null);
+			LinearLayout view = (LinearLayout)inflater.inflate(R.layout.otheripdialog, null);
 			
 			final EditText
-				myIp = (EditText) findViewById(R.id.myIpText),
-				subnetMask = (EditText) findViewById(R.id.subnetMaskText),
-				routerIp = (EditText) findViewById(R.id.routerIpText),
-				myIf = (EditText) findViewById(R.id.myIfText);
+				myIp = (EditText) view.findViewById(R.id.myIpText),
+				subnetMask = (EditText) view.findViewById(R.id.subnetMaskText),
+				routerIp = (EditText) view.findViewById(R.id.routerIpText),
+				myIf = (EditText) view.findViewById(R.id.myIfText);
 			
 			builder.setView(view);
 			builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
