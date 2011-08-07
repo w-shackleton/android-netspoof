@@ -22,6 +22,8 @@
 package uk.digitalsquid.netspoofer.spoofs;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -52,4 +54,6 @@ public abstract class Spoof implements Serializable {
 	public static interface OnExtraDialogDoneListener {
 		void onDone();
 	}
+	
+	public Map<String, String> getCustomEnv() {return new HashMap<String, String>();}
 }

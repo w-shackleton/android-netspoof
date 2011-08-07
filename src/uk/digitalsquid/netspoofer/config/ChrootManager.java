@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 import uk.digitalsquid.netspoofer.R;
+import uk.digitalsquid.netspoofer.spoofs.CustomGSearchSpoof;
 import uk.digitalsquid.netspoofer.spoofs.IPRedirectSpoof;
 import uk.digitalsquid.netspoofer.spoofs.SimpleScriptedSpoof;
 import uk.digitalsquid.netspoofer.spoofs.Spoof;
@@ -131,6 +132,8 @@ public class ChrootManager implements Config {
 			}
 		}
 		
+		spoofs.add(new CustomGSearchSpoof());
+		
 		// General spoof - only arpspoof.
 		spoofs.add(new SimpleScriptedSpoof(
 				"Redirect traffic through phone",
@@ -171,6 +174,7 @@ public class ChrootManager implements Config {
 						spoof.getSpoof().getSpoofCmd(spoof.getVictimString(), spoof.getRouterIpString())); // Pass config script as arg.
 				Map<String, String> env = pb.environment();
 				env.putAll(config.getValues());
+				env.putAll(spoof.getSpoof().getCustomEnv());
 				
 				if(!spoof.isRunningPassively()) {
 					env.put("WLAN", spoof.getMyIface());
@@ -187,6 +191,7 @@ public class ChrootManager implements Config {
 				
 				combinedEnv.putAll(systemEnv);
 				combinedEnv.putAll(config.getValues());
+				combinedEnv.putAll(spoof.getSpoof().getCustomEnv());
 				
 				if(!spoof.isRunningPassively()) {
 					combinedEnv.put("WLAN", spoof.getMyIface());
