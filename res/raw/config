@@ -3,7 +3,7 @@ export PATH=/usr/local/bin:/usr/bin:/usr/sbin:/bin:$PATH
 export TERM=linux
 export HOME=/root
 
-deb-mount ()
+debmount ()
 {
 	echo "INFO: Mount data"
 	$BB mount
@@ -42,7 +42,7 @@ deb-mount ()
 	ls -la $DEB
 }
 
-deb-umount ()
+debumount ()
 {
 	echo "Closing environment"
 	# Debug

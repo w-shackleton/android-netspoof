@@ -141,7 +141,7 @@ public class HackSelector extends Activity implements OnItemClickListener, LogCo
 					if(startingDialog != null) startingDialog.cancel();
 	            	if(!gettingSpoofList) {
 	            		gettingSpoofList = true;
-	            		HackSelector.this.service.requestSpoofs();
+	            		if(HackSelector.this.service != null) HackSelector.this.service.requestSpoofs();
 	            	}
 					break;
 				case NetSpoofService.STATUS_FAILED:

@@ -22,4 +22,4 @@
 # First arg is always path to config file.
 . $1
 
-deb-umount
+debumount
