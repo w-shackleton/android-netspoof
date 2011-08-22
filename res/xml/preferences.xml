@@ -39,6 +39,6 @@
         <EditTextPreference android:key="loopnum" android:title="@string/loopNum" android:summary="@string/loopNumDesc"></EditTextPreference>
         <EditTextPreference android:key="debianMount" android:title="@string/debianMount" android:summary="@string/debianMountDesc"></EditTextPreference>
         <EditTextPreference android:key="debianImage" android:title="@string/debianImage" android:summary="@string/debianImageDesc"></EditTextPreference>
-        <EditTextPreference android:key="iface" android:title="@string/iface" android:summary="@string/ifaceDesc"></EditTextPreference>
+        <!--<EditTextPreference android:key="iface" android:title="@string/iface" android:summary="@string/ifaceDesc"></EditTextPreference>-->
     </PreferenceCategory>
 </PreferenceScreen>

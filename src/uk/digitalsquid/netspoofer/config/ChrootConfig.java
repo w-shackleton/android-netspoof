@@ -71,7 +71,7 @@ public final class ChrootConfig {
 		
 		iface = prefs.getString("iface", DEFAULTS.iface);
 		if(iface.equals("")) iface = DEFAULTS.iface;
-		values.put("WLAN", iface);
+		// values.put("WLAN", iface); - Set in other places
 	}
 	
 	private ChrootConfig(String loopdev, int loopnum, String debianMount, String debianImage, String iface) {
@@ -84,7 +84,7 @@ public final class ChrootConfig {
 		values.put("LOOPNUM", "" + loopnum);
 		values.put("DEB", debianMount);
 		values.put("DEBIMG", debianImage);
-		values.put("WLAN", iface);
+		// values.put("WLAN", iface); - Set in other places
 	}
 
 	public String getLoopdev() {
