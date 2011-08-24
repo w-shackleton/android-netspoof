@@ -22,7 +22,7 @@
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="uk.digitalsquid.netspoofer"
-      android:versionName="0.3" android:versionCode="4">
+      android:versionName="0.5" android:versionCode="5">
     <uses-sdk android:minSdkVersion="8"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
