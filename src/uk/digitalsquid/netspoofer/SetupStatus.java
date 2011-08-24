@@ -88,7 +88,7 @@ public class SetupStatus extends Activity implements OnClickListener, Config {
         	@Override
         	public void onLoadResource(WebView view, String url) {
         		// Note to self: check this every now and then, as SF may change a bit once in a while.
-        		if(url.startsWith("http://downloads.sourceforge.net/project/netspoof/debian-images/debian-0.3.img.gz?r=")) {
+        		if(url.startsWith("http://downloads.sourceforge.net/project/netspoof/debian-images/debian")) {
 	        		Log.i("android-netspoof", "Found SF DL URL: " + url);
 					if(!ConfigChecker.isInstallServiceRunning(getApplicationContext())) {
 						startServiceForUrl(url);
@@ -103,7 +103,7 @@ public class SetupStatus extends Activity implements OnClickListener, Config {
 		webView.setWebViewClient(wvc);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setBuiltInZoomControls(true);
-        webView.loadUrl("http://sourceforge.net/projects/netspoof/files/debian-images/debian-0.3.img.gz/download");
+        webView.loadUrl(SF_DEB_IMG_URL);
 	}
 	
 	private void startServiceForUrl(String url) {

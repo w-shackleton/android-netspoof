@@ -109,7 +109,7 @@ public class NetSpoofService extends Service implements LogConf {
     }
     
     private void start() {
-    	Toast.makeText(getApplicationContext(), "Starting chroot", Toast.LENGTH_LONG).show();
+    	Toast.makeText(getApplicationContext(), "Loaded setup", Toast.LENGTH_LONG).show();
     	
     	mainLoopManager.execute(new ChrootConfig(getBaseContext()));
     	setStatus(STATUS_LOADING);
@@ -121,7 +121,7 @@ public class NetSpoofService extends Service implements LogConf {
     
     @Override
     public void onDestroy() {
-    	Toast.makeText(getApplicationContext(), "Stopping chroot", Toast.LENGTH_LONG).show();
+    	Toast.makeText(getApplicationContext(), "Unloaded setup", Toast.LENGTH_LONG).show();
     	mainLoopManager.cancel(false);
     	tasks.add(new ServiceMsg(ServiceMsg.MESSAGE_STOP));
     	super.onDestroy();

@@ -110,6 +110,7 @@ public class InstallService extends Service implements Config {
 		// String downloadUrl = prefs.getString("debImgUrl", DEB_IMG_URL);
 		String downloadUrl = intent.getStringExtra(INTENT_START_URL);
 		if(downloadUrl == null) throw new IllegalArgumentException("Start URL was null");
+		Log.v(TAG, "Downloading file " + downloadUrl);
 		// if(downloadUrl.equals("")) downloadUrl = DEB_IMG_URL;
 		downloadTask.execute(downloadUrl);
 	}
