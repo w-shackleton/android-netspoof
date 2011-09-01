@@ -57,15 +57,18 @@ public final class NetHelpers implements LogConf {
 						});
 	}
 	
-	public static final int inetFromByte(byte[] ip) {
+	public static final long inetFromByte(byte[] ip) {
 		return
-			((int)ip[0] << 0 ) +
-			((int)ip[1] << 8 ) +
-			((int)ip[2] << 16) +
-			((int)ip[3] << 24);
+			((long)(ip[0]&0xFF) << 0 ) +
+			((long)(ip[1]&0xFF) << 8 ) +
+			((long)(ip[2]&0xFF) << 16) +
+			((long)(ip[3]&0xFF) << 24);
 	}
 	
 	public static final InetAddress reverseInetFromInt(int ip) throws UnknownHostException {
+		return reverseInetFromInt((long)ip);
+	}
+	public static final InetAddress reverseInetFromInt(long ip) throws UnknownHostException {
 		return InetAddress.getByAddress(new byte[] {
 				(byte) ((ip >>>24) & 0xFF),
 				(byte) ((ip >> 16) & 0xFF),
@@ -74,12 +77,17 @@ public final class NetHelpers implements LogConf {
 						});
 	}
 	
-	public static final int reverseInetFromByte(byte[] ip) {
+	/**
+	 * 
+	 * @param ip
+	 * @return a long value, to avoid IP signed-ness
+	 */
+	public static final long reverseInetFromByte(byte[] ip) {
 		return
-			((int)ip[0] << 24) +
-			((int)ip[1] << 16) +
-			((int)ip[2] << 8 ) +
-			((int)ip[3] << 0 );
+			((long)(ip[0]&0xFF) << 24) +
+			((long)(ip[1]&0xFF) << 16) +
+			((long)(ip[2]&0xFF) << 8 ) +
+			((long)(ip[3]&0xFF) << 0 );
 	}
 	
 	public static final class GatewayData implements Serializable {

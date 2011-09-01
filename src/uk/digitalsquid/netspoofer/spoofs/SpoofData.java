@@ -100,10 +100,10 @@ public class SpoofData implements Serializable {
 	public InetAddress getMyIp() {
 		return myIp;
 	}
-	public int getMyIpInt() {
+	public long getMyIpInt() {
 		return NetHelpers.inetFromByte(myIp.getAddress());
 	}
-	public int getMyIpReverseInt() {
+	public long getMyIpReverseInt() {
 		return NetHelpers.reverseInetFromByte(myIp.getAddress());
 	}
 	public String getMyIface() {
@@ -116,7 +116,7 @@ public class SpoofData implements Serializable {
 		if(routerIp == null) return "none";
 		return routerIp.getHostAddress();
 	}
-	public int getRouterIpInt() {
+	public long getRouterIpInt() {
 		return NetHelpers.inetFromByte(routerIp.getAddress());
 	}
 	public int getMySubnet() {
@@ -127,20 +127,20 @@ public class SpoofData implements Serializable {
 		return new byte[]{ 
 	            (byte)(mask >>> 24), (byte)(mask >> 16 & 0xff), (byte)(mask >> 8 & 0xff), (byte)(mask & 0xff) };
 	}
-	public int getMySubnetReverseInt() {
+	public long getMySubnetReverseInt() {
 		return 0xffffffff << (32 - mySubnet);
 	}
 	public String getMySubnetString() {
 		return SUBNETS[mySubnet];
 	}
 	
-	public int getMySubnetBaseAddressReverseInt() {
-		int ip = getMyIpReverseInt();
+	public long getMySubnetBaseAddressReverseInt() {
+		long ip = getMyIpReverseInt();
 		return ip & getMySubnetReverseInt(); // Bottom possble IP
 	}
 	
 	public String getMySubnetBaseAddressString() {
-		int baseIp = getMySubnetBaseAddressReverseInt();
+		long baseIp = getMySubnetBaseAddressReverseInt();
 		try {
 			return NetHelpers.reverseInetFromInt(baseIp).getHostAddress();
 		} catch (UnknownHostException e) {

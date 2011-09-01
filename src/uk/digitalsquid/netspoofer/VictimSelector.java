@@ -240,11 +240,11 @@ public class VictimSelector extends Activity implements OnClickListener, LogConf
 	
 	private class IPScanner extends AsyncTask<Void, Victim, Void> {
 		
-		private final int ipFrom, ipTo;
+		private final long ipFrom, ipTo;
 		
 		private boolean running = true;
 		
-		public IPScanner(int ipFrom, int ipTo) {
+		public IPScanner(long ipFrom, long ipTo) {
 			this.ipFrom = ipFrom;
 			this.ipTo = ipTo;
 		}
@@ -252,7 +252,7 @@ public class VictimSelector extends Activity implements OnClickListener, LogConf
 		@Override
 		protected Void doInBackground(Void... params) {
 			Log.d(TAG, String.format("Starting scanning IPs %d to %d.", ipFrom, ipTo));
-			for(int ip = ipFrom; ip < ipTo; ip++) {
+			for(long ip = ipFrom; ip < ipTo; ip++) {
 				try {
 					InetAddress addr = NetHelpers.reverseInetFromInt(ip);
 					if(addr.isReachable(100)) {
@@ -302,9 +302,9 @@ public class VictimSelector extends Activity implements OnClickListener, LogConf
 	private void startScanners() {
 		victimListAdapter.clearDeviceList();
 		// Start IP Scanners
-		int ip = spoof.getMyIpReverseInt();
-		int baseIp = ip & spoof.getMySubnetReverseInt(); // Bottom possble IP
-		int topIp = baseIp | (0xffffffff >>> spoof.getMySubnet()); // Top possible IP
+		long ip = spoof.getMyIpReverseInt();
+		long baseIp = ip & spoof.getMySubnetReverseInt(); // Bottom possble IP
+		long topIp = baseIp | (0xffffffffL >> spoof.getMySubnet()); // Top possible IP
 		/*
 		 * A little note here. The logical way to store IP addrs in ints (the 'reverse' commands)
 		 * is the opposite to the one used by Android functions (the non reverse ones). The difference
@@ -322,7 +322,7 @@ public class VictimSelector extends Activity implements OnClickListener, LogConf
 		if(numScanners > 40) numScanners = 40;
 		scanners = new IPScanner[numScanners];
 		
-		int range = (topIp - baseIp) / scanners.length;
+		long range = (topIp - baseIp) / scanners.length;
 		for(int i = 0; i < scanners.length - 1; i++) {
 			scanners[i] = new IPScanner(baseIp + (range * i), baseIp + (range * (i+1)));
 		}
