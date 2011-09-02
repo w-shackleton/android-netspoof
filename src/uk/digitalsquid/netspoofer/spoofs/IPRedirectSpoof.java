@@ -24,6 +24,7 @@ package uk.digitalsquid.netspoofer.spoofs;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Map;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -33,14 +34,19 @@ import android.content.DialogInterface.OnClickListener;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class IPRedirectSpoof extends Spoof {
+/**
+ * A spoof which redirects a website to another.
+ * @author william
+ *
+ */
+public class IPRedirectSpoof extends SquidScriptSpoof {
 	private static final long serialVersionUID = -7780822391880161592L;
-	public static final String KITTENWAR = "205.196.209.62";
+	public static final String KITTENWAR = "kittenwar.com";
 	
 	private InetAddress host;
 	
 	public IPRedirectSpoof(String title, String description, String hostTo) throws UnknownHostException {
-		super(title, description);
+		super(title, description, "redirect.sh");
 		if(hostTo == null) {
 			host = null;
 			return;
@@ -52,35 +58,19 @@ public class IPRedirectSpoof extends Spoof {
 	 * Constructor that leaves host undefined, and shows dialog later.
 	 * @param title
 	 * @param description
+	 * @throws UnknownHostException 
 	 */
 	public IPRedirectSpoof(String title, String description) {
-		super(title, description);
-		host = null;
+		super(title, description, "redirect.sh");
 	}
 	
-	/**
-	 * Returns the spoofing debian shell command.
-	 * @param victim The victim of the attack; <code>null</code> means everyone on the subnet.
-	 * @param router The router to intercept packets for.
-	 */
-	@Override
-	public String getSpoofCmd(String victim, String router) {
-		if(victim == null) victim = "*";
-		return String.format("spoof %s %s 1 %s", victim, router, host.getHostAddress());
-	}
-
-	@Override
-	public String getStopCmd() {
-		return "\n"; // Enter stops this
-	}
-
 	@Override
 	public Dialog displayExtraDialog(final Context context, final OnExtraDialogDoneListener onDone) {
 		if(host == null) {
 			AlertDialog.Builder alert = new AlertDialog.Builder(context);
 	
 			alert.setTitle("Website redirect");
-			alert.setMessage("Please enter a website to redirect to.");
+			alert.setMessage("Please enter a website to redirect to, not including http:// (eg. kittenwar.com).");
 	
 			final EditText input = new EditText(context);
 			alert.setView(input);
@@ -108,5 +98,15 @@ public class IPRedirectSpoof extends Spoof {
 			return alert.create();
 		}
 		else return null;
+	}
+	
+	/**
+	 * Adds redirect env variable
+	 */
+	@Override
+	public Map<String, String> getCustomEnv() {
+		Map<String, String> ret = super.getCustomEnv();
+		ret.put("REDIRECTURL", host.getHostName());
+		return ret;
 	}
 }

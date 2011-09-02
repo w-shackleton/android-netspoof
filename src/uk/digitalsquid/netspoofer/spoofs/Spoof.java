@@ -28,7 +28,7 @@ import java.util.Map;
 import android.app.Dialog;
 import android.content.Context;
 
-public abstract class Spoof implements Serializable {
+public abstract class Spoof implements Serializable, Comparable<Spoof> {
 	private static final long serialVersionUID = -3207729013734241941L;
 	
 	private final String title, description;
@@ -56,4 +56,9 @@ public abstract class Spoof implements Serializable {
 	}
 	
 	public Map<String, String> getCustomEnv() {return new HashMap<String, String>();}
+	
+	@Override
+	public int compareTo(Spoof other) {
+		return getTitle().compareTo(other.getTitle());
+	}
 }

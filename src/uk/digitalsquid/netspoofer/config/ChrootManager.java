@@ -28,8 +28,8 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,9 +45,9 @@ import android.content.Context;
 import android.content.res.Resources.NotFoundException;
 import android.os.Build;
 import android.util.Log;
-import android.widget.Toast;
 
 public class ChrootManager implements Config {
+	@SuppressWarnings("unused")
 	private final Context context;
 	private final ChrootConfig config;
 	
@@ -141,13 +141,10 @@ public class ChrootManager implements Config {
 				"spoof %s %s 0", "\n"));
 		
 		// IP Redirect spoofs.
-		try {
-			spoofs.add(new IPRedirectSpoof("All sites -> kittenwar", "Redirect all websites to kittenwar.com", IPRedirectSpoof.KITTENWAR));
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-			Toast.makeText(context, "Couldn't load kittenwar webaddress", Toast.LENGTH_LONG).show();
-		}
 		spoofs.add(new IPRedirectSpoof("All sites -> other website", "Redirect all websites to another website"));
+		
+		Collections.sort(spoofs);
+		
 		return spoofs;
 	}
 	
