@@ -77,6 +77,8 @@ public class NetSpoof extends Activity implements OnClickListener {
 		
 		if(!ConfigChecker.checkInstalledLatest(getApplicationContext())) {
 			setupButton.setTypeface(setupButton.getTypeface(), Typeface.BOLD);
+		} else {
+			setupButton.setTypeface(setupButton.getTypeface(), Typeface.NORMAL);
 		}
 
 		prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -158,12 +160,11 @@ public class NetSpoof extends Activity implements OnClickListener {
 				break;
 			case DIALOG_ROOT:
 				builder = new AlertDialog.Builder(this);
-				builder.setMessage("Please root your phone before using this application. Search the internet for instructions on how to do this for your phone.\nA custom firmware (such as CyanogenMod) is also recommended.")
+				builder.setMessage("Please root your phone before using this application. Search the internet for instructions on how to do this for your phone.\nA custom firmware (such as CyanogenMod) is also recommended.\n" +
+				"If the 'su' application is somewhere else on your phone, please specify it in the settings.")
 					.setCancelable(false)
 					.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int id) {
-							NetSpoof.this.finish();
-						}
+						public void onClick(DialogInterface dialog, int id) { }
 					});
 				dialog = builder.create();
 				break;

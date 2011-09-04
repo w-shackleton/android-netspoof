@@ -21,6 +21,11 @@
 
 package uk.digitalsquid.netspoofer.servicestatus;
 
+/**
+ * Message for managing notifications
+ * @author william
+ *
+ */
 public class Notifyer extends ServiceStatus {
 	
 	public static final int STATUS_SHOW = 0;

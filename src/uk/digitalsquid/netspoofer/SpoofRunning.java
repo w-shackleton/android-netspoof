@@ -41,6 +41,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class SpoofRunning extends Activity implements OnClickListener, LogConf {
 	public static final String EXTRA_SPOOFDATA = "uk.digitalsquid.netspoofer.SpoofRunning.SPOOFDATA";
@@ -142,6 +143,7 @@ public class SpoofRunning extends Activity implements OnClickListener, LogConf {
         	startButton.setEnabled(false);
         	startButton.setText(R.string.stop);
         	spoofStatus.setText(R.string.spoofstarting);
+        	stopBackPress = true;
         	break;
         case NetSpoofService.STATUS_STARTED:
         	startButton.setEnabled(true);
@@ -153,10 +155,11 @@ public class SpoofRunning extends Activity implements OnClickListener, LogConf {
         	startButton.setText(R.string.start);
         	spoofStatus.setText(R.string.spoofstopping);
         	break;
-        case NetSpoofService.STATUS_LOADED:
+        case NetSpoofService.STATUS_LOADED: // Stopped
         	startButton.setEnabled(true);
         	startButton.setText(R.string.start);
         	spoofStatus.setText(R.string.spoofnotrunning);
+        	stopBackPress = false;
         	break;
 		}
 	}
@@ -174,6 +177,18 @@ public class SpoofRunning extends Activity implements OnClickListener, LogConf {
 				break;
 			}
 			break;
+		}
+	}
+	
+	private boolean stopBackPress = false;
+	
+	// Stop accidental back press
+	@Override
+	public void onBackPressed() {
+		if(!stopBackPress) finish();
+		else {
+			Toast.makeText(this, "Spoof is still running, please press back again to confirm that you want to exit.", Toast.LENGTH_LONG).show();
+			stopBackPress = false;
 		}
 	}
 }
