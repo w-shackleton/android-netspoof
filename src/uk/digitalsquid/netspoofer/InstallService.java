@@ -53,6 +53,7 @@ public class InstallService extends Service implements Config {
 	public static final String INTENT_EXTRA_DLSTATE = "uk.digitalsquid.netspoofer.InstallService.dlprogress";
 	public static final String INTENT_STATUSUPDATE = "uk.digitalsquid.netspoofer.config.ConfigChecker.StatusUpdate";
 	public static final String INTENT_START_URL = "uk.digitalsquid.netspoofer.config.InstallStatus.URL";
+	public static final String INTENT_START_URL_UNZIPPED = "uk.digitalsquid.netspoofer.config.InstallStatus.URLUnzipped";
 	public static final int STATUS_STARTED = 0;
 	public static final int STATUS_DOWNLOADING = 1;
 	public static final int STATUS_FINISHED = 2;
@@ -109,10 +110,26 @@ public class InstallService extends Service implements Config {
 		// SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 		// String downloadUrl = prefs.getString("debImgUrl", DEB_IMG_URL);
 		String downloadUrl = intent.getStringExtra(INTENT_START_URL);
+		boolean downloadUnzipped = intent.getBooleanExtra(INTENT_START_URL_UNZIPPED, false);
 		if(downloadUrl == null) throw new IllegalArgumentException("Start URL was null");
 		Log.v(TAG, "Downloading file " + downloadUrl);
 		// if(downloadUrl.equals("")) downloadUrl = DEB_IMG_URL;
-		downloadTask.execute(downloadUrl);
+		downloadTask.execute(new DlStartData(downloadUrl, downloadUnzipped));
+	}
+	
+	/**
+	 * Information about the download to start
+	 * @author william
+	 *
+	 */
+	private static class DlStartData {
+		public final String url;
+		public final boolean unzipped;
+		
+		public DlStartData(String url, boolean unzipped) {
+			this.url = url;
+			this.unzipped = unzipped;
+		}
 	}
 	
 	private DLProgress dlProgress = new DLProgress(0, 1024);
@@ -180,7 +197,7 @@ public class InstallService extends Service implements Config {
 		private int bytesDone, bytesTotal;
 	}
 	
-	private final AsyncTask<String, DLProgress, Integer> downloadTask = new AsyncTask<String, DLProgress, Integer>() {
+	private final AsyncTask<DlStartData, DLProgress, Integer> downloadTask = new AsyncTask<DlStartData, DLProgress, Integer>() {
 		private InputStream response;
 		private URLConnection connection;
 		
@@ -191,9 +208,12 @@ public class InstallService extends Service implements Config {
 		private FileOutputStream debWriter;
 		
 		@Override
-		protected Integer doInBackground(String... params) {
+		protected Integer doInBackground(DlStartData... params) {
+			boolean downloadUnzipped = params[0].unzipped;
 			sd = getExternalFilesDir(null);
-			debian = new File(sd.getAbsolutePath() + "/" + DEB_IMG_GZ);
+			debian = downloadUnzipped ?
+					new File(sd.getAbsolutePath() + "/" + DEB_IMG) : // Save directly to new location
+					new File(sd.getAbsolutePath() + "/" + DEB_IMG_GZ);
 			try {
 				debian.createNewFile();
 			} catch (IOException e) {
@@ -213,7 +233,7 @@ public class InstallService extends Service implements Config {
 			
 			if(params.length != 1) throw new IllegalArgumentException("Please specify 1 parameter");
 			try {
-				downloadURL = new URL(params[0]);
+				downloadURL = new URL(params[0].url);
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
 				return STATUS_DL_FAIL_MALFORMED_FILE;
@@ -252,11 +272,13 @@ public class InstallService extends Service implements Config {
 			} catch (IOException e) {
 			}
 			
-			try {
-				unzip(debian);
-			} catch (IOException e1) {
-				e1.printStackTrace();
-				done = false;
+			if(!downloadUnzipped) { // Don't bother extracting
+				try {
+					unzip(debian);
+				} catch (IOException e1) {
+					e1.printStackTrace();
+					done = false;
+				}
 			}
 			
 			if(done) {

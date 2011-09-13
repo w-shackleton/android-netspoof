@@ -103,12 +103,21 @@ public class SetupStatus extends Activity implements OnClickListener, Config {
 		webView.setWebViewClient(wvc);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setBuiltInZoomControls(true);
-        webView.loadUrl(SF_DEB_IMG_URL);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		// If user wants to download larger file
+		downloadUnzipped = prefs.getBoolean("downloadUnzipped", false);
+		if(downloadUnzipped)
+	        webView.loadUrl(SF_DEB_IMG_URL_NOZIP);
+		else
+	        webView.loadUrl(SF_DEB_IMG_URL);
 	}
+	
+	private boolean downloadUnzipped;
 	
 	private void startServiceForUrl(String url) {
 		Intent intent = new Intent(getApplicationContext(), InstallService.class);
 		intent.putExtra(InstallService.INTENT_START_URL, url);
+		intent.putExtra(InstallService.INTENT_START_URL_UNZIPPED, downloadUnzipped);
 		startService(intent);
 		status.setText(R.string.dlStarting);
 		dlButton.setText(R.string.dlCancel);

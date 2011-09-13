@@ -62,6 +62,8 @@
     <string name="loadfailed">Something went wrong whilst trying to load. Perhaps the SD card isn\'t plugged in, or you didn\'t accept the superuser command?\n\nCheck the log for more details.</string>
     <string name="preferences">Preferences</string>
     <string name="programPrefs">Programs</string>
+    <string name="downloadUnzipped">Download uncompressed installation files</string>
+    <string name="downloadUnzippedDesc">Download the setup files uncompressed (larger download). Use if you are having problems with the extraction process.</string>
     <string name="pathToSu">Custom path to \'su\' command</string>
     <string name="pathToBB">Custom path to \'busybox\' command</string>
     <string name="pathToSuDesc">Set a custom path to the superuser binary. Normally this is automatically detected.</string>

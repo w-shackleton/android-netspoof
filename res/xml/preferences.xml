@@ -23,9 +23,10 @@
 <PreferenceScreen
   xmlns:android="http://schemas.android.com/apk/res/android" android:title="@string/preferences">
     <PreferenceCategory android:title="@string/programPrefs">
-        <EditTextPreference android:title="@string/pathToSu" android:key="pathToSu" android:summary="@string/pathToSuDesc"></EditTextPreference>
+        <CheckBoxPreference android:key="downloadUnzipped" android:title="@string/downloadUnzipped" android:summary="@string/downloadUnzippedDesc"></CheckBoxPreference><EditTextPreference android:title="@string/pathToSu" android:key="pathToSu" android:summary="@string/pathToSuDesc"></EditTextPreference>
         <EditTextPreference android:key="pathToBB" android:title="@string/pathToBB" android:summary="@string/pathToBBDesc"></EditTextPreference>
         <EditTextPreference android:key="debImgUrl" android:title="@string/debImgUrl" android:summary="@string/debImgUrlDesc"></EditTextPreference>
+        
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/automaticOptions">
         <CheckBoxPreference android:title="@string/autoChooseRouter" android:key="autoChooseRouter" android:summary="@string/autoChooseRouterDesc"></CheckBoxPreference>
