@@ -268,7 +268,7 @@ public class InstallService extends Service implements Config {
 			
 			try {
 				debWriter.close();
-				response.close();
+				if(response != null) response.close(); // Could be nothing that was downloaded
 			} catch (IOException e) {
 			}
 			
@@ -305,7 +305,7 @@ public class InstallService extends Service implements Config {
 		}
 		
 		/**
-		 * 
+		 * Tries to download part of the file
 		 * @return the number of bytes downloaded
 		 */
 		private int tryDownload(final int bytesSoFar, final int totalBytes) throws IOException, CancellationException {

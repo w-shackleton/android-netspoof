@@ -145,7 +145,11 @@ public class HackSelector extends Activity implements OnItemClickListener, LogCo
 	            	}
 					break;
 				case NetSpoofService.STATUS_FAILED:
-					if(startingDialog != null) startingDialog.cancel();
+					try {
+						if(startingDialog != null) startingDialog.cancel();
+					} catch (IllegalArgumentException e) {
+						Log.e(TAG, "Couldn't close dialog, ignoring...");
+					}
 					showDialog(DIALOG_FAIL_LOAD);
 					break;
 				}

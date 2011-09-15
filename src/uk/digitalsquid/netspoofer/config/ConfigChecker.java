@@ -39,6 +39,7 @@ public final class ConfigChecker implements Config {
 	public static final boolean checkInstalled(Context context) {
 		if(getSDStatus(false)) {
 			final File sd = context.getExternalFilesDir(null);
+			if(sd == null) return false;
 			File debian = new File(sd.getAbsolutePath() + "/" + DEB_VERSION_FILE);
 			if(debian.exists()) return true;
 		}
@@ -48,6 +49,7 @@ public final class ConfigChecker implements Config {
 	public static final boolean checkInstalledLatest(Context context) {
 		if(getSDStatus(false)) {
 			final File sd = context.getExternalFilesDir(null);
+			if(sd == null) return false;
 			File version = new File(sd.getAbsolutePath() + "/" + DEB_VERSION_FILE);
 			String ver;
 			try {
