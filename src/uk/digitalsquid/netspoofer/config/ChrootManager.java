@@ -91,7 +91,7 @@ public class ChrootManager implements Config {
 		// Setup & mount DEB.
 		ProcessRunner.runProcess(env, FileFinder.SU, "-c", fi.getScriptPath("mount") + " " + fi.getScriptPath("config")); // Pass config script as arg.
 		
-		try { Thread.sleep(50); } catch (InterruptedException e) { e.printStackTrace(); }
+		try { Thread.sleep(300); } catch (InterruptedException e) { e.printStackTrace(); }
 		return new File(config.getDebianMount() + "/rewriters").exists();
 	}
 	
