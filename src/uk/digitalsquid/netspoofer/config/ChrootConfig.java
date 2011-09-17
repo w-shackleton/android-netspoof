@@ -27,6 +27,7 @@ import java.util.Map;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.widget.Toast;
 
 /**
  * A class to hold the configuration; It is pulled from the shared preferences.
@@ -57,6 +58,9 @@ public final class ChrootConfig {
 			loopnum = prefs.getInt("loopnum", DEFAULTS.loopnum);
 		} catch (NumberFormatException e) {
 			loopnum = DEFAULTS.loopnum;
+		} catch (ClassCastException e) {
+			loopnum = DEFAULTS.loopnum;
+			Toast.makeText(context, "Invalid loop device number, using default", Toast.LENGTH_SHORT).show();
 		}
 		if(prefs.getString("loopnum", "").equals("")) loopnum = DEFAULTS.loopnum;
 		values.put("LOOPNUM", "" + loopnum);
