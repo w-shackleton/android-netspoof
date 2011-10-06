@@ -23,12 +23,16 @@ package uk.digitalsquid.netspoofer.config;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
-public final class FileFinder {
+public final class FileFinder implements LogConf {
 	private FileFinder() { }
 	private static boolean initialised = false;
 	
@@ -76,8 +80,10 @@ public final class FileFinder {
 		if(initialised) {
 			return;
 		}
-		assert context != null;
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		SharedPreferences prefs = null;
+		if(context != null) {
+			prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		}
 		initialised = true;
 		BUSYBOX = findBusybox(prefs);
 		if(BUSYBOX.equals("")) {
@@ -87,6 +93,29 @@ public final class FileFinder {
 		if(SU.equals("")) {
 			throw new FileNotFoundException("su");
 		}
+		
+		checkBBInstalledFunctions();
+	}
+	
+	/**
+	 * Checks that the necessary BB commands are available
+	 * @throws FileNotFoundException 
+	 */
+	static final void checkBBInstalledFunctions() throws FileNotFoundException {
+		List<String> result = new LinkedList<String>();
+		try {
+			ProcessRunner.runProcess(null, result, BUSYBOX);
+		} catch (IOException e) {
+			Log.e(TAG, "Failed to check BB programs, probably as BB doesn't exist?");
+			e.printStackTrace();
+		}
+		boolean chrootFound = false;
+		for(String line : result) {
+			if(line.contains("chroot")) {
+				chrootFound = true;
+			}
+		}
+		if(!chrootFound) throw new FileNotFoundException("chroot");
 	}
 	
 	/**

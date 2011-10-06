@@ -25,6 +25,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import android.os.Build;
@@ -37,7 +38,26 @@ public final class ProcessRunner implements LogConf {
 		return runProcess(null, args);
 	}
 
+	/**
+	 * Runs a process with the given environment and args
+	 * @param env
+	 * @param args
+	 * @return
+	 * @throws IOException
+	 */
 	public static final int runProcess(Map<String, String> env, String... args) throws IOException {
+		return runProcess(env, null, args);
+	}
+	
+	/**
+	 * Runs a process with an environment and saves the output to output.
+	 * @param env The environment
+	 * @param output A list to put the command's output in.
+	 * @param args The program args
+	 * @return
+	 * @throws IOException
+	 */
+	public static final int runProcess(Map<String, String> env, List<String> output, String... args) throws IOException {
 		Process proc;
 		if(Build.VERSION.SDK_INT >= 9) { // 2.2 doesn't like this method
 			ProcessBuilder pb = new ProcessBuilder(args);
@@ -66,10 +86,12 @@ public final class ProcessRunner implements LogConf {
 		while(running) {
 			while(cout.ready()) {
 				String msg = cout.readLine();
+				if(output != null) output.add(msg);
 				Log.d(TAG, "cout: " + msg);
 			}
 			while(cerr.ready()) {
 				String msg = cerr.readLine();
+				if(output != null) output.add(msg);
 				Log.d(TAG, "cerr: " + msg);
 			}
 			try {

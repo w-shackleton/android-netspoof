@@ -57,6 +57,10 @@ public class NetSpoof extends Activity implements OnClickListener {
 	static final int DIALOG_W_SD = 2;
 	static final int DIALOG_ROOT = 3;
 	static final int DIALOG_BB = 4;
+	/**
+	 * BB found, no chroot.
+	 */
+	static final int DIALOG_BB_2 = 6;
 	static final int DIALOG_ABOUT = 5;
 	
 	private Button startButton, setupButton;
@@ -118,6 +122,8 @@ public class NetSpoof extends Activity implements OnClickListener {
 				showDialog(DIALOG_ROOT);
 			} else if(e.getMessage().equals("busybox")) {
 				showDialog(DIALOG_BB);
+			} else if(e.getMessage().equals("chroot")) {
+				showDialog(DIALOG_BB_2);
 			}
 		}
 	}
@@ -171,6 +177,15 @@ public class NetSpoof extends Activity implements OnClickListener {
 			case DIALOG_BB:
 				builder = new AlertDialog.Builder(this);
 				builder.setMessage("Please install Busybox (either manually or from the Android Market) before using this application. Network Spoofer will try to run, but may be unstable as Busybox is missing.")
+					.setCancelable(false)
+					.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int id) { }
+					});
+				dialog = builder.create();
+			case DIALOG_BB_2:
+				builder = new AlertDialog.Builder(this);
+				builder.setTitle("So close..");
+				builder.setMessage("You have Busybox installed, but it doesn't appear to have a required component 'chroot'. Please update Busybox or try a different version of Busybox. Network Spoofer will most likely not work until you have updated Busybox")
 					.setCancelable(false)
 					.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int id) { }
