@@ -28,6 +28,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import uk.digitalsquid.netspoofer.JNI;
+
 import android.content.Context;
 import android.content.res.Resources;
 import android.util.Log;
@@ -42,17 +44,14 @@ public final class FileInstaller implements LogConf {
 		new File(context.getFilesDir().getParent() + BIN_DIR).mkdir();
 	}
 	
-	private void installFile(String filename, String permissions, int id) throws Resources.NotFoundException, IOException {
+	private void installFile(String filename, boolean executable, int id) throws Resources.NotFoundException, IOException {
 		installFile(filename, id);
-		if(!FileFinder.BUSYBOX.equals("")) 
-			ProcessRunner.runProcess(FileFinder.BUSYBOX, "chmod", "a+rx", filename);
-		else
-			ProcessRunner.runProcess("chmod", "a+rx", filename); // Run non-bb version
+		if(executable) JNI.setExecutable(filename);
 	}
 	
 	public void installScript(String scriptName, int id) throws Resources.NotFoundException, IOException {
 		String scriptPath = getScriptPath(scriptName);
-		installFile(scriptPath, "a+x", id);
+		installFile(scriptPath, true, id);
 	}
 	
 	private void installFile(String filename, int id) throws Resources.NotFoundException, IOException {

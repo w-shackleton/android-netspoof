@@ -7,6 +7,14 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+/*
+ * Class:     uk_digitalsquid_netspoofer_JNI
+ * Method:    setExecutable
+ * Signature: (Ljava/lang/String;)I
+ */
+JNIEXPORT jint JNICALL Java_uk_digitalsquid_netspoofer_JNI_setExecutable
+  (JNIEnv *, jobject, jstring);
+
 #ifdef __cplusplus
 }
 #endif
