@@ -28,6 +28,8 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import uk.digitalsquid.netspoofer.config.LogConf;
 import uk.digitalsquid.netspoofer.config.NetHelpers;
@@ -97,13 +99,22 @@ public class VictimSelector extends Activity implements OnClickListener, LogConf
 		scanProgressRefresh.setOnClickListener(this);
 		
 		startScanners();
+		hostnameFinder.execute();
+	}
+	
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		Log.v(TAG, "VictimSelector stopping");
+		hostnameFinder.cancel(false);
 	}
 	
 	private VictimListAdapter victimListAdapter;
 	
-	public static class Victim implements Comparable<Victim>, Serializable {
+	public class Victim implements Comparable<Victim>, Serializable {
 		private static final long serialVersionUID = -8815727249378333391L;
 		private final InetAddress ip;
+		private String name;
 		
 		public Victim(InetAddress ip) {
 			this.ip = ip;
@@ -115,6 +126,22 @@ public class VictimSelector extends Activity implements OnClickListener, LogConf
 
 		public String getIpString() {
 			return ip.getHostAddress();
+		}
+		
+		/**
+		 * Gets the predetermined hostname. This will initially be <code>null</code>, but will be filled in later by the lookup thread.
+		 * @return
+		 */
+		public String getHostname() {
+			return name;
+		}
+		
+		public void setHostname(String name) {
+			this.name = name;
+		}
+		
+		public void notifyChange() {
+			victimListAdapter.notifyDataSetChanged();
 		}
 
 		@Override
@@ -186,8 +213,7 @@ public class VictimSelector extends Activity implements OnClickListener, LogConf
 	        	break;
         	default:
 	        	holder.vIp.setText(getItem(position).ip.getHostAddress());
-	        	// holder.vText.setText(getItem(position).ip.getCanonicalHostName());
-	        	holder.vText.setText("");
+	        	holder.vText.setText(getItem(position).getHostname());
         		break;
 	        }
 	        return convertView;
@@ -256,7 +282,9 @@ public class VictimSelector extends Activity implements OnClickListener, LogConf
 				try {
 					InetAddress addr = NetHelpers.reverseInetFromInt(ip);
 					if(addr.isReachable(100)) {
-						publishProgress(new Victim(addr));
+						Victim v = new Victim(addr);
+						hostnameFindQueue.add(v); // Get hostname async-ly
+						publishProgress(v);
 					}
 				} catch (UnknownHostException e) {
 					e.printStackTrace();
@@ -394,4 +422,34 @@ public class VictimSelector extends Activity implements OnClickListener, LogConf
 		intent.putExtra(SpoofRunning.EXTRA_SPOOFDATA, spoof);
 		startActivity(intent);
 	}
+	
+	LinkedBlockingQueue<Victim> hostnameFindQueue = new LinkedBlockingQueue<VictimSelector.Victim>();
+	
+	private final AsyncTask<Void, Victim, Void> hostnameFinder = new AsyncTask<Void, VictimSelector.Victim, Void>() {
+		@Override
+		protected Void doInBackground(Void... params) {
+			while(!isCancelled()) {
+				Victim victim = null;
+				try {
+					victim = hostnameFindQueue.poll(100, TimeUnit.MILLISECONDS);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				
+				if(victim != null) {
+					Log.v(TAG, "Finding hostname for " + victim.getIp().getHostAddress());
+					victim.setHostname(victim.getIp().getHostName());
+					Log.v(TAG, "IP " + victim.getIp().getHostAddress() + " = " + victim.getHostname());
+					publishProgress(victim);
+				}
+			}
+			return null;
+		}
+		
+		@Override
+		protected void onProgressUpdate(Victim... victim) {
+			super.onProgressUpdate(victim);
+			victim[0].notifyChange();
+		}
+	};
 }

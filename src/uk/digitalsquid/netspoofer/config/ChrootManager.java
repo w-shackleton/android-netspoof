@@ -61,6 +61,7 @@ public class ChrootManager implements Config {
 	public synchronized boolean start() throws IOException {
 		Map<String, String> env = config.getValues();
 		// Setup & mount DEB.
+		FileFinder.initialise(context.getApplicationContext()); // In case of weird android instancing
 		ProcessRunner.runProcess(env, FileFinder.SU, "-c", FileInstaller.getScriptPath(context, "mount") + " " + FileInstaller.getScriptPath(context, "config")); // Pass config script as arg.
 		
 		try { Thread.sleep(300); } catch (InterruptedException e) { e.printStackTrace(); }
@@ -73,6 +74,7 @@ public class ChrootManager implements Config {
 	 */
 	public synchronized int stop() throws IOException {
 		Map<String, String> env = config.getValues();
+		FileFinder.initialise(context.getApplicationContext()); // In case of weird android instancing
 		return ProcessRunner.runProcess(env, FileFinder.SU, "-c", FileInstaller.getScriptPath(context, "umount") + " " + FileInstaller.getScriptPath(context, "config"));
 	}
 	
@@ -135,6 +137,7 @@ public class ChrootManager implements Config {
 	
 	public void startSpoof(SpoofData spoof) throws IOException {
 		if(spoofRunning) throw new IllegalStateException("Spoof already running");
+		FileFinder.initialise(context.getApplicationContext()); // In case of weird android instancing
 		synchronized(spoofLock) {
 			spoofRunning = true;
 			
