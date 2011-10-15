@@ -36,6 +36,8 @@ public final class FileFinder implements LogConf {
 	private FileFinder() { }
 	private static boolean initialised = false;
 	
+	private static Context context;
+	
 	public static String SU = "";
 	public static String BUSYBOX = "";
 	
@@ -43,11 +45,16 @@ public final class FileFinder implements LogConf {
 	private static final String[] SU_PATHS = { "/system/bin/su", "/system/xbin/su", "/system/sbin/su", "/vendor/bin/su", "su" };
 	
 	/**
-	 * Searches for the busybox executable
+	 * Searches for the busybox executable. Uses the builtin one if user wants. This is also the default behaviour.
 	 * @return
 	 */
 	private static final String findBusybox(SharedPreferences prefs) {
 		if(prefs != null) {
+			if(prefs.getBoolean("builtinbusybox", true)) {
+				String myBB = FileInstaller.getScriptPath(context, "busybox");
+				Log.i(TAG, "Using local copy of BB");
+				return myBB; // Found our copy of BB
+			}
 			String customPath = prefs.getString("pathToBB", "");
 			if(!customPath.equals("") && new File(customPath).exists()) return customPath;
 		}
@@ -76,15 +83,24 @@ public final class FileFinder implements LogConf {
 		return "";
 	}
 	
-	public static final void initialise(Context context) throws FileNotFoundException {
+	public static final void initialise(Context appContext) throws FileNotFoundException {
+		FileFinder.context = appContext;
 		if(initialised) {
 			return;
 		}
+		initialised = true;
+		loadPaths();
+	}
+	
+	/**
+	 * (re)loads the SU and BB paths, perhaps after a preference change.
+	 * @throws FileNotFoundException 
+	 */
+	public static final void loadPaths() throws FileNotFoundException {
 		SharedPreferences prefs = null;
 		if(context != null) {
 			prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		}
-		initialised = true;
 		BUSYBOX = findBusybox(prefs);
 		if(BUSYBOX.equals("")) {
 			throw new FileNotFoundException("busybox");
@@ -93,7 +109,6 @@ public final class FileFinder implements LogConf {
 		if(SU.equals("")) {
 			throw new FileNotFoundException("su");
 		}
-		
 		checkBBInstalledFunctions();
 	}
 	
@@ -110,12 +125,19 @@ public final class FileFinder implements LogConf {
 			e.printStackTrace();
 		}
 		boolean chrootFound = false;
+		boolean losetupFound = false;
+		boolean mountFound = false;
 		for(String line : result) {
-			if(line.contains("chroot")) {
+			if(line.contains("chroot"))
 				chrootFound = true;
-			}
+			if(line.contains("losetup"))
+				losetupFound = true;
+			if(line.contains("mount"))
+				mountFound = true;
 		}
 		if(!chrootFound) throw new FileNotFoundException("chroot");
+		if(!losetupFound) throw new FileNotFoundException("losetup");
+		if(!mountFound) throw new FileNotFoundException("mount");
 	}
 	
 	/**

@@ -21,14 +21,57 @@
 
 package uk.digitalsquid.netspoofer;
 
+import java.io.FileNotFoundException;
+
+import uk.digitalsquid.netspoofer.config.FileFinder;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
+import android.widget.Toast;
 
-public class Preferences extends PreferenceActivity {
+public class Preferences extends PreferenceActivity implements OnSharedPreferenceChangeListener {
+	
+	SharedPreferences prefs;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.xml.preferences);
+		prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		prefs.registerOnSharedPreferenceChangeListener(this);
+		
+		if(prefs.getBoolean("builtinbusybox", true)) { // If builtinBB is true
+			findPreference("pathToBB").setEnabled(false);
+		} else {
+			findPreference("pathToBB").setEnabled(true);
+		}
+	}
+	
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		prefs.unregisterOnSharedPreferenceChangeListener(this);
+	}
+
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+		if(key.equals("builtinbusybox")) {
+			if(prefs.getBoolean(key, true)) { // If builtinBB is true
+				findPreference("pathToBB").setEnabled(false);
+			} else {
+				findPreference("pathToBB").setEnabled(true);
+			}
+		}
+		
+		if(key.equals("builtinbusybox") || key.equals("pathToBB")) {
+			try {
+				FileFinder.loadPaths();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+				Toast.makeText(getBaseContext(), "Failed to find new BusyBox path", Toast.LENGTH_LONG).show();
+			}
+		}
 	}
 }

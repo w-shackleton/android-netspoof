@@ -23,9 +23,12 @@
 <PreferenceScreen
   xmlns:android="http://schemas.android.com/apk/res/android" android:title="@string/preferences">
     <PreferenceCategory android:title="@string/programPrefs">
-        <CheckBoxPreference android:key="downloadUnzipped" android:title="@string/downloadUnzipped" android:summary="@string/downloadUnzippedDesc"></CheckBoxPreference><EditTextPreference android:title="@string/pathToSu" android:key="pathToSu" android:summary="@string/pathToSuDesc"></EditTextPreference>
+        <CheckBoxPreference android:key="downloadUnzipped" android:title="@string/downloadUnzipped" android:summary="@string/downloadUnzippedDesc"></CheckBoxPreference>
+        <EditTextPreference android:title="@string/pathToSu" android:key="pathToSu" android:summary="@string/pathToSuDesc"></EditTextPreference>
+        <CheckBoxPreference android:defaultValue="true" android:summary="@string/builtinbusyboxDesc" android:key="builtinbusybox" android:title="@string/builtinbusybox"></CheckBoxPreference>
         <EditTextPreference android:key="pathToBB" android:title="@string/pathToBB" android:summary="@string/pathToBBDesc"></EditTextPreference>
         <EditTextPreference android:key="debImgUrl" android:title="@string/debImgUrl" android:summary="@string/debImgUrlDesc"></EditTextPreference>
+        
         
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/automaticOptions">
@@ -33,7 +36,7 @@
         <CheckBoxPreference android:title="@string/autoChooseVictim" android:key="autoChooseVictim" android:summary="@string/autoChooseVictimDesc"></CheckBoxPreference>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/performance">
-        <EditTextPreference android:key="ipScanThreads" android:summary="@string/ipScanThreadsDesc" android:title="@string/ipScanThreads"></EditTextPreference>
+        <EditTextPreference android:key="ipScanThreads" android:summary="@string/ipScanThreadsDesc" android:title="@string/ipScanThreads" android:defaultValue="4"></EditTextPreference>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/advanced">
         <EditTextPreference android:key="loopdev" android:title="@string/loopDev" android:summary="@string/loopDevDesc"></EditTextPreference>

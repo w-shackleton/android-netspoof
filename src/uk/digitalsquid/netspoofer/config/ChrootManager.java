@@ -23,7 +23,6 @@ package uk.digitalsquid.netspoofer.config;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -34,7 +33,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import uk.digitalsquid.netspoofer.R;
 import uk.digitalsquid.netspoofer.spoofs.CustomGSearchSpoof;
 import uk.digitalsquid.netspoofer.spoofs.CustomImageChange;
 import uk.digitalsquid.netspoofer.spoofs.IPRedirectSpoof;
@@ -43,42 +41,16 @@ import uk.digitalsquid.netspoofer.spoofs.Spoof;
 import uk.digitalsquid.netspoofer.spoofs.SpoofData;
 import uk.digitalsquid.netspoofer.spoofs.SquidScriptSpoof;
 import android.content.Context;
-import android.content.res.Resources.NotFoundException;
 import android.os.Build;
 import android.util.Log;
 
 public class ChrootManager implements Config {
-	@SuppressWarnings("unused")
 	private final Context context;
 	private final ChrootConfig config;
-	
-	FileInstaller fi;
 	
 	public ChrootManager(Context context, ChrootConfig config) {
 		this.context = context;
 		this.config = config;
-		
-		try {
-			fi = new FileInstaller(context);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	private void installFiles() {
-		try {
-			fi.installScript("config", R.raw.config);
-			fi.installScript("start", R.raw.start);
-			fi.installScript("mount", R.raw.mount);
-			fi.installScript("umount", R.raw.umount);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (NotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-			Log.e(TAG, "Failed to install scripts.");
-		}
 	}
 	
 	/**
@@ -87,10 +59,9 @@ public class ChrootManager implements Config {
 	 * @throws IOException 
 	 */
 	public synchronized boolean start() throws IOException {
-		installFiles();
 		Map<String, String> env = config.getValues();
 		// Setup & mount DEB.
-		ProcessRunner.runProcess(env, FileFinder.SU, "-c", fi.getScriptPath("mount") + " " + fi.getScriptPath("config")); // Pass config script as arg.
+		ProcessRunner.runProcess(env, FileFinder.SU, "-c", FileInstaller.getScriptPath(context, "mount") + " " + FileInstaller.getScriptPath(context, "config")); // Pass config script as arg.
 		
 		try { Thread.sleep(300); } catch (InterruptedException e) { e.printStackTrace(); }
 		return new File(config.getDebianMount() + "/rewriters").exists();
@@ -102,7 +73,7 @@ public class ChrootManager implements Config {
 	 */
 	public synchronized int stop() throws IOException {
 		Map<String, String> env = config.getValues();
-		return ProcessRunner.runProcess(env, FileFinder.SU, "-c", fi.getScriptPath("umount") + " " + fi.getScriptPath("config"));
+		return ProcessRunner.runProcess(env, FileFinder.SU, "-c", FileInstaller.getScriptPath(context, "umount") + " " + FileInstaller.getScriptPath(context, "config"));
 	}
 	
 	public ArrayList<Spoof> getSpoofList() {
@@ -169,7 +140,7 @@ public class ChrootManager implements Config {
 			
 			if(Build.VERSION.SDK_INT >= 9) { // 2.2 doesn't like this method
 				ProcessBuilder pb = new ProcessBuilder(FileFinder.SU, "-c",
-						fi.getScriptPath("start") + " " + fi.getScriptPath("config") + " " + 
+						FileInstaller.getScriptPath(context, "start") + " " + FileInstaller.getScriptPath(context, "config") + " " + 
 						spoof.getSpoof().getSpoofCmd(spoof.getVictimString(), spoof.getRouterIpString())); // Pass config script as arg.
 				Map<String, String> env = pb.environment();
 				env.putAll(config.getValues());
@@ -207,7 +178,7 @@ public class ChrootManager implements Config {
 				}
 				su = Runtime.getRuntime().exec(new String [] {
 						FileFinder.SU, "-c",
-						fi.getScriptPath("start") + " " + fi.getScriptPath("config") + " " + 
+						FileInstaller.getScriptPath(context, "start") + " " + FileInstaller.getScriptPath(context, "config") + " " + 
 						spoof.getSpoof().getSpoofCmd(spoof.getVictimString(), spoof.getRouterIpString()), // Pass config script as arg.
 				}, envArray);
 			}

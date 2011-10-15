@@ -23,9 +23,12 @@ package uk.digitalsquid.netspoofer;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import uk.digitalsquid.netspoofer.config.ConfigChecker;
 import uk.digitalsquid.netspoofer.config.FileFinder;
+import uk.digitalsquid.netspoofer.config.FileInstaller;
+import uk.digitalsquid.netspoofer.config.LogConf;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -35,18 +38,20 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.res.Resources.NotFoundException;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.Toast;
 
-public class NetSpoof extends Activity implements OnClickListener {
+public class NetSpoof extends Activity implements OnClickListener, LogConf {
 	/**
 	 * A dialog to tell the user to mount their SD card.
 	 */
@@ -73,29 +78,12 @@ public class NetSpoof extends Activity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		if(ConfigChecker.checkInstalled(getApplicationContext())) findViewById(R.id.startButton).setEnabled(true);
 		startButton = (Button) findViewById(R.id.startButton);
 		startButton.setOnClickListener(this);
 		setupButton = (Button) findViewById(R.id.setupButton);
 		setupButton.setOnClickListener(this);
 		
-		if(!ConfigChecker.checkInstalledLatest(getApplicationContext())) {
-			setupButton.setTypeface(setupButton.getTypeface(), Typeface.BOLD);
-		} else {
-			setupButton.setTypeface(setupButton.getTypeface(), Typeface.NORMAL);
-		}
-
-		prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-
-		if(!ConfigChecker.getSDStatus(false)) {
-			showDialog(DIALOG_R_SD);
-		} else {
-			if(!ConfigChecker.getSDStatus(true)) {
-				showDialog(DIALOG_R_SD);
-			}
-			firstTimeSetup();
-		}
-		startButton.setEnabled(ConfigChecker.checkInstalled(getApplicationContext()));
+		loadTask.execute();
 		
 	    statusFilter = new IntentFilter();
 	    statusFilter.addAction(InstallService.INTENT_STATUSUPDATE);
@@ -107,25 +95,6 @@ public class NetSpoof extends Activity implements OnClickListener {
 	public void onDestroy() {
 		super.onDestroy();
 		unregisterReceiver(statusReceiver);
-	}
-
-	private void firstTimeSetup() {
-		final File sd = getExternalFilesDir(null);
-		File imgDir = new File(sd, "img");
-		if(!imgDir.exists()) if(!imgDir.mkdir()) Toast.makeText(this, "Couldn't create 'img' folder.", Toast.LENGTH_LONG).show();
-		
-		try {
-			FileFinder.initialise(getApplicationContext());
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			if(e.getMessage().equals("su")) {
-				showDialog(DIALOG_ROOT);
-			} else if(e.getMessage().equals("busybox")) {
-				showDialog(DIALOG_BB);
-			} else if(e.getMessage().equals("chroot")) {
-				showDialog(DIALOG_BB_2);
-			}
-		}
 	}
 
 	@Override
@@ -235,4 +204,99 @@ public class NetSpoof extends Activity implements OnClickListener {
 	        return super.onOptionsItemSelected(item);
 	    }
 	}
+	
+	private AsyncTask<Void, Integer, Void> loadTask = new AsyncTask<Void, Integer, Void>() {
+		
+		@Override
+		protected Void doInBackground(Void... params) {
+			if(!ConfigChecker.checkInstalledLatest(getApplicationContext())) {
+				setupButton.setTypeface(setupButton.getTypeface(), Typeface.BOLD);
+			} else {
+				setupButton.setTypeface(setupButton.getTypeface(), Typeface.NORMAL);
+			}
+	
+			prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+			
+			// Install scripts & BB
+			installFiles();
+	
+			// Check SD and files on it
+			if(!ConfigChecker.getSDStatus(false)) {
+				publishProgress(DIALOG_R_SD);
+			} else {
+				if(!ConfigChecker.getSDStatus(true)) {
+					publishProgress(DIALOG_W_SD);
+				}
+				
+				final File sd = getExternalFilesDir(null);
+				File imgDir = new File(sd, "img");
+				if(!imgDir.exists()) if(!imgDir.mkdir()) Log.e(TAG, "Couldn't create 'img' dir");
+				
+				// Find files etc.
+				try {
+					FileFinder.initialise(getApplicationContext());
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+					if(e.getMessage().equals("su")) {
+						publishProgress(DIALOG_ROOT);
+					} else if(e.getMessage().equals("busybox")) {
+						publishProgress(DIALOG_BB);
+					} else if(
+							e.getMessage().equals("chroot") ||
+							e.getMessage().equals("losetup") ||
+							e.getMessage().equals("mount")
+							) {
+						publishProgress(DIALOG_BB_2);
+					}
+					
+				}
+			}
+		
+			return null;
+		}
+		
+		/**
+		 * Shows the dialog with the given ID.
+		 */
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+			super.onProgressUpdate(values);
+			showDialog(values[0]);
+		}
+		
+		@Override
+		protected void onPostExecute(Void result) {
+			if(!ConfigChecker.checkInstalledLatest(getApplicationContext())) {
+				setupButton.setTypeface(setupButton.getTypeface(), Typeface.BOLD);
+			} else {
+				setupButton.setTypeface(setupButton.getTypeface(), Typeface.NORMAL);
+			}
+			startButton.setEnabled(ConfigChecker.checkInstalled(getApplicationContext()));
+			
+			findViewById(R.id.loading).setVisibility(View.INVISIBLE);
+		}
+		
+		/**
+		 * Installs scripts & files into the data folder.
+		 */
+		private void installFiles() {
+			try {
+				FileInstaller fi = new FileInstaller(getApplicationContext());
+				
+				fi.installScript("config", R.raw.config);
+				fi.installScript("start", R.raw.start);
+				fi.installScript("mount", R.raw.mount);
+				fi.installScript("umount", R.raw.umount);
+				
+				fi.installScript("busybox", R.raw.busybox);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (NotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+				Log.e(TAG, "Failed to install scripts.");
+			}
+		}
+	};
 }

@@ -98,10 +98,11 @@ public final class R {
         public static final int netspoofmenu=0x7f070000;
     }
     public static final class raw {
-        public static final int config=0x7f050000;
-        public static final int mount=0x7f050001;
-        public static final int start=0x7f050002;
-        public static final int umount=0x7f050003;
+        public static final int busybox=0x7f050000;
+        public static final int config=0x7f050001;
+        public static final int mount=0x7f050002;
+        public static final int start=0x7f050003;
+        public static final int umount=0x7f050004;
     }
     public static final class string {
         public static final int about=0x7f06003b;
@@ -118,6 +119,8 @@ public final class R {
         public static final int autoChooseVictimDesc=0x7f060037;
         public static final int automaticOptions=0x7f060033;
         public static final int blank=0x7f060015;
+        public static final int builtinbusybox=0x7f060055;
+        public static final int builtinbusyboxDesc=0x7f060056;
         public static final int contactdev=0x7f060040;
         public static final int customIpSettings=0x7f060019;
         public static final int debImgUrl=0x7f060043;

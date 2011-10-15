@@ -111,4 +111,6 @@
     <string name="udternet">Upside-down-ternet</string>
     <string name="squidscripts">Squid - \'playing with traffic\'</string>
     <string name="aboutTextRefs">Many thanks to the developer of the \'upside-down-ternet\' (see above link) and the writer of \'playing with traffic\' (also above) for the inspiration for this project.</string>
+    <string name="builtinbusybox">Use builtin Busybox</string>
+    <string name="builtinbusyboxDesc">Use the version of Busybox distributed with Network Spoofer. Uncheck to use the phone\'s version.</string>
 </resources>

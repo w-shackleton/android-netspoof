@@ -40,7 +40,6 @@ public final class FileInstaller implements LogConf {
 	
 	public FileInstaller(Context context) throws FileNotFoundException {
 		this.context = context;
-		FileFinder.initialise(context);
 		new File(context.getFilesDir().getParent() + BIN_DIR).mkdir();
 	}
 	
@@ -69,7 +68,11 @@ public final class FileInstaller implements LogConf {
         is.close();
 	}
 	
-	public String getScriptPath(String scriptName) {
+	public static String getScriptPath(Context context, String scriptName) {
 		return context.getFilesDir().getParent() + BIN_DIR + "/" + scriptName;
+	}
+	
+	private String getScriptPath(String scriptName) {
+		return getScriptPath(context, scriptName);
 	}
 }
