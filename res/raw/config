@@ -26,7 +26,7 @@ debmount ()
 		$BB mkdir -p $DEB
 	)
 	
-	ls -la $DEB
+	$BB ls -la $DEB
 
 	echo "Loading FS..."
 
@@ -39,14 +39,14 @@ debmount ()
 	$BB mount -t sysfs sysfs $DEB/sys
 	
 	# Debug
-	ls -la $DEB
+	$BB ls -la $DEB
 }
 
 debumount ()
 {
 	echo "Closing environment"
 	# Debug
-	ls -la $DEB
+	$BB ls -la $DEB
 	
 	$BB umount $DEB/dev/pts
 	$BB umount $DEB/proc   
@@ -56,6 +56,6 @@ debumount ()
 	$BB losetup -d $LOOPDEV
 	$BB rm $LOOPDEV
 	
-	ls -la $DEB
+	$BB ls -la $DEB
 	echo "Done."
 }

@@ -77,11 +77,17 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-
+	
 		startButton = (Button) findViewById(R.id.startButton);
 		startButton.setOnClickListener(this);
 		setupButton = (Button) findViewById(R.id.setupButton);
 		setupButton.setOnClickListener(this);
+		
+		if(!ConfigChecker.checkInstalledLatest(getApplicationContext())) {
+			setupButton.setTypeface(setupButton.getTypeface(), Typeface.BOLD);
+		} else {
+			setupButton.setTypeface(setupButton.getTypeface(), Typeface.NORMAL);
+		}
 		
 		loadTask.execute();
 		
@@ -209,12 +215,6 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 		
 		@Override
 		protected Void doInBackground(Void... params) {
-			if(!ConfigChecker.checkInstalledLatest(getApplicationContext())) {
-				setupButton.setTypeface(setupButton.getTypeface(), Typeface.BOLD);
-			} else {
-				setupButton.setTypeface(setupButton.getTypeface(), Typeface.NORMAL);
-			}
-	
 			prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 			
 			// Install scripts & BB

@@ -11,6 +11,5 @@ bg-med.png
 bg-small.png
 bin/android-netspoof.api8.apk
 bzr.sf
-libs/armeabi/libnetspooflib.so
 obj
 obj/local
