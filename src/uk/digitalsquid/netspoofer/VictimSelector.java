@@ -111,7 +111,7 @@ public class VictimSelector extends Activity implements OnClickListener, LogConf
 	
 	private VictimListAdapter victimListAdapter;
 	
-	public class Victim implements Comparable<Victim>, Serializable {
+	public static class Victim implements Comparable<Victim>, Serializable {
 		private static final long serialVersionUID = -8815727249378333391L;
 		private final InetAddress ip;
 		private String name;
@@ -140,10 +140,6 @@ public class VictimSelector extends Activity implements OnClickListener, LogConf
 			this.name = name;
 		}
 		
-		public void notifyChange() {
-			victimListAdapter.notifyDataSetChanged();
-		}
-
 		@Override
 		public int compareTo(Victim another) {
 			byte[] me = ip.getAddress();
@@ -428,6 +424,7 @@ public class VictimSelector extends Activity implements OnClickListener, LogConf
 	private final AsyncTask<Void, Victim, Void> hostnameFinder = new AsyncTask<Void, VictimSelector.Victim, Void>() {
 		@Override
 		protected Void doInBackground(Void... params) {
+			Log.i(TAG, "Starting to find hostnames");
 			while(!isCancelled()) {
 				Victim victim = null;
 				try {
@@ -449,7 +446,7 @@ public class VictimSelector extends Activity implements OnClickListener, LogConf
 		@Override
 		protected void onProgressUpdate(Victim... victim) {
 			super.onProgressUpdate(victim);
-			victim[0].notifyChange();
+			victimListAdapter.notifyDataSetChanged();
 		}
 	};
 }

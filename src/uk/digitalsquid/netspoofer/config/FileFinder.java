@@ -127,6 +127,8 @@ public final class FileFinder implements LogConf {
 		boolean chrootFound = false;
 		boolean losetupFound = false;
 		boolean mountFound = false;
+		boolean mkdirFound = false;
+		boolean mknodFound = false;
 		for(String line : result) {
 			if(line.contains("chroot"))
 				chrootFound = true;
@@ -134,10 +136,16 @@ public final class FileFinder implements LogConf {
 				losetupFound = true;
 			if(line.contains("mount"))
 				mountFound = true;
+			if(line.contains("mkdir"))
+				mkdirFound = true;
+			if(line.contains("mknod"))
+				mknodFound = true;
 		}
-		if(!chrootFound) throw new FileNotFoundException("chroot");
-		if(!losetupFound) throw new FileNotFoundException("losetup");
-		if(!mountFound) throw new FileNotFoundException("mount");
+		if(!chrootFound) throw new FileNotFoundException("bb:chroot");
+		if(!losetupFound) throw new FileNotFoundException("bb:losetup");
+		if(!mountFound) throw new FileNotFoundException("bb:mount");
+		if(!mkdirFound) throw new FileNotFoundException("bb:mkdir");
+		if(!mknodFound) throw new FileNotFoundException("bb:mknod");
 	}
 	
 	/**

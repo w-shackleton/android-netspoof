@@ -160,7 +160,7 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 			case DIALOG_BB_2:
 				builder = new AlertDialog.Builder(this);
 				builder.setTitle("So close..");
-				builder.setMessage("You have Busybox installed, but it doesn't appear to have a required component 'chroot'. Please update Busybox or try a different version of Busybox. Network Spoofer will most likely not work until you have updated Busybox")
+				builder.setMessage("You have Busybox installed, but it doesn't appear to have a required component '" + missingBBComponent + "'. Please update Busybox or try a different version of Busybox. Network Spoofer will most likely not work until you have updated Busybox")
 					.setCancelable(false)
 					.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int id) { }
@@ -170,6 +170,8 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 		}
 		return dialog;
 	}
+	
+	private String missingBBComponent = "?";
 	
 	private IntentFilter statusFilter;
 	private final BroadcastReceiver statusReceiver = new BroadcastReceiver() {
@@ -241,11 +243,8 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 						publishProgress(DIALOG_ROOT);
 					} else if(e.getMessage().equals("busybox")) {
 						publishProgress(DIALOG_BB);
-					} else if(
-							e.getMessage().equals("chroot") ||
-							e.getMessage().equals("losetup") ||
-							e.getMessage().equals("mount")
-							) {
+					} else if(e.getMessage().startsWith("bb:")) {
+						missingBBComponent = e.getMessage().substring(2); // 2 = end of bb:
 						publishProgress(DIALOG_BB_2);
 					}
 					
