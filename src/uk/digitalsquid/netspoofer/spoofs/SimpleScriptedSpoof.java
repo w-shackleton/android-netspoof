@@ -23,6 +23,7 @@ package uk.digitalsquid.netspoofer.spoofs;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 
 public class SimpleScriptedSpoof extends Spoof {
 	private static final long serialVersionUID = 6510405899936627809L;
@@ -58,5 +59,12 @@ public class SimpleScriptedSpoof extends Spoof {
 			OnExtraDialogDoneListener onDone) {
 		return null;
 	}
-
+	@Override
+	public Intent activityForResult(Context context) {
+		return null;
+	}
+	@Override
+	public boolean activityFinished(Intent result) {
+		return false;
+	}
 }

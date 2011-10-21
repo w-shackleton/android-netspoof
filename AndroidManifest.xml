@@ -46,6 +46,8 @@
         <activity android:label="@string/spoofrunning" android:name="SpoofRunning" android:screenOrientation="portrait"></activity>
         <activity android:label="@string/preferences" android:name="Preferences"></activity>
         <activity android:name="About" android:theme="@android:style/Theme.Dialog" android:label="@string/about"></activity>
+        <activity android:name="YoutubeSelector" android:label="@string/selectvideo">
+        </activity>
 
     </application>
 </manifest>

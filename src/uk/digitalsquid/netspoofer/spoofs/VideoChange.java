@@ -21,45 +21,41 @@
 
 package uk.digitalsquid.netspoofer.spoofs;
 
-import android.app.Dialog;
+import java.util.Map;
+
+import uk.digitalsquid.netspoofer.YoutubeSelector;
 import android.content.Context;
 import android.content.Intent;
 
-public class SquidScriptSpoof extends Spoof {
-	private static final long serialVersionUID = 52887789907180627L;
+/**
+ * A custom version of the Google spoof which allows the user to enter their own google search query.
+ * @author william
+ *
+ */
+public class VideoChange extends SquidScriptSpoof {
+	private static final long serialVersionUID = 8490503138296852028L;
+
+	public VideoChange() {
+		super("Custom Youtube video", "Change all videos on Youtube to a custom one", "trollface.sh");
+	}
 	
-	private final String scriptName;
+	private String videoURL;
 	
-	public SquidScriptSpoof(String title, String description, String scriptName) {
-		super(title, description);
-		this.scriptName = scriptName;
-	}
-
-	@Override
-	public String getSpoofCmd(String victim, String router) {
-		if(victim == null) victim = "all";
-		return String.format("spoof %s %s 2 %s", victim, router, scriptName);
-	}
-
-	@Override
-	public String getStopCmd() {
-		return "\n";
-	}
-
-	@Override
-	public Dialog displayExtraDialog(Context context, OnExtraDialogDoneListener onDone) {
-		return null;
-	}
 	@Override
 	public Intent activityForResult(Context context) {
-		return null;
+		return new Intent(context, YoutubeSelector.class);
 	}
+	
+	public boolean activityFinished(Intent intent) {
+		videoURL = intent.getStringExtra(YoutubeSelector.CODE);
+		if(videoURL == null) return false; // No video selected
+		else return true;
+	}
+	
 	@Override
-	public boolean activityFinished(Intent result) {
-		return false;
-	}
-
-	public String getScriptName() {
-		return scriptName;
+	public Map<String, String> getCustomEnv() {
+		Map<String, String> ret = super.getCustomEnv();
+		ret.put("SPOOFVIDEOID", videoURL);
+		return ret;
 	}
 }

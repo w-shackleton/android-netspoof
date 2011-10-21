@@ -254,14 +254,27 @@ public class HackSelector extends Activity implements OnItemClickListener, LogCo
 			}
 		};
 		Dialog optDialog = spoof.displayExtraDialog(this, onDone);
-		if(optDialog == null) { // Null, so execute onDone now.
-			onDone.onDone();
+		if(optDialog == null) {
+			// Only execute activity if no dialog. TODO: Make this logic better?
+			Intent resultIntent = spoof.activityForResult(this);
+			if(resultIntent != null) {
+				activityResultSpoof = spoof;
+				startActivityForResult(resultIntent, ACTIVITY_REQUEST_CUSTOM);
+			}
+			else onDone.onDone(); // Nothing to do
 		} else { // Let dialog do so.
 			optDialog.show();
 		}
 	}
 	
 	private static final int DIALOG_FAIL_LOAD = 1;
+	
+	/**
+	 * The ID used for result intents returned by custom spoofs.
+	 */
+	private static final int ACTIVITY_REQUEST_CUSTOM = 2;
+	
+	private Spoof activityResultSpoof;
 	
 	@Override
 	public Dialog onCreateDialog(int id, Bundle bundle) {
@@ -279,6 +292,25 @@ public class HackSelector extends Activity implements OnItemClickListener, LogCo
 			});
 			return builder.create();
 		default: return null;
+		}
+	}
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		switch(requestCode) {
+		case ACTIVITY_REQUEST_CUSTOM:
+			if(activityResultSpoof != null) {
+				if(resultCode == RESULT_OK) {
+					if(activityResultSpoof.activityFinished(data)) { // If true, continue
+						Log.d(TAG, "Activity done, continuing");
+						Intent intent = new Intent(HackSelector.this, RouterSelector.class);
+						intent.putExtra(RouterSelector.EXTRA_SPOOF, activityResultSpoof);
+						startActivity(intent);
+					}
+				}
+			}
+			break;
 		}
 	}
 }

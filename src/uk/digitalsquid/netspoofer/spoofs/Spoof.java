@@ -27,6 +27,7 @@ import java.util.Map;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 
 public abstract class Spoof implements Serializable, Comparable<Spoof> {
 	private static final long serialVersionUID = -3207729013734241941L;
@@ -43,6 +44,15 @@ public abstract class Spoof implements Serializable, Comparable<Spoof> {
 	
 	public abstract Dialog displayExtraDialog(Context context, OnExtraDialogDoneListener onDone);
 	
+	public abstract Intent activityForResult(Context context);
+	
+	/**
+	 * 
+	 * @param result
+	 * @return <code>true</code> to continue the process.
+	 */
+	public abstract boolean activityFinished(Intent result);
+	
 	public String getDescription() {
 		return description;
 	}
@@ -53,6 +63,10 @@ public abstract class Spoof implements Serializable, Comparable<Spoof> {
 
 	public static interface OnExtraDialogDoneListener {
 		void onDone();
+	}
+
+	public static interface OnActivityResultListener {
+		void onResult(Intent result);
 	}
 	
 	public Map<String, String> getCustomEnv() {return new HashMap<String, String>();}

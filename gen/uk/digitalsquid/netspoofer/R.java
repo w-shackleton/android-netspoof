@@ -28,6 +28,7 @@ public final class R {
         public static final int dlStatus=0x7f08002c;
         public static final int dlprogress=0x7f08002d;
         public static final int dlprogresstext=0x7f08002e;
+        public static final int goback=0x7f08003e;
         public static final int horizontalScrollView1=0x7f080002;
         public static final int imageView1=0x7f080001;
         public static final int ipBox=0x7f080011;
@@ -42,8 +43,8 @@ public final class R {
         public static final int myIfText=0x7f080021;
         public static final int myIp=0x7f08001a;
         public static final int myIpText=0x7f08001b;
-        public static final int netSpoofMenuItemAbout=0x7f08003c;
-        public static final int netSpoofMenuItemPrefs=0x7f08003b;
+        public static final int netSpoofMenuItemAbout=0x7f08003d;
+        public static final int netSpoofMenuItemPrefs=0x7f08003c;
         public static final int redlconfirm=0x7f080029;
         public static final int refreshWeb=0x7f08002b;
         public static final int reportBug=0x7f08000d;
@@ -75,6 +76,7 @@ public final class R {
         public static final int victimExtraText=0x7f080036;
         public static final int victimIp=0x7f080035;
         public static final int victimList=0x7f080037;
+        public static final int web=0x7f08003b;
         public static final int website=0x7f080004;
         public static final int wifiSettings=0x7f080028;
     }
@@ -93,9 +95,11 @@ public final class R {
         public static final int spoofrunning=0x7f03000b;
         public static final int victimlistitem=0x7f03000c;
         public static final int victimselector=0x7f03000d;
+        public static final int youtube=0x7f03000e;
     }
     public static final class menu {
         public static final int netspoofmenu=0x7f070000;
+        public static final int youtube=0x7f070001;
     }
     public static final class raw {
         public static final int busybox=0x7f050000;
@@ -171,11 +175,13 @@ public final class R {
         public static final int redownloadnotify=0x7f06000e;
         public static final int refresh=0x7f060021;
         public static final int reportBug=0x7f060041;
+        public static final int returntoyt=0x7f060058;
         public static final int routerIp=0x7f060017;
         public static final int scanning=0x7f06001b;
         public static final int selectgateway=0x7f060013;
         public static final int selecthack=0x7f060011;
         public static final int selectvictim=0x7f06001a;
+        public static final int selectvideo=0x7f060057;
         public static final int setup=0x7f060006;
         public static final int setupt1=0x7f060008;
         public static final int spoofRunning=0x7f060050;
