@@ -185,7 +185,7 @@ public class RouterSelector extends Activity implements OnClickListener, LogConf
 	        switch(position) {
 	        case ITEM_DEFAULT:
 	        	if(wifiReady) {
-	        		name.setText("Default gateway");
+	        		name.setText("Default gateway (recommended)");
 	        		description.setText("Autodetected " + wifiGateway);
 	        		convertView.setEnabled(true);
 	        	} else {

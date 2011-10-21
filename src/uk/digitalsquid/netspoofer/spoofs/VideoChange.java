@@ -36,7 +36,7 @@ public class VideoChange extends SquidScriptSpoof {
 	private static final long serialVersionUID = 8490503138296852028L;
 
 	public VideoChange() {
-		super("Custom Youtube video", "Change all videos on Youtube to a custom one", "trollface.sh");
+		super("Custom Youtube video", "Change all videos on Youtube to a custom one", "rickroll.sh");
 	}
 	
 	private String videoURL;

@@ -1,9 +1,11 @@
 package uk.digitalsquid.netspoofer;
 
+import uk.digitalsquid.netspoofer.config.LogConf;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -18,7 +20,7 @@ import android.widget.Toast;
  * @author william
  *
  */
-public class YoutubeSelector extends Activity {
+public class YoutubeSelector extends Activity implements LogConf {
 	
 	/**
 	 * The extra the YT code is returned in.
@@ -53,11 +55,21 @@ public class YoutubeSelector extends Activity {
 						Intent intent = new Intent();
 						intent.putExtra(CODE, videoID);
 						YoutubeSelector.this.setResult(RESULT_OK, intent);
+						
+						Log.i(TAG, "Found video " + videoID + " at " + url);
 						Toast.makeText(getApplicationContext(), "Got video", Toast.LENGTH_LONG).show();
+						
+						YoutubeSelector.this.finish();
 					}
 				} catch(UnsupportedOperationException e) { }
 			}
 		}
+		
+	    @Override
+	    public boolean shouldOverrideUrlLoading(WebView view, String url) {
+	        view.loadUrl(url);
+	        return true;
+	    }
 	};
 	
 	@Override
@@ -71,8 +83,8 @@ public class YoutubeSelector extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    switch (item.getItemId()) {
 	    case R.id.goback:
+	        web.loadUrl("http://m.youtube.com");
 	        return true;
-	    case R.id.netSpoofMenuItemAbout:
 	    default:
 	        return super.onOptionsItemSelected(item);
 	    }

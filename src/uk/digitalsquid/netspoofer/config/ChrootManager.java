@@ -40,6 +40,7 @@ import uk.digitalsquid.netspoofer.spoofs.SimpleScriptedSpoof;
 import uk.digitalsquid.netspoofer.spoofs.Spoof;
 import uk.digitalsquid.netspoofer.spoofs.SpoofData;
 import uk.digitalsquid.netspoofer.spoofs.SquidScriptSpoof;
+import uk.digitalsquid.netspoofer.spoofs.VideoChange;
 import android.content.Context;
 import android.os.Build;
 import android.util.Log;
@@ -108,6 +109,7 @@ public class ChrootManager implements Config {
 		
 		spoofs.add(new CustomGSearchSpoof());
 		spoofs.add(new CustomImageChange());
+		spoofs.add(new VideoChange());
 		
 		// General spoof - only arpspoof.
 		spoofs.add(new SimpleScriptedSpoof(
