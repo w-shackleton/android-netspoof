@@ -41,6 +41,11 @@ public final class FileFinder implements LogConf {
 	public static String SU = "";
 	public static String BUSYBOX = "";
 	
+	/**
+	 * The system's version of BB, if it exists.
+	 */
+	public static String SYSTEM_BUSYBOX = "";
+	
 	private static final String[] BB_PATHS = { "/system/bin/busybox", "/system/xbin/busybox", "/system/sbin/busybox", "/vendor/bin/busybox", "busybox" };
 	private static final String[] SU_PATHS = { "/system/bin/su", "/system/xbin/su", "/system/sbin/su", "/vendor/bin/su", "su" };
 	
@@ -48,8 +53,8 @@ public final class FileFinder implements LogConf {
 	 * Searches for the busybox executable. Uses the builtin one if user wants. This is also the default behaviour.
 	 * @return
 	 */
-	private static final String findBusybox(SharedPreferences prefs) {
-		if(prefs != null) {
+	private static final String findBusybox(boolean useLocal, SharedPreferences prefs) {
+		if(useLocal && prefs != null) {
 			if(prefs.getBoolean("builtinbusybox", true)) {
 				String myBB = FileInstaller.getScriptPath(context, "busybox");
 				Log.i(TAG, "Using local copy of BB");
@@ -101,7 +106,8 @@ public final class FileFinder implements LogConf {
 		if(context != null) {
 			prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		}
-		BUSYBOX = findBusybox(prefs);
+		BUSYBOX = findBusybox(true, prefs);
+		SYSTEM_BUSYBOX = findBusybox(false, prefs);
 		if(BUSYBOX.equals("")) {
 			throw new FileNotFoundException("busybox");
 		}
@@ -109,7 +115,12 @@ public final class FileFinder implements LogConf {
 		if(SU.equals("")) {
 			throw new FileNotFoundException("su");
 		}
-		checkBBInstalledFunctions();
+		try {
+			checkBBInstalledFunctions();
+		} catch (FileNotFoundException e) { // If fails with this BB, try system BB.
+			BUSYBOX = SYSTEM_BUSYBOX;
+			checkBBInstalledFunctions(); // Let this one throw error
+		}
 	}
 	
 	/**
@@ -157,7 +168,7 @@ public final class FileFinder implements LogConf {
 			return;
 		}
 		initialised = true;
-		BUSYBOX = findBusybox(null);
+		BUSYBOX = findBusybox(true, null);
 		if(BUSYBOX.equals("")) {
 			throw new FileNotFoundException("busybox");
 		}
