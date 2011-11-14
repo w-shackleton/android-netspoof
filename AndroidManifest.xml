@@ -37,7 +37,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:label="Setup Status" android:name="SetupStatus"></activity>
+        <activity android:label="Setup Status" android:name=".InstallStatus"></activity>
         <service android:name="InstallService" android:label="Installer Service"></service>
         <activity android:name="HackSelector" android:label="@string/selecthack"></activity>
         <service android:name="NetSpoofService"></service>

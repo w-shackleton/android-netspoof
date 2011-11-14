@@ -45,7 +45,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class SetupStatus extends Activity implements OnClickListener, Config {
+public class InstallStatus extends Activity implements OnClickListener, Config {
 	private Button dlButton;
 	
 	private ProgressBar dlProgress;
@@ -173,25 +173,25 @@ public class SetupStatus extends Activity implements OnClickListener, Config {
 				switch(intent.getIntExtra(InstallService.INTENT_EXTRA_DLSTATE, InstallService.STATUS_DL_FAIL_DLERROR)) {
 				case InstallService.STATUS_DL_FAIL_DLERROR:
 					Toast.makeText(
-							SetupStatus.this,
+							InstallStatus.this,
 							"An error ocurred whilst downloading the file. Please try again",
 							Toast.LENGTH_LONG).show();
 					break;
 				case InstallService.STATUS_DL_FAIL_IOERROR:
 					Toast.makeText(
-							SetupStatus.this,
+							InstallStatus.this,
 							"Couldn't download file. Are you connected to the internet?",
 							Toast.LENGTH_LONG).show();
 					break;
 				case InstallService.STATUS_DL_FAIL_MALFORMED_FILE:
 					Toast.makeText(
-							SetupStatus.this,
+							InstallStatus.this,
 							"Couldn't locate download file. Please check download URL, or please report this as a bug.",
 							Toast.LENGTH_LONG).show();
 					break;
 				case InstallService.STATUS_DL_FAIL_SDERROR:
 					Toast.makeText(
-							SetupStatus.this,
+							InstallStatus.this,
 							"Couldn't open file for writing on SD card",
 							Toast.LENGTH_LONG).show();
 					break;
@@ -200,7 +200,7 @@ public class SetupStatus extends Activity implements OnClickListener, Config {
 					break;
 				case InstallService.STATUS_DL_CANCEL:
 					Toast.makeText(
-							SetupStatus.this,
+							InstallStatus.this,
 							"Cancelled",
 							Toast.LENGTH_LONG).show();
 					break;

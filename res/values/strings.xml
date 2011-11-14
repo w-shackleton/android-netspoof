@@ -115,4 +115,6 @@
     <string name="builtinbusyboxDesc">Use the version of Busybox distributed with Network Spoofer. Uncheck to use the phone\'s version.</string>
     <string name="selectvideo">Please Select a Youtube Video</string>
     <string name="returntoyt">Return to Youtube</string>
+    <string name="customText">Change page text</string>
+    <string name="customTextDesc">Enter custom text values to change. Blank fields are ignored.</string>
 </resources>

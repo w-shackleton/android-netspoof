@@ -107,7 +107,7 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 	public void onClick(View v) {
 		switch(v.getId()) {
 			case R.id.setupButton:
-				startActivity(new Intent(this, SetupStatus.class));
+				startActivity(new Intent(this, InstallStatus.class));
 				break;
 			case R.id.startButton:
 				startActivity(new Intent(this, HackSelector.class));

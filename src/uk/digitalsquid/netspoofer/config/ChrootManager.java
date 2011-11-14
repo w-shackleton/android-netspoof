@@ -35,6 +35,7 @@ import java.util.Map;
 
 import uk.digitalsquid.netspoofer.spoofs.CustomGSearchSpoof;
 import uk.digitalsquid.netspoofer.spoofs.CustomImageChange;
+import uk.digitalsquid.netspoofer.spoofs.CustomTextChange;
 import uk.digitalsquid.netspoofer.spoofs.IPRedirectSpoof;
 import uk.digitalsquid.netspoofer.spoofs.SimpleScriptedSpoof;
 import uk.digitalsquid.netspoofer.spoofs.Spoof;
@@ -110,6 +111,7 @@ public class ChrootManager implements Config {
 		spoofs.add(new CustomGSearchSpoof());
 		spoofs.add(new CustomImageChange());
 		spoofs.add(new VideoChange());
+		spoofs.add(new CustomTextChange());
 		
 		// General spoof - only arpspoof.
 		spoofs.add(new SimpleScriptedSpoof(
