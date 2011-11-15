@@ -29,6 +29,8 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -68,22 +70,40 @@ public class CustomTextChange extends SquidScriptSpoof {
 		R.id.textTo8,
 	};
 	
-	private final void setValue(boolean old, int position, String value) {
+	/**
+	 * Sets the value in the environment map, and also saves to shared prefs.
+	 * @param old
+	 * @param position
+	 * @param value
+	 */
+	private final void setValue(SharedPreferences prefs, boolean old, int position, String value) {
 		if(old) {
-			changeValues.put(String.format("TEXT%dOLD", position), value);
+			final String key = String.format("TEXT%dOLD", position);
+			changeValues.put(key, value);
+			prefs.edit().putString(key, value).commit();
 		} else {
-			changeValues.put(String.format("TEXT%dNEW", position), value);
+			final String key = String.format("TEXT%dNEW", position);
+			changeValues.put(key, value);
+			prefs.edit().putString(key, value).commit();
 		}
 	}
 	
 	@Override
 	public Dialog displayExtraDialog(final Context context, final OnExtraDialogDoneListener onDone) {
+		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		final AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		
 		final LayoutInflater inflater = LayoutInflater.from(context);
 		final ScrollView view = (ScrollView)inflater.inflate(R.layout.customtextdialog, null);
 		
-		builder.setMessage(R.string.customTextDesc);
+		// Iterate through all
+		for(int i = 0; i < 8; i++) {
+			String from = prefs.getString(String.format("TEXT%dOLD", i), "");
+			String to = prefs.getString(String.format("TEXT%dNEW", i), "");
+			((TextView)view.findViewById(froms[i])).setText(from);
+			((TextView)view.findViewById(tos[i])).setText(to);
+		}
+		
 		
 		builder.setView(view);
 		builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
@@ -94,8 +114,8 @@ public class CustomTextChange extends SquidScriptSpoof {
 					String from = ((TextView)view.findViewById(froms[i])).getText().toString();
 					String to = ((TextView)view.findViewById(tos[i])).getText().toString();
 					
-					setValue(true, i, from);
-					setValue(false, i, to);
+					setValue(prefs, true, i, from);
+					setValue(prefs, false, i, to);
 				}
 				
 				onDone.onDone();

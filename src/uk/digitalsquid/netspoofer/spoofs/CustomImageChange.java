@@ -28,6 +28,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.widget.EditText;
 
@@ -47,20 +48,21 @@ public class CustomImageChange extends SquidScriptSpoof {
 	
 	@Override
 	public Dialog displayExtraDialog(final Context context, final OnExtraDialogDoneListener onDone) {
+		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		AlertDialog.Builder alert = new AlertDialog.Builder(context);
 
 		alert.setTitle("Image URL");
 		alert.setMessage("Enter the URL of the image you would like to replace all images with.");
 
 		final EditText input = new EditText(context);
-		input.setText(PreferenceManager.getDefaultSharedPreferences(context).getString("imageChangeUrl", "http://"));
+		input.setText(prefs.getString("imageChangeUrl", "http://"));
 		alert.setView(input);
 
 		alert.setPositiveButton("Done", new OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				customImageURL = input.getText().toString();
-				PreferenceManager.getDefaultSharedPreferences(context).edit().putString("imageChangeUrl", customImageURL);
+				prefs.edit().putString("imageChangeUrl", customImageURL).commit();
 				onDone.onDone();
 			}
 		});

@@ -28,6 +28,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.widget.EditText;
 
 /**
@@ -46,6 +48,7 @@ public class CustomGSearchSpoof extends SquidScriptSpoof {
 	
 	@Override
 	public Dialog displayExtraDialog(final Context context, final OnExtraDialogDoneListener onDone) {
+		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		AlertDialog.Builder alert = new AlertDialog.Builder(context);
 
 		alert.setTitle("Search change pattern");
@@ -53,11 +56,13 @@ public class CustomGSearchSpoof extends SquidScriptSpoof {
 
 		final EditText input = new EditText(context);
 		alert.setView(input);
+		input.setText(prefs.getString("gSearchText", ""));
 
 		alert.setPositiveButton("Done", new OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				customFilter = input.getText().toString().replace('\n', '+').replace('\t', '+').replace(' ', '+');
+				prefs.edit().putString("gSearchText", input.getText().toString()).commit();
 				onDone.onDone();
 			}
 		});
