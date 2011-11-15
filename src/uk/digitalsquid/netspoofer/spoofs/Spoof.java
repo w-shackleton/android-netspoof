@@ -75,4 +75,9 @@ public abstract class Spoof implements Serializable, Comparable<Spoof> {
 	public int compareTo(Spoof other) {
 		return getTitle().compareTo(other.getTitle());
 	}
+	
+	@Override
+	public String toString() {
+		return title;
+	}
 }

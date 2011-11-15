@@ -110,7 +110,7 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 				startActivity(new Intent(this, InstallStatus.class));
 				break;
 			case R.id.startButton:
-				startActivity(new Intent(this, HackSelector.class));
+				startActivity(new Intent(this, SpoofSelector.class));
 				break;
 		}
 	}

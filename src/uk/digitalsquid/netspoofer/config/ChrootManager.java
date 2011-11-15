@@ -37,6 +37,7 @@ import uk.digitalsquid.netspoofer.spoofs.CustomGSearchSpoof;
 import uk.digitalsquid.netspoofer.spoofs.CustomImageChange;
 import uk.digitalsquid.netspoofer.spoofs.CustomTextChange;
 import uk.digitalsquid.netspoofer.spoofs.IPRedirectSpoof;
+import uk.digitalsquid.netspoofer.spoofs.MultiSpoof;
 import uk.digitalsquid.netspoofer.spoofs.SimpleScriptedSpoof;
 import uk.digitalsquid.netspoofer.spoofs.Spoof;
 import uk.digitalsquid.netspoofer.spoofs.SpoofData;
@@ -123,6 +124,7 @@ public class ChrootManager implements Config {
 		spoofs.add(new IPRedirectSpoof("All sites -> other website", "Redirect all websites to another website"));
 		
 		Collections.sort(spoofs);
+		spoofs.add(0, new MultiSpoof());
 		
 		return spoofs;
 	}

@@ -21,13 +21,17 @@
 
 package uk.digitalsquid.netspoofer;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import uk.digitalsquid.netspoofer.NetSpoofService.NetSpoofServiceBinder;
 import uk.digitalsquid.netspoofer.config.LogConf;
+import uk.digitalsquid.netspoofer.misc.CheckedLinearLayout;
 import uk.digitalsquid.netspoofer.servicestatus.SpoofList;
 import uk.digitalsquid.netspoofer.spoofs.Spoof;
 import uk.digitalsquid.netspoofer.spoofs.Spoof.OnExtraDialogDoneListener;
+import uk.digitalsquid.netspoofer.spoofs.SquidScriptSpoof;
 import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
@@ -42,17 +46,27 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.Checkable;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class HackSelector extends Activity implements OnItemClickListener, LogConf {
+/**
+ * Shows a list of possible spoofs, either a single one or a multi choice.
+ * @author william
+ *
+ */
+public class SpoofSelector extends Activity implements OnClickListener, OnItemClickListener, LogConf {
 	ProgressDialog startingProgress;
 	
 	private ListView spoofList;
@@ -60,22 +74,37 @@ public class HackSelector extends Activity implements OnItemClickListener, LogCo
 	boolean haveSpoofList = false;
 	boolean gettingSpoofList = false;
 	
+	boolean multiChoice = false;
+	List<Spoof> multiSpoofList;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.hackselector);
-        startService(new Intent(this, NetSpoofService.class));
-        
-        spoofListAdapter = new SpoofListAdapter();
-        spoofList = (ListView) findViewById(R.id.spoofList);
-        spoofList.setAdapter(spoofListAdapter);
-        spoofList.setOnItemClickListener(this);
-        
+		
+		if(Intent.ACTION_PICK.equals(getIntent().getAction())) { // activity for result
+			multiChoice = true;
+			setContentView(R.layout.spoofmultiselector);
+			findViewById(R.id.ok).setOnClickListener(this);
+			findViewById(R.id.cancel).setOnClickListener(this);
+		} else {
+			setContentView(R.layout.spoofselector);
+		}
+	    startService(new Intent(this, NetSpoofService.class));
+	    
+	    spoofListAdapter = new SpoofListAdapter();
+	    spoofList = (ListView) findViewById(R.id.spoofList);
+	    if(!multiChoice) {
+		    spoofList.setAdapter(spoofListAdapter);
+	    	spoofList.setOnItemClickListener(this);
+	    } else {
+			spoofList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+	    	spoofList.setItemsCanFocus(false);
+	    }
+	    
 	    statusFilter = new IntentFilter();
 	    statusFilter.addAction(NetSpoofService.INTENT_STATUSUPDATE);
 	    statusFilter.addAction(NetSpoofService.INTENT_SPOOFLIST);
 		registerReceiver(statusReceiver, statusFilter);
-		
 	}
 	@Override
 	public void onDestroy() {
@@ -107,16 +136,16 @@ public class HackSelector extends Activity implements OnItemClickListener, LogCo
 		@Override
 		public void onServiceConnected(ComponentName className, IBinder service) {
 			NetSpoofServiceBinder binder = (NetSpoofServiceBinder) service;
-            HackSelector.this.service = binder.getService();
+            SpoofSelector.this.service = binder.getService();
             
-            switch(HackSelector.this.service.getStatus()) {
+            switch(SpoofSelector.this.service.getStatus()) {
             case NetSpoofService.STATUS_LOADING:
             	showStartingDialog();
             	break;
             case NetSpoofService.STATUS_LOADED:
             	if(!gettingSpoofList) {
             		gettingSpoofList = true;
-            		HackSelector.this.service.requestSpoofs();
+            		SpoofSelector.this.service.requestSpoofs();
             	}
             	break;
             }
@@ -141,7 +170,7 @@ public class HackSelector extends Activity implements OnItemClickListener, LogCo
 					if(startingDialog != null) startingDialog.cancel();
 	            	if(!gettingSpoofList) {
 	            		gettingSpoofList = true;
-	            		if(HackSelector.this.service != null) HackSelector.this.service.requestSpoofs();
+	            		if(SpoofSelector.this.service != null) SpoofSelector.this.service.requestSpoofs();
 	            	}
 					break;
 				case NetSpoofService.STATUS_FAILED:
@@ -155,7 +184,12 @@ public class HackSelector extends Activity implements OnItemClickListener, LogCo
 				}
 			} else if(intent.getAction().equals(NetSpoofService.INTENT_SPOOFLIST)) {
 				SpoofList spoofs = (SpoofList) intent.getSerializableExtra(NetSpoofService.INTENT_EXTRA_SPOOFLIST);
-				spoofListAdapter.setSpoofs(spoofs.getSpoofs());
+				if(multiChoice) {
+					spoofList.setAdapter(new ArrayAdapter<Spoof>(SpoofSelector.this, android.R.layout.simple_list_item_multiple_choice, spoofs.getSpoofs()));
+					multiSpoofList = spoofs.getSpoofs();
+				} else {
+					spoofListAdapter.setSpoofs(spoofs.getSpoofs());
+				}
 			}
 		}
 	};
@@ -188,7 +222,7 @@ public class HackSelector extends Activity implements OnItemClickListener, LogCo
 		private List<Spoof> spoofs;
 		
 		public SpoofListAdapter() {
-			inflater = LayoutInflater.from(HackSelector.this);
+			inflater = LayoutInflater.from(SpoofSelector.this);
 		}
 		
 		@Override
@@ -205,6 +239,13 @@ public class HackSelector extends Activity implements OnItemClickListener, LogCo
 		        } else {
 		            convertView = inflater.inflate(R.layout.spoofitem, null);
 		        }
+		        // NOTE: Not used, currently using ArrayAdapter.
+	            if(multiChoice) {
+	            	convertView.findViewById(R.id.checkbox).setVisibility(View.VISIBLE);
+	            	((CheckedLinearLayout)convertView).setCheckable((Checkable) convertView.findViewById(R.id.checkbox));
+	            } else {
+	            	convertView.findViewById(R.id.checkbox).setVisibility(View.GONE);
+	            }
 		        TextView title = (TextView) convertView.findViewById(R.id.spoofTitle);
 		        TextView description = (TextView) convertView.findViewById(R.id.spoofDescription);
 		        
@@ -233,7 +274,17 @@ public class HackSelector extends Activity implements OnItemClickListener, LogCo
 		}
 		
 		public void setSpoofs(List<Spoof> spoofs) {
-			this.spoofs = spoofs;
+			if(!multiChoice) {
+				this.spoofs = spoofs;
+			} else {
+				// Remove non squid spoofs
+				this.spoofs = new ArrayList<Spoof>();
+				for(Spoof spoof : spoofs) {
+					if(spoof instanceof SquidScriptSpoof) {
+						this.spoofs.add(spoof);
+					}
+				}
+			}
 			notifyDataSetChanged();
 		}
 	}
@@ -248,7 +299,7 @@ public class HackSelector extends Activity implements OnItemClickListener, LogCo
 			@Override
 			public void onDone() {
 				Log.d(TAG, "Dialog done, continuing");
-				Intent intent = new Intent(HackSelector.this, RouterSelector.class);
+				Intent intent = new Intent(SpoofSelector.this, RouterSelector.class);
 				intent.putExtra(RouterSelector.EXTRA_SPOOF, spoof);
 				startActivity(intent);
 			}
@@ -304,12 +355,43 @@ public class HackSelector extends Activity implements OnItemClickListener, LogCo
 				if(resultCode == RESULT_OK) {
 					if(activityResultSpoof.activityFinished(data)) { // If true, continue
 						Log.d(TAG, "Activity done, continuing");
-						Intent intent = new Intent(HackSelector.this, RouterSelector.class);
+						Intent intent = new Intent(SpoofSelector.this, RouterSelector.class);
 						intent.putExtra(RouterSelector.EXTRA_SPOOF, activityResultSpoof);
 						startActivity(intent);
 					}
 				}
 			}
+			break;
+		}
+	}
+	@Override
+	public void onClick(View v) {
+		switch(v.getId()) {
+		case R.id.ok:
+			// Process selections
+			SparseBooleanArray arr = spoofList.getCheckedItemPositions();
+			LinkedList<Spoof> selected = new LinkedList<Spoof>();
+			if(multiSpoofList != null) {
+				for(int i = 0; i < multiSpoofList.size(); i++) {
+					if(arr.get(i)) {
+						selected.add(multiSpoofList.get(i));
+					}
+				}
+			}
+			if(selected.size() != 0) {
+				Intent result = new Intent();
+				result.putExtra("uk.digitalsquid.netspoof.SpoofSelector.spoofs", selected);
+				setResult(RESULT_OK, result);
+				finish();
+			} else {
+				setResult(RESULT_CANCELED);
+				Toast.makeText(this, "Please specify some spoofs to use", Toast.LENGTH_LONG).show();
+				finish();
+			}
+			break;
+		case R.id.cancel:
+			setResult(RESULT_CANCELED);
+			finish();
 			break;
 		}
 	}

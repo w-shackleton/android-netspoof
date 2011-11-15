@@ -39,7 +39,11 @@
         </activity>
         <activity android:label="Setup Status" android:name=".InstallStatus"></activity>
         <service android:name="InstallService" android:label="Installer Service"></service>
-        <activity android:name="HackSelector" android:label="@string/selecthack"></activity>
+        <activity android:name=".SpoofSelector" android:label="@string/selecthack">
+            <intent-filter>
+                <action android:name="android.intent.action.PICK"></action>
+            </intent-filter>
+        </activity>
         <service android:name="NetSpoofService"></service>
         <activity android:name="RouterSelector" android:label="@string/selectgateway" android:noHistory="true"></activity>
         <activity android:label="@string/selectvictim" android:name="VictimSelector" android:noHistory="true"></activity>
