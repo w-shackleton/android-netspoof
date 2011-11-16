@@ -45,13 +45,25 @@ public abstract class Spoof implements Serializable, Comparable<Spoof> {
 	public abstract Dialog displayExtraDialog(Context context, OnExtraDialogDoneListener onDone);
 	
 	public abstract Intent activityForResult(Context context);
+	/**
+	 * A second activity to be displayed afterwards.
+	 * @param context
+	 * @return
+	 */
+	public Intent activityForResult2(Context context){ return null; }
 	
 	/**
 	 * 
 	 * @param result
 	 * @return <code>true</code> to continue the process.
 	 */
-	public abstract boolean activityFinished(Intent result);
+	public abstract boolean activityFinished(Context context, Intent result);
+	/**
+	 * 
+	 * @param result
+	 * @return <code>true</code> to continue the process.
+	 */
+	public boolean activityFinished2(Context context, Intent result) { return true; }
 	
 	public String getDescription() {
 		return description;

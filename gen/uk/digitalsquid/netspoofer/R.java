@@ -146,6 +146,7 @@ public final class R {
         public static final int blank=0x7f060015;
         public static final int builtinbusybox=0x7f060055;
         public static final int builtinbusyboxDesc=0x7f060056;
+        public static final int configuring=0x7f06005b;
         public static final int contactdev=0x7f060040;
         public static final int customIpSettings=0x7f060019;
         public static final int customText=0x7f060059;

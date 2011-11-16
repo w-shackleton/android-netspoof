@@ -117,4 +117,5 @@
     <string name="returntoyt">Return to Youtube</string>
     <string name="customText">Change page text</string>
     <string name="customTextDesc">Enter custom text values to change. Blank fields are ignored.</string>
+    <string name="configuring">Configuring...</string>
 </resources>

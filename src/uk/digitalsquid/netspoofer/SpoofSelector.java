@@ -185,7 +185,13 @@ public class SpoofSelector extends Activity implements OnClickListener, OnItemCl
 			} else if(intent.getAction().equals(NetSpoofService.INTENT_SPOOFLIST)) {
 				SpoofList spoofs = (SpoofList) intent.getSerializableExtra(NetSpoofService.INTENT_EXTRA_SPOOFLIST);
 				if(multiChoice) {
-					spoofList.setAdapter(new ArrayAdapter<Spoof>(SpoofSelector.this, android.R.layout.simple_list_item_multiple_choice, spoofs.getSpoofs()));
+					ArrayList<Spoof> filteredSpoofs = new ArrayList<Spoof>();
+					for(Spoof s : spoofs.getSpoofs()) {
+						if(s instanceof SquidScriptSpoof) {
+							filteredSpoofs.add(s);
+						}
+					}
+					spoofList.setAdapter(new ArrayAdapter<Spoof>(SpoofSelector.this, android.R.layout.simple_list_item_multiple_choice, filteredSpoofs));
 					multiSpoofList = spoofs.getSpoofs();
 				} else {
 					spoofListAdapter.setSpoofs(spoofs.getSpoofs());
@@ -278,7 +284,7 @@ public class SpoofSelector extends Activity implements OnClickListener, OnItemCl
 				this.spoofs = spoofs;
 			} else {
 				// Remove non squid spoofs
-				this.spoofs = new ArrayList<Spoof>();
+				this.spoofs = new LinkedList<Spoof>();
 				for(Spoof spoof : spoofs) {
 					if(spoof instanceof SquidScriptSpoof) {
 						this.spoofs.add(spoof);
@@ -324,6 +330,10 @@ public class SpoofSelector extends Activity implements OnClickListener, OnItemCl
 	 * The ID used for result intents returned by custom spoofs.
 	 */
 	private static final int ACTIVITY_REQUEST_CUSTOM = 2;
+	/**
+	 * The ID used for result intents returned by custom spoofs, part 2.
+	 */
+	private static final int ACTIVITY_REQUEST_CUSTOM_2 = 3;
 	
 	private Spoof activityResultSpoof;
 	
@@ -353,8 +363,26 @@ public class SpoofSelector extends Activity implements OnClickListener, OnItemCl
 		case ACTIVITY_REQUEST_CUSTOM:
 			if(activityResultSpoof != null) {
 				if(resultCode == RESULT_OK) {
-					if(activityResultSpoof.activityFinished(data)) { // If true, continue
+					if(activityResultSpoof.activityFinished(getBaseContext(), data)) { // If true, continue
 						Log.d(TAG, "Activity done, continuing");
+						// NEW: Run 2nd activity if needed.
+						Intent part2 = activityResultSpoof.activityForResult2(this);
+						if(part2 != null) {
+							startActivityForResult(part2, ACTIVITY_REQUEST_CUSTOM_2);
+						} else {
+							Intent intent = new Intent(SpoofSelector.this, RouterSelector.class);
+							intent.putExtra(RouterSelector.EXTRA_SPOOF, activityResultSpoof);
+							startActivity(intent);
+						}
+					}
+				}
+			}
+			break;
+		case ACTIVITY_REQUEST_CUSTOM_2:
+			if(activityResultSpoof != null) {
+				if(resultCode == RESULT_OK) {
+					if(activityResultSpoof.activityFinished2(getBaseContext(), data)) { // If true, continue
+						Log.d(TAG, "Activity 2 done, continuing");
 						Intent intent = new Intent(SpoofSelector.this, RouterSelector.class);
 						intent.putExtra(RouterSelector.EXTRA_SPOOF, activityResultSpoof);
 						startActivity(intent);

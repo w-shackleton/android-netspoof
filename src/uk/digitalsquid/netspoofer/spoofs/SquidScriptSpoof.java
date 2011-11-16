@@ -55,7 +55,7 @@ public class SquidScriptSpoof extends Spoof {
 		return null;
 	}
 	@Override
-	public boolean activityFinished(Intent result) {
+	public boolean activityFinished(Context context, Intent result) {
 		return false;
 	}
 

@@ -52,6 +52,7 @@
         <activity android:name="About" android:theme="@android:style/Theme.Dialog" android:label="@string/about"></activity>
         <activity android:name="YoutubeSelector" android:label="@string/selectvideo">
         </activity>
+        <activity android:name="MultiSpoofDialogRunner" android:label="@string/configuring"></activity>
 
     </application>
 </manifest>
