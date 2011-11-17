@@ -1,6 +1,7 @@
 package uk.digitalsquid.netspoofer.spoofs;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import uk.digitalsquid.netspoofer.MultiSpoofDialogRunner;
 import uk.digitalsquid.netspoofer.SpoofSelector;
@@ -52,16 +53,43 @@ public class MultiSpoof extends Spoof {
 		finalSpoofs = (ArrayList<SquidScriptSpoof>) result.getSerializableExtra(MultiSpoofDialogRunner.SPOOF_LIST);
 		return true;
 	}
+	
+	private static final String BASE_REWRITE_URL = "/rewriters/";
 
 	@Override
 	public String getSpoofCmd(String victim, String router) {
-		// TODO Auto-generated method stub
-		return null;
+		if(finalSpoofs == null) return null;
+		final StringBuilder cmdBuilder = new StringBuilder();
+		cmdBuilder.append("spoof %s %s 3 \"");
+		boolean first = true;
+		for(SquidScriptSpoof spoof : finalSpoofs) {
+			// Leaving no spaces in script def
+			if(!first) {
+				cmdBuilder.append('|');
+			} else {
+				first = false;
+			}
+			cmdBuilder.append(BASE_REWRITE_URL);
+			cmdBuilder.append(spoof.getScriptName());
+		}
+		cmdBuilder.append('"');
+		return String.format(cmdBuilder.toString(), victim, router);
 	}
 
 	@Override
 	public String getStopCmd() {
 		return "\n";
+	}
+	
+	@Override
+	public Map<String, String> getCustomEnv() {
+		Map<String, String> ret = super.getCustomEnv();
+		if(finalSpoofs != null) {
+			for(SquidScriptSpoof spoof : finalSpoofs) {
+				ret.putAll(spoof.getCustomEnv());
+			}
+		}
+		return ret;
 	}
 
 	@Override public Dialog displayExtraDialog(Context context, OnExtraDialogDoneListener onDone) { return null; }

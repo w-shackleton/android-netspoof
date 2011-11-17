@@ -89,7 +89,7 @@ public class SpoofSelector extends Activity implements OnClickListener, OnItemCl
 		} else {
 			setContentView(R.layout.spoofselector);
 		}
-	    startService(new Intent(this, NetSpoofService.class));
+	    if(!multiChoice) startService(new Intent(this, NetSpoofService.class));
 	    
 	    spoofListAdapter = new SpoofListAdapter();
 	    spoofList = (ListView) findViewById(R.id.spoofList);
@@ -109,7 +109,7 @@ public class SpoofSelector extends Activity implements OnClickListener, OnItemCl
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-        stopService(new Intent(this, NetSpoofService.class));
+        if(!multiChoice) stopService(new Intent(this, NetSpoofService.class));
 		unregisterReceiver(statusReceiver);
 	}
 

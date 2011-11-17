@@ -280,7 +280,7 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 		 */
 		private void installFiles() {
 			try {
-				FileInstaller fi = new FileInstaller(getApplicationContext());
+				FileInstaller fi = new FileInstaller(getBaseContext());
 				
 				fi.installScript("config", R.raw.config);
 				fi.installScript("start", R.raw.start);
