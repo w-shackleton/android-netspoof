@@ -22,6 +22,7 @@
 package uk.digitalsquid.netspoofer;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -185,14 +186,14 @@ public class SpoofSelector extends Activity implements OnClickListener, OnItemCl
 			} else if(intent.getAction().equals(NetSpoofService.INTENT_SPOOFLIST)) {
 				SpoofList spoofs = (SpoofList) intent.getSerializableExtra(NetSpoofService.INTENT_EXTRA_SPOOFLIST);
 				if(multiChoice) {
-					ArrayList<Spoof> filteredSpoofs = new ArrayList<Spoof>();
+					multiSpoofList = new ArrayList<Spoof>();
 					for(Spoof s : spoofs.getSpoofs()) {
 						if(s instanceof SquidScriptSpoof) {
-							filteredSpoofs.add(s);
+							multiSpoofList.add(s);
 						}
 					}
-					spoofList.setAdapter(new ArrayAdapter<Spoof>(SpoofSelector.this, android.R.layout.simple_list_item_multiple_choice, filteredSpoofs));
-					multiSpoofList = spoofs.getSpoofs();
+					Collections.sort(multiSpoofList);
+					spoofList.setAdapter(new ArrayAdapter<Spoof>(SpoofSelector.this, android.R.layout.simple_list_item_multiple_choice, multiSpoofList));
 				} else {
 					spoofListAdapter.setSpoofs(spoofs.getSpoofs());
 				}
