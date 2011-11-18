@@ -245,10 +245,5 @@ public class SetupStatus extends Activity implements OnClickListener, Config {
 				dlButton.setText(R.string.startdl);
 			}
 		}
-		if(ConfigChecker.checkInstalledLatest(getApplicationContext())) {
-			findViewById(R.id.redlconfirm).setVisibility(View.VISIBLE);
-		} else {
-			findViewById(R.id.redlconfirm).setVisibility(View.GONE);
-		}
 	}
 }
