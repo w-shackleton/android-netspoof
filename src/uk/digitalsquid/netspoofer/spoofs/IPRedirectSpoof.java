@@ -26,11 +26,13 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Map;
 
+import uk.digitalsquid.netspoofer.config.LogConf;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -39,7 +41,7 @@ import android.widget.Toast;
  * @author william
  *
  */
-public class IPRedirectSpoof extends SquidScriptSpoof {
+public class IPRedirectSpoof extends SquidScriptSpoof implements LogConf {
 	private static final long serialVersionUID = -7780822391880161592L;
 	public static final String KITTENWAR = "kittenwar.com";
 	
@@ -106,7 +108,8 @@ public class IPRedirectSpoof extends SquidScriptSpoof {
 	@Override
 	public Map<String, String> getCustomEnv() {
 		Map<String, String> ret = super.getCustomEnv();
-		ret.put("REDIRECTURL", host.getHostName());
+		if(host != null) ret.put("REDIRECTURL", host.getHostName());
+		else Log.e(TAG, "Entered URL not here, probably a non-existent website.");
 		return ret;
 	}
 }

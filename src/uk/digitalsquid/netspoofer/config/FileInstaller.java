@@ -40,7 +40,12 @@ public final class FileInstaller implements LogConf {
 	
 	public FileInstaller(Context context) throws FileNotFoundException {
 		this.context = context;
+		try {
 		new File(context.getFilesDir().getParent() + BIN_DIR).mkdir();
+		} catch (NullPointerException e) {
+			// One of the above fileops failed, most likely due to broken phone.
+			Log.e(TAG, "Failed to create binary directory!");
+		}
 	}
 	
 	private void installFile(String filename, boolean executable, int id) throws Resources.NotFoundException, IOException {
