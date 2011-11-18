@@ -21,17 +21,22 @@
 
 package uk.digitalsquid.netspoofer.spoofs;
 
-import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Map;
 
-import android.app.AlertDialog;
+import uk.digitalsquid.netspoofer.R;
+import uk.digitalsquid.netspoofer.config.LogConf;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
-import android.widget.EditText;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
+import android.preference.PreferenceManager;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -39,7 +44,7 @@ import android.widget.Toast;
  * @author william
  *
  */
-public class IPRedirectSpoof extends SquidScriptSpoof {
+public class IPRedirectSpoof extends SquidScriptSpoof implements LogConf {
 	private static final long serialVersionUID = -7780822391880161592L;
 	public static final String KITTENWAR = "kittenwar.com";
 	
@@ -67,35 +72,78 @@ public class IPRedirectSpoof extends SquidScriptSpoof {
 	@Override
 	public Dialog displayExtraDialog(final Context context, final OnExtraDialogDoneListener onDone) {
 		if(host == null) {
-			AlertDialog.Builder alert = new AlertDialog.Builder(context);
+			final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+			final Dialog dialog = new Dialog(context);
 	
-			alert.setTitle("Website redirect");
-			alert.setMessage("Please enter a website to redirect to, not including http:// (eg. kittenwar.com).");
-	
-			final EditText input = new EditText(context);
-			alert.setView(input);
-	
-			alert.setPositiveButton("Done", new OnClickListener() {
+			dialog.setTitle("Website redirect");
+			
+			dialog.setContentView(R.layout.iptextfield);
+			
+			final TextView input = (TextView) dialog.findViewById(R.id.text);
+			input.setText(prefs.getString("redirectUrl", ""));
+			final View[] progressParts = new View[] {
+					dialog.findViewById(R.id.progress),
+					dialog.findViewById(R.id.status) };
+			final Button
+					ok = (Button) dialog.findViewById(R.id.ok),
+					cancel = (Button) dialog.findViewById(R.id.cancel);
+			
+			// Run this in BG to make UX better
+			final AsyncTask<Void, Void, InetAddress> bg = new AsyncTask<Void, Void, InetAddress>() {
+				@Override
+				protected void onPreExecute() {
+					userEntry = input.getText().toString();
+				}
+				
+				String userEntry;
 				
 				@Override
-				public void onClick(DialogInterface dialog, int which) {
+				protected InetAddress doInBackground(Void... params) {
+					InetAddress host = null;
 					try {
-						if(input.getText().toString().equals("")) throw new UnknownHostException("Blank host");
-						host = InetAddress.getByName(input.getText().toString());
+						if(userEntry.equals("")) throw new UnknownHostException("Blank host");
+						host = InetAddress.getByName(userEntry);
+						prefs.edit().putString("redirectUrl", userEntry).commit();
 					} catch (UnknownHostException e) {
-						e.printStackTrace();
-						Toast.makeText(context, "Couldn't find specified website, using kittenwar.", Toast.LENGTH_LONG).show();
 						try {
-							host = Inet4Address.getByName(KITTENWAR);
+							host = InetAddress.getByName(KITTENWAR);
 						} catch (UnknownHostException e1) {
 							e1.printStackTrace();
 						}
 					}
-					onDone.onDone();
+					return host;
+				}
+				@Override
+				protected void onPostExecute(InetAddress addr) {
+					if(!isCancelled()) {
+						if(addr == null) {
+							Toast.makeText(context, "Couldn't find specified website, using kittenwar.", Toast.LENGTH_LONG).show();
+						}
+						host = addr;
+						dialog.dismiss();
+						onDone.onDone();
+					}
+				}
+			};
+			
+			ok.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					for(View v : progressParts) {
+						v.setVisibility(View.VISIBLE);
+					}
+					bg.execute();
+				}
+			});
+			cancel.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					bg.cancel(false);
+					dialog.cancel();
 				}
 			});
 	
-			return alert.create();
+			return dialog;
 		}
 		else return null;
 	}
@@ -106,7 +154,8 @@ public class IPRedirectSpoof extends SquidScriptSpoof {
 	@Override
 	public Map<String, String> getCustomEnv() {
 		Map<String, String> ret = super.getCustomEnv();
-		ret.put("REDIRECTURL", host.getHostName());
+		if(host != null) ret.put("REDIRECTURL", host.getHostName());
+		else Log.e(TAG, "Entered URL not here, probably a non-existent website.");
 		return ret;
 	}
 }

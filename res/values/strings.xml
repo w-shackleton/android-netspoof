@@ -118,4 +118,6 @@
     <string name="customText">Change page text</string>
     <string name="customTextDesc">Enter custom text values to change. Blank fields are ignored.</string>
     <string name="configuring">Configuring...</string>
+    <string name="lookingupSite">Finding website...</string>
+    <string name="customwebsitedesc">Please enter a website to redirect to, not including http:// (eg. kittenwar.com).</string>
 </resources>
