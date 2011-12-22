@@ -13,3 +13,5 @@ bin/android-netspoof.api8.apk
 bzr.sf
 obj
 obj/local
+bin/classes
+bin/res

@@ -152,6 +152,7 @@ public class ChrootManager implements Config {
 						FileInstaller.getScriptPath(context, "start") + " " + FileInstaller.getScriptPath(context, "config") + " " + 
 						spoof.getSpoof().getSpoofCmd(spoof.getVictimString(), spoof.getRouterIpString())); // Pass config script as arg.
 				Map<String, String> env = pb.environment();
+				if(env == null) env = new HashMap<String, String>(); // No idea what will happen
 				env.putAll(config.getValues());
 				env.putAll(spoof.getSpoof().getCustomEnv());
 				

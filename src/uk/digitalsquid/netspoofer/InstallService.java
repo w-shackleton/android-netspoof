@@ -122,7 +122,8 @@ public class InstallService extends Service implements Config {
 	 * @author william
 	 *
 	 */
-	private static class DlStartData {
+	private static class DlStartData implements Serializable {
+		private static final long serialVersionUID = 6287320665354658386L;
 		public final String url;
 		public final boolean unzipped;
 		
