@@ -46,8 +46,10 @@ public class VideoChange extends SquidScriptSpoof {
 		return new Intent(context, YoutubeSelector.class);
 	}
 	
-	public boolean activityFinished(Intent intent) {
-		videoURL = intent.getStringExtra(YoutubeSelector.CODE);
+	@Override
+	public boolean activityFinished(Context context, Intent result) {
+		super.activityFinished(context, result);
+		videoURL = result.getStringExtra(YoutubeSelector.CODE);
 		if(videoURL == null) return false; // No video selected
 		else return true;
 	}
