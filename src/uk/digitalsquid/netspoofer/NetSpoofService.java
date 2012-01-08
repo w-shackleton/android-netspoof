@@ -21,13 +21,21 @@
 
 package uk.digitalsquid.netspoofer;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import uk.digitalsquid.netspoofer.config.ChrootConfig;
 import uk.digitalsquid.netspoofer.config.ChrootManager;
+import uk.digitalsquid.netspoofer.config.FileFinder;
+import uk.digitalsquid.netspoofer.config.IOHelpers;
 import uk.digitalsquid.netspoofer.config.LogConf;
+import uk.digitalsquid.netspoofer.servicemsg.ImageLoader;
 import uk.digitalsquid.netspoofer.servicemsg.ServiceMsg;
 import uk.digitalsquid.netspoofer.servicemsg.SpoofStarter;
 import uk.digitalsquid.netspoofer.servicestatus.InitialiseStatus;
@@ -41,8 +49,12 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Binder;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -68,7 +80,7 @@ public class NetSpoofService extends Service implements LogConf {
 	private Notification notification;
 	
 	public class NetSpoofServiceBinder extends Binder {
-        NetSpoofService getService() {
+        public NetSpoofService getService() {
             return NetSpoofService.this;
         }
 	}
@@ -163,6 +175,14 @@ public class NetSpoofService extends Service implements LogConf {
 		sendBroadcast(intent);
     }
     
+    public void saveImageToWebserver(Uri image) {
+    	try {
+	    	tasks.add(new ImageLoader(image));
+    	} catch(IllegalStateException e) {
+    		e.printStackTrace();
+    	}
+    }
+    
 	private final BlockingQueue<ServiceMsg> tasks = new LinkedBlockingQueue<ServiceMsg>();
     
     private final AsyncTask<ChrootConfig, ServiceStatus, Void> mainLoopManager = new AsyncTask<ChrootConfig, ServiceStatus, Void>() {
@@ -211,6 +231,8 @@ public class NetSpoofService extends Service implements LogConf {
 						if(task instanceof SpoofStarter) {
 							SpoofStarter starter = (SpoofStarter) task;
 							spoofLoop(chroot, starter.getSpoof());
+						} else if(task instanceof ImageLoader) {
+							loadImageToDebian(chroot, ((ImageLoader)task).getUri());
 						}
 						break;
 					case ServiceMsg.MESSAGE_STOP:
@@ -306,6 +328,51 @@ public class NetSpoofService extends Service implements LogConf {
 				return;
 			}
 			publishProgress(new InitialiseStatus(STATUS_LOADED));
+		}
+		
+		/**
+		 * Loads the image then saves it as a jpg to the debian.
+		 * @param imageUri
+		 */
+		private void loadImageToDebian(ChrootManager chroot, Uri imageUri) {
+			
+			File tmpImage = new File(getFilesDir(), "customimage.jpg");
+			Log.i(TAG, "Loading image from media store");
+			try {
+				Bitmap image = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+				Log.i(TAG, "Writing image");
+				FileOutputStream out = openFileOutput("customimage.jpg", MODE_WORLD_READABLE);
+				image.compress(CompressFormat.JPEG, 80, out);
+				out.close();
+				image.recycle();
+				Log.i(TAG, "Written image");
+				
+				// Use BB to copy this as SU (need root to write to debian area)
+				final String su = FileFinder.SU;
+				final String bb = FileFinder.BUSYBOX;
+				final File debianImageFolder = new File(chroot.config.getDebianMount() + "/var/www/images");
+				final File debianImage = new File(debianImageFolder, "customimage.jpg");
+				final List<String> cpArgs = new LinkedList<String>();
+				// su busybox cp tmp.jpg deb.jpg
+				cpArgs.add(su);
+				cpArgs.add("-c");
+				cpArgs.add(bb + " " + "cp" + " " + tmpImage.getCanonicalPath() + " " + debianImage.getCanonicalPath());
+				Log.v(TAG, "Running " + cpArgs);
+				if(IOHelpers.runProcess(cpArgs) != 0) {
+					throw new IOException("Couldn't copy image from tmp to debian.\n Used cmdline " + cpArgs.toString());
+				}
+				Log.i(TAG, "Copied image to debian folder.");
+			} catch (FileNotFoundException e) {
+				Log.e(TAG, "Couldn't open temporary file to write image", e);
+				Toast.makeText(getBaseContext(), "Couldn't load selected image!", Toast.LENGTH_LONG).show();
+			} catch (IOException e) {
+				Log.e(TAG, "Couldn't write to temporary image", e);
+				Toast.makeText(getBaseContext(), "Couldn't load selected image!", Toast.LENGTH_LONG).show();
+			} finally {
+				try {
+					tmpImage.delete();
+				} catch(Exception e) { } // Don't care if it fails.
+			}
 		}
     	
 		protected void onProgressUpdate(ServiceStatus... progress) {

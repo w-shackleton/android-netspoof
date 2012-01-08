@@ -23,6 +23,7 @@ package uk.digitalsquid.netspoofer.spoofs;
 
 import java.util.Map;
 
+import uk.digitalsquid.netspoofer.config.LogConf;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -33,15 +34,15 @@ import android.preference.PreferenceManager;
 import android.widget.EditText;
 
 /**
- * A custom version of the Google spoof which allows the user to enter their own google search query.
+ * A custom version of the Image spoof. Uses a URL.
  * @author william
  *
  */
-public class CustomImageChange extends SquidScriptSpoof {
+public class CustomImageChange extends SquidScriptSpoof implements LogConf {
 	private static final long serialVersionUID = 8490503138296852028L;
-
+	
 	public CustomImageChange() {
-		super("Custom image change", "Change all images on all websites", "trollface.sh");
+		super("Custom image change (image on web)", "Change all images on all websites", "trollface.sh");
 	}
 	
 	private String customImageURL;

@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 import uk.digitalsquid.netspoofer.spoofs.CustomGSearchSpoof;
+import uk.digitalsquid.netspoofer.spoofs.CustomGalleryImageChange;
 import uk.digitalsquid.netspoofer.spoofs.CustomImageChange;
 import uk.digitalsquid.netspoofer.spoofs.CustomTextChange;
 import uk.digitalsquid.netspoofer.spoofs.IPRedirectSpoof;
@@ -49,7 +50,7 @@ import android.util.Log;
 
 public class ChrootManager implements Config {
 	private final Context context;
-	private final ChrootConfig config;
+	public final ChrootConfig config;
 	
 	public ChrootManager(Context context, ChrootConfig config) {
 		this.context = context;
@@ -111,6 +112,7 @@ public class ChrootManager implements Config {
 		
 		spoofs.add(new CustomGSearchSpoof());
 		spoofs.add(new CustomImageChange());
+		spoofs.add(new CustomGalleryImageChange());
 		spoofs.add(new VideoChange());
 		spoofs.add(new CustomTextChange());
 		

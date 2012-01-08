@@ -87,4 +87,16 @@ public final class IOHelpers {
 		cout.close();
 		return lines;
 	}
+	
+	public static final int runProcess(List<String> args) throws IOException {
+		ProcessBuilder pb = new ProcessBuilder(args);
+		
+		Process proc = pb.start();
+		try {
+			return proc.waitFor();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
 }
