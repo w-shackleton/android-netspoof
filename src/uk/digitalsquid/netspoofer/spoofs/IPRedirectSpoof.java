@@ -31,6 +31,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.AsyncTask.Status;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
@@ -132,7 +133,8 @@ public class IPRedirectSpoof extends SquidScriptSpoof implements LogConf {
 					for(View v : progressParts) {
 						v.setVisibility(View.VISIBLE);
 					}
-					bg.execute();
+					if(bg.getStatus() != Status.RUNNING)
+						bg.execute();
 				}
 			});
 			cancel.setOnClickListener(new OnClickListener() {

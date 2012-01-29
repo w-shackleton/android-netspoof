@@ -49,6 +49,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager.BadTokenException;
 import android.widget.Button;
 
 public class NetSpoof extends Activity implements OnClickListener, LogConf {
@@ -260,7 +261,11 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 		@Override
 		protected void onProgressUpdate(Integer... values) {
 			super.onProgressUpdate(values);
-			showDialog(values[0]);
+			try {
+				showDialog(values[0]);
+			} catch(BadTokenException e) {
+				Log.w(TAG, "Activity not visible, tryed to show dialog", e);
+			}
 		}
 		
 		@Override

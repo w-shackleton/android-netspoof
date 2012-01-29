@@ -54,6 +54,7 @@ import android.graphics.Bitmap.CompressFormat;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Binder;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
@@ -91,9 +92,29 @@ public class NetSpoofService extends Service implements LogConf {
 		return binder;
 	}
 	
+	/**
+	 * Used to do things on the UI thread (ie toasts)
+	 */
+	Handler uiThreadHandler;
+	
     @Override
     public void onCreate() {
           super.onCreate();
+          uiThreadHandler = new Handler();
+    }
+    
+    /**
+     * Shows a toast on the UI thread
+     * @param text
+     * @param duration
+     */
+    private void showToast(final String text, final int duration) {
+    	uiThreadHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				Toast.makeText(getBaseContext(), text, duration).show();
+			}
+		});
     }
     
     private boolean started = false;
@@ -352,6 +373,19 @@ public class NetSpoofService extends Service implements LogConf {
 				final String bb = FileFinder.BUSYBOX;
 				final File debianImageFolder = new File(chroot.config.getDebianMount() + "/var/www/images");
 				final File debianImage = new File(debianImageFolder, "customimage.jpg");
+				
+				final List<String> mkdirArgs = new LinkedList<String>();
+				// su -c busybox mkdir 
+				mkdirArgs.add(su);
+				mkdirArgs.add("-c");
+				mkdirArgs.add(bb + " " + "mkdir" + " " + debianImageFolder.getCanonicalPath());
+				Log.v(TAG, "Running " + mkdirArgs);
+				try {
+					IOHelpers.runProcess(mkdirArgs); // Is this necessary?
+				} catch (IOException e) {
+					Log.e(TAG, "Failed to create image folder.");
+				}
+				
 				final List<String> cpArgs = new LinkedList<String>();
 				// su busybox cp tmp.jpg deb.jpg
 				cpArgs.add(su);
@@ -364,10 +398,10 @@ public class NetSpoofService extends Service implements LogConf {
 				Log.i(TAG, "Copied image to debian folder.");
 			} catch (FileNotFoundException e) {
 				Log.e(TAG, "Couldn't open temporary file to write image", e);
-				Toast.makeText(getBaseContext(), "Couldn't load selected image!", Toast.LENGTH_LONG).show();
+				showToast("Couldn't load selected image!", Toast.LENGTH_LONG);
 			} catch (IOException e) {
 				Log.e(TAG, "Couldn't write to temporary image", e);
-				Toast.makeText(getBaseContext(), "Couldn't load selected image!", Toast.LENGTH_LONG).show();
+				showToast("Couldn't load selected image!", Toast.LENGTH_LONG);
 			} finally {
 				try {
 					tmpImage.delete();

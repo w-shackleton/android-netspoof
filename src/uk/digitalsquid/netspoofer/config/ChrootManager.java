@@ -155,8 +155,12 @@ public class ChrootManager implements Config {
 						spoof.getSpoof().getSpoofCmd(spoof.getVictimString(), spoof.getRouterIpString())); // Pass config script as arg.
 				Map<String, String> env = pb.environment();
 				if(env == null) env = new HashMap<String, String>(); // No idea what will happen
-				env.putAll(config.getValues());
-				env.putAll(spoof.getSpoof().getCustomEnv());
+				
+				Map<String, String> configValues = config.getValues();
+				if(configValues != null) env.putAll(configValues);
+				
+				Map<String, String> customEnv = spoof.getSpoof().getCustomEnv();
+				if(customEnv != null) env.putAll(customEnv);
 				
 				if(!spoof.isRunningPassively()) {
 					env.put("WLAN", spoof.getMyIface());
@@ -171,9 +175,12 @@ public class ChrootManager implements Config {
 				Map<String, String> systemEnv = System.getenv(); // We also must include this
 				Map<String, String> combinedEnv = new HashMap<String, String>();
 				
-				combinedEnv.putAll(systemEnv);
-				combinedEnv.putAll(config.getValues());
-				combinedEnv.putAll(spoof.getSpoof().getCustomEnv());
+				if(systemEnv != null) combinedEnv.putAll(systemEnv);
+				Map<String, String> configValues = config.getValues();
+				if(configValues != null) combinedEnv.putAll(configValues);
+				
+				Map<String, String> customEnv = spoof.getSpoof().getCustomEnv();
+				if(customEnv != null) combinedEnv.putAll(customEnv);
 				
 				if(!spoof.isRunningPassively()) {
 					combinedEnv.put("WLAN", spoof.getMyIface());
