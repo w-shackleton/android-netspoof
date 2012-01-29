@@ -55,9 +55,11 @@ public final class ChrootConfig {
 		values.put("LOOPDEV", loopdev);
 		
 		try {
-			loopnum = prefs.getInt("loopnum", DEFAULTS.loopnum);
+			// loopnum = prefs.getInt("loopnum", DEFAULTS.loopnum);
+			loopnum = Integer.parseInt(prefs.getString("loopnum", "" + DEFAULTS.loopnum));
 		} catch (NumberFormatException e) {
 			loopnum = DEFAULTS.loopnum;
+			Toast.makeText(context, "Invalid loop device number, using default", Toast.LENGTH_SHORT).show();
 		} catch (ClassCastException e) {
 			loopnum = DEFAULTS.loopnum;
 			Toast.makeText(context, "Invalid loop device number, using default", Toast.LENGTH_SHORT).show();
