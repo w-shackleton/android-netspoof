@@ -111,6 +111,52 @@ public final class NetHelpers implements LogConf {
 	}
 	
 	/**
+	 * Represents an entry in the route table.
+	 * @author william
+	 *
+	 */
+	static final class RouteEntry implements Serializable {
+
+		private static final long serialVersionUID = 7930709441175690366L;
+		
+		private String destination;
+		private String gateway;
+		private String genmask;
+		private String flags;
+		private String iface;
+		public void setDestination(String destination) {
+			this.destination = destination;
+		}
+		public String getDestination() {
+			return destination;
+		}
+		public void setGateway(String gateway) {
+			this.gateway = gateway;
+		}
+		public String getGateway() {
+			return gateway;
+		}
+		public void setGenmask(String genmask) {
+			this.genmask = genmask;
+		}
+		public String getGenmask() {
+			return genmask;
+		}
+		public void setFlags(String flags) {
+			this.flags = flags;
+		}
+		public String getFlags() {
+			return flags;
+		}
+		public void setIface(String iface) {
+			this.iface = iface;
+		}
+		public String getIface() {
+			return iface;
+		}
+	}
+	
+	/**
 	 * 
 	 * @param iface
 	 * @return
@@ -121,56 +167,85 @@ public final class NetHelpers implements LogConf {
 		
 		try { FileFinder.initialise(); } catch (FileNotFoundException e1) { }
 		
-		String ifacename = iface.getDisplayName();
+		final String ifacename = iface.getDisplayName();
+		Log.d(TAG, "Checking for routes on iface " + ifacename);
+		
+		ArrayList<RouteEntry> routes = getRoutes();
+		
+		String gateway = "", subnet = "";
+		for(RouteEntry route : routes) {
+			if(!route.getIface().equalsIgnoreCase(ifacename)) continue; // Ignore routes not on wifi
+			if(route.getFlags().contains("G")) { // This is a route with a gateway
+				gateway = route.getGateway();
+			}
+			if(route.getFlags().equals("U")) {
+				subnet = route.getGenmask();
+			}
+		}
+		if(gateway.equals("")) { // Try again
+			Log.i(TAG, "Trying more agressive approach to finding gateway");
+			for(RouteEntry route : routes) {
+				if(!route.getIface().equalsIgnoreCase(ifacename)) continue; // Ignore routes not on wifi
+				if(!route.getGateway().equals("0.0.0.0")) { // Just try the first proper gateway
+					gateway = route.getGateway();
+					break;
+				}
+			}
+		}
+		if(subnet.equals("")) { // Try again
+			Log.i(TAG, "Trying more agressive approach to finding subnet");
+			for(RouteEntry route : routes) {
+				if(!route.getIface().equalsIgnoreCase(ifacename)) continue; // Ignore routes not on wifi
+				if(!route.getGateway().equals("0.0.0.0")) { // Just try the first proper subnet mask
+					subnet = route.getGenmask();
+					break;
+				}
+			}
+		}
+		return new GatewayData(InetAddress.getByName(gateway), subnet);
+	}
+	
+	public static final ArrayList<RouteEntry> getRoutes() throws UnknownHostException {
+		try { FileFinder.initialise(); } catch (FileNotFoundException e1) { }
+		
 		List<String> routeArgs = new ArrayList<String>();
 		// If not using BB, don't add it.
 		if(!FileFinder.BUSYBOX.equals("")) routeArgs.add(FileFinder.BUSYBOX);
 		routeArgs.add("route");
 		routeArgs.add("-n");
 		
-		String importantRouteLine = "";
-		String localnetRouteLine = "";
+		ArrayList<RouteEntry> routes = new ArrayList<NetHelpers.RouteEntry>();
 		try {
+			// Run route -n, get lines
 			List<String> routeTable = IOHelpers.runProcessOutputToLines(routeArgs);
+			
+			int linePosition = 0; // Used to ignore the first 2 lines
 			for(String line : routeTable) {
-				if(line.contains(ifacename)) { // Important info
-					importantRouteLine = line;
-					if(localnetRouteLine.equals("")) {
-						localnetRouteLine = line;
-					}
+				if(linePosition++ < 2) continue;
+				String line2 = line.replaceAll("\\s+", " "); // Single space only between each part
+				Log.v(TAG, "Parsing routing line " + line2);
+				StringTokenizer parts = new StringTokenizer(line2, " ");
+				if(parts.countTokens() < 8) { // Should be 8 parts
+					Log.w(TAG, "Found incorrectly formatted route line!");
+					continue;
 				}
+				
+				RouteEntry entry = new RouteEntry();
+				entry.setDestination(parts.nextToken());
+				entry.setGateway(parts.nextToken());
+				entry.setGenmask(parts.nextToken());
+				entry.setFlags(parts.nextToken());
+				parts.nextToken(); // Unused parts
+				parts.nextToken();
+				parts.nextToken();
+				entry.setIface(parts.nextToken());
+				routes.add(entry);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new UnknownHostException("Error executing 'route' command.");
 		}
 		
-		if(importantRouteLine.equals("")) throw new UnknownHostException("Empty route table line received");
-		importantRouteLine = Pattern.compile("\\s+").matcher(importantRouteLine).replaceAll(" ");
-		Log.v(TAG, "Found gateway line " + importantRouteLine);
-		StringTokenizer tkz = new StringTokenizer(importantRouteLine, " ");
-		String gateway;
-		try {
-			tkz.nextToken();
-			gateway = tkz.nextToken();
-		} catch(NoSuchElementException e) {
-			e.printStackTrace();
-			throw new UnknownHostException("Not enough elements in route line " + importantRouteLine);
-		}
-		
-		if(localnetRouteLine.equals("")) throw new UnknownHostException("Empty route table line received");
-		importantRouteLine = Pattern.compile("\\s+").matcher(localnetRouteLine).replaceAll(" ");
-		Log.v(TAG, "Found gateway line " + importantRouteLine);
-		tkz = new StringTokenizer(importantRouteLine, " ");
-		String subnet;
-		try {
-			tkz.nextToken();
-			tkz.nextToken();
-			subnet = tkz.nextToken();
-		} catch(NoSuchElementException e) {
-			e.printStackTrace();
-			throw new UnknownHostException("Not enough elements in route line " + importantRouteLine);
-		}
-		return new GatewayData(InetAddress.getByName(gateway), subnet);
+		return routes;
 	}
 }
