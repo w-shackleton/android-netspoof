@@ -26,6 +26,6 @@ echo 1 > /proc/sys/net/ipv4/ip_forward
 # Get all args but first
 shift
 
-echo "Starting environment"
+echo "Starting spoof"
 $BB chroot $DEB $@
-echo "Environment done."
+echo "Spoof done."

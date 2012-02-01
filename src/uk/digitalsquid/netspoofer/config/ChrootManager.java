@@ -113,7 +113,8 @@ public class ChrootManager implements Config {
 		spoofs.add(new CustomGSearchSpoof());
 		spoofs.add(new CustomImageChange());
 		spoofs.add(new CustomGalleryImageChange());
-		spoofs.add(new VideoChange());
+		// This breaks IOHelpers.runProcessOutputToLines on Android 4.0 for some reason, so temporarily disabling it.
+		if(Build.VERSION.SDK_INT < 14) spoofs.add(new VideoChange());
 		spoofs.add(new CustomTextChange());
 		
 		// General spoof - only arpspoof.
