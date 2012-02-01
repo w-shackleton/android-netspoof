@@ -30,8 +30,8 @@ public interface Config extends LogConf {
 	public static final String DEB_IMG = "img/debian.img";
 	public static final String DEB_IMG_GZ = "img/debian.img.gz";
 	public static final String DEB_VERSION_FILE = "img/version";
-	public static final String SF_DEB_IMG_URL = "http://sourceforge.net/projects/netspoof/files/debian-images/debian-0.8.img.gz/download";
-	public static final String SF_DEB_IMG_URL_NOZIP = "http://sourceforge.net/projects/netspoof/files/debian-images/debian-0.8.img/download";
+	public static final String SF_DEB_IMG_URL = "http://sourceforge.net/projects/netspoof/files/debian-images/debian-0.8.1.img.gz/download";
+	public static final String SF_DEB_IMG_URL_NOZIP = "http://sourceforge.net/projects/netspoof/files/debian-images/debian-0.8.1.img/download";
 	public static final int DEB_IMG_URL_SIZE = 440320000;
-	public static final int DEB_IMG_URL_VERSION = 11;
+	public static final int DEB_IMG_URL_VERSION = 12;
 }

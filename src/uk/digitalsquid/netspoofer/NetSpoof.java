@@ -51,6 +51,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager.BadTokenException;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class NetSpoof extends Activity implements OnClickListener, LogConf {
 	/**
@@ -86,6 +87,9 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 		
 		if(!ConfigChecker.checkInstalledLatest(getApplicationContext())) {
 			setupButton.setTypeface(setupButton.getTypeface(), Typeface.BOLD);
+			if(ConfigChecker.checkInstalled(getApplicationContext())) { // Installed, but not latest version.
+				Toast.makeText(this, "New version of setup files, please download", Toast.LENGTH_LONG).show();
+			}
 		} else {
 			setupButton.setTypeface(setupButton.getTypeface(), Typeface.NORMAL);
 		}
