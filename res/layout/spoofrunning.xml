@@ -26,10 +26,30 @@
   android:layout_height="match_parent" android:gravity="center_horizontal" android:orientation="vertical">
     <Button android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="@string/start" android:textStyle="bold" android:layout_margin="3dip" android:id="@+id/startButton" android:enabled="false"></Button>
     <TextView android:layout_height="wrap_content" android:layout_width="match_parent" android:text="@string/spoofnotrunning" android:layout_margin="3dip" android:id="@+id/spoofstatus"></TextView>
-    <ScrollView android:layout_width="match_parent" android:layout_weight="1" android:layout_height="match_parent" android:id="@+id/logscroller">
+
+    <ScrollView android:layout_width="match_parent" android:layout_weight="1" android:layout_height="0dip" android:id="@+id/logscroller">
         <LinearLayout android:layout_width="match_parent" android:id="@+id/linearLayout1" android:layout_height="wrap_content" android:orientation="vertical">
             <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/textView2" android:text="@string/output" android:textAppearance="?android:attr/textAppearanceMedium"></TextView>
 	        <TextView android:layout_width="match_parent" android:layout_height="match_parent" android:id="@+id/logoutput" android:text="@string/blank"></TextView>
         </LinearLayout>
     </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/spoofWarning"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/warningTitle"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/warningText" />
+
+    </LinearLayout>
 </LinearLayout>

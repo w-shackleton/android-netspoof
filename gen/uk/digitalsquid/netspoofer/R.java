@@ -30,7 +30,7 @@ public final class R {
         public static final int dlStatus=0x7f080040;
         public static final int dlprogress=0x7f080041;
         public static final int dlprogresstext=0x7f080042;
-        public static final int goback=0x7f080054;
+        public static final int goback=0x7f080055;
         public static final int horizontalScrollView1=0x7f080002;
         public static final int imageView1=0x7f080001;
         public static final int ipBox=0x7f080011;
@@ -45,8 +45,8 @@ public final class R {
         public static final int myIfText=0x7f080036;
         public static final int myIp=0x7f080031;
         public static final int myIpText=0x7f080032;
-        public static final int netSpoofMenuItemAbout=0x7f080053;
-        public static final int netSpoofMenuItemPrefs=0x7f080052;
+        public static final int netSpoofMenuItemAbout=0x7f080054;
+        public static final int netSpoofMenuItemPrefs=0x7f080053;
         public static final int ok=0x7f08002c;
         public static final int progress=0x7f080029;
         public static final int redlconfirm=0x7f08003d;
@@ -57,15 +57,16 @@ public final class R {
         public static final int routerIpText=0x7f080034;
         public static final int routerList=0x7f08003b;
         public static final int routerName=0x7f080039;
-        public static final int scanProgressBar=0x7f08004e;
-        public static final int scanProgressRefresh=0x7f080050;
-        public static final int scanProgressText=0x7f08004f;
+        public static final int scanProgressBar=0x7f08004f;
+        public static final int scanProgressRefresh=0x7f080051;
+        public static final int scanProgressText=0x7f080050;
         public static final int scrollView1=0x7f080008;
         public static final int setupButton=0x7f080030;
         public static final int sfWebView=0x7f080043;
         public static final int spoofDescription=0x7f080046;
         public static final int spoofList=0x7f080047;
         public static final int spoofTitle=0x7f080045;
+        public static final int spoofWarning=0x7f08004b;
         public static final int spoofstatus=0x7f080048;
         public static final int squidscripts=0x7f080007;
         public static final int startButton=0x7f08002f;
@@ -95,10 +96,10 @@ public final class R {
         public static final int textView2=0x7f08000e;
         public static final int textView3=0x7f080010;
         public static final int udternet=0x7f080006;
-        public static final int victimExtraText=0x7f08004c;
-        public static final int victimIp=0x7f08004b;
-        public static final int victimList=0x7f08004d;
-        public static final int web=0x7f080051;
+        public static final int victimExtraText=0x7f08004d;
+        public static final int victimIp=0x7f08004c;
+        public static final int victimList=0x7f08004e;
+        public static final int web=0x7f080052;
         public static final int website=0x7f080004;
         public static final int wifiSettings=0x7f08003c;
     }
@@ -227,6 +228,8 @@ public final class R {
         public static final int stop=0x7f060025;
         public static final int subnet=0x7f06001c;
         public static final int udternet=0x7f060052;
+        public static final int warningText=0x7f06005f;
+        public static final int warningTitle=0x7f06005e;
         public static final int wifiSettings=0x7f060014;
     }
     public static final class xml {

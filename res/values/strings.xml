@@ -120,4 +120,6 @@
     <string name="configuring">Configuring...</string>
     <string name="lookingupSite">Finding website...</string>
     <string name="customwebsitedesc">Please enter a website to redirect to, not including http:// (eg. kittenwar.com).</string>
+    <string name="warningTitle">Don\'t be evil!</string>
+    <string name="warningText">Remember, only run Network Spoofer when you have permission to do so, such as at work.</string>
 </resources>

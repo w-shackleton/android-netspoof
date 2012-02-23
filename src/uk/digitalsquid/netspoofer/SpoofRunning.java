@@ -171,9 +171,11 @@ public class SpoofRunning extends Activity implements OnClickListener, LogConf {
 			switch(service.getStatus()) {
 			case NetSpoofService.STATUS_LOADED:
 				service.startSpoof(spoof);
+				findViewById(R.id.spoofWarning).setVisibility(View.GONE);
 				break;
 			case NetSpoofService.STATUS_STARTED:
 				service.stopSpoof();
+				findViewById(R.id.spoofWarning).setVisibility(View.VISIBLE);
 				break;
 			}
 			break;
