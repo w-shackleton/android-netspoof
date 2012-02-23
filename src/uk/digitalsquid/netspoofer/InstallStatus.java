@@ -24,6 +24,8 @@ package uk.digitalsquid.netspoofer;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.lamerman.FileDialog;
+
 import uk.digitalsquid.netspoofer.InstallService.DLProgress;
 import uk.digitalsquid.netspoofer.config.Config;
 import uk.digitalsquid.netspoofer.config.ConfigChecker;
@@ -36,6 +38,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.webkit.WebView;
@@ -246,4 +251,47 @@ public class InstallStatus extends Activity implements OnClickListener, Config {
 			}
 		}
 	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.dlscreen, menu);
+	    return true;
+	}
+	
+	static final int REQUEST_GETFILE = 1;
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch(item.getItemId()) {
+		case R.id.useLocalFile:
+			Intent intent = new Intent(this, FileDialog.class);
+			intent.putExtra(FileDialog.START_PATH, "/sdcard");
+			startActivityForResult(intent, REQUEST_GETFILE);
+			return true;
+		}
+		return false;
+	}
+	
+	public void onActivityResult(final int requestCode,
+            int resultCode, final Intent data) {
+		switch(requestCode) {
+		case REQUEST_GETFILE:
+			switch(resultCode) {
+			case RESULT_OK:
+                String filePath = data.getStringExtra(FileDialog.RESULT_PATH);
+				Intent intent = new Intent(getApplicationContext(), InstallService.class);
+				intent.putExtra(InstallService.INTENT_START_URL, filePath);
+				intent.putExtra(InstallService.INTENT_START_FILE, true);
+				// Decompress .gz files
+				intent.putExtra(InstallService.INTENT_START_URL_UNZIPPED, !filePath.endsWith(".gz"));
+				startService(intent);
+				break;
+			case RESULT_CANCELED:
+				Toast.makeText(this, "No file selected", Toast.LENGTH_SHORT).show();
+				break;
+			}
+			break;
+		}
+    }
 }

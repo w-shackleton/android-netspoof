@@ -53,6 +53,10 @@ public class InstallService extends Service implements Config {
 	public static final String INTENT_EXTRA_DLSTATE = "uk.digitalsquid.netspoofer.InstallService.dlprogress";
 	public static final String INTENT_STATUSUPDATE = "uk.digitalsquid.netspoofer.config.ConfigChecker.StatusUpdate";
 	public static final String INTENT_START_URL = "uk.digitalsquid.netspoofer.config.InstallStatus.URL";
+	/**
+	 * When a file is given as the URL, pass true to this extra.
+	 */
+	public static final String INTENT_START_FILE = "uk.digitalsquid.netspoofer.config.InstallStatus.isFile";
 	public static final String INTENT_START_URL_UNZIPPED = "uk.digitalsquid.netspoofer.config.InstallStatus.URLUnzipped";
 	public static final int STATUS_STARTED = 0;
 	public static final int STATUS_DOWNLOADING = 1;
@@ -111,10 +115,11 @@ public class InstallService extends Service implements Config {
 		// String downloadUrl = prefs.getString("debImgUrl", DEB_IMG_URL);
 		String downloadUrl = intent.getStringExtra(INTENT_START_URL);
 		boolean downloadUnzipped = intent.getBooleanExtra(INTENT_START_URL_UNZIPPED, false);
+		boolean useLocalFile = intent.getBooleanExtra(INTENT_START_FILE, false);
 		if(downloadUrl == null) throw new IllegalArgumentException("Start URL was null");
 		Log.v(TAG, "Downloading file " + downloadUrl);
 		// if(downloadUrl.equals("")) downloadUrl = DEB_IMG_URL;
-		downloadTask.execute(new DlStartData(downloadUrl, downloadUnzipped));
+		downloadTask.execute(new DlStartData(downloadUrl, downloadUnzipped, useLocalFile));
 	}
 	
 	/**
@@ -126,10 +131,12 @@ public class InstallService extends Service implements Config {
 		private static final long serialVersionUID = 6287320665354658386L;
 		public final String url;
 		public final boolean unzipped;
+		public final boolean useLocalFile;
 		
-		public DlStartData(String url, boolean unzipped) {
+		public DlStartData(String url, boolean unzipped, boolean useLocal) {
 			this.url = url;
 			this.unzipped = unzipped;
+			useLocalFile = useLocal;
 		}
 	}
 	
@@ -211,6 +218,7 @@ public class InstallService extends Service implements Config {
 		@Override
 		protected Integer doInBackground(DlStartData... params) {
 			boolean downloadUnzipped = params[0].unzipped;
+			boolean useLocalFile = params[0].useLocalFile;
 			sd = getExternalFilesDir(null);
 			debian = downloadUnzipped ?
 					new File(sd.getAbsolutePath() + "/" + DEB_IMG) : // Save directly to new location
@@ -226,51 +234,56 @@ public class InstallService extends Service implements Config {
 			File oldversion = new File(sd.getAbsolutePath() + "/" + DEB_VERSION_FILE);
 			oldversion.delete();
 			
-			try {
-				debWriter = new FileOutputStream(debian);
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
-			
-			if(params.length != 1) throw new IllegalArgumentException("Please specify 1 parameter");
-			try {
-				downloadURL = new URL(params[0].url);
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-				return STATUS_DL_FAIL_MALFORMED_FILE;
-			}
-			
-			int fileSize = 0;
-			try {
-				connection = downloadURL.openConnection();
-				connection.connect();
-				fileSize = connection.getContentLength();
-			} catch (IOException e1) { }
-			
 			boolean done = true;
-			
-			int downloaded = 0;
-			while(downloaded < fileSize) {
-				if(isCancelled()) {
-					done = false;
-					break;
-				}
+			if(!useLocalFile) {
 				try {
-					downloaded += tryDownload(downloaded, fileSize);
-				} catch (CancellationException e) {
-					done = false;
-					break;
-				} catch (IOException e) {
+					debWriter = new FileOutputStream(debian);
+				} catch (FileNotFoundException e) {
 					e.printStackTrace();
-					Log.w(TAG, "Download failed, trying to continue...");
-					try { Thread.sleep(300); } catch (InterruptedException e1) { }
 				}
-			}
-			
-			try {
-				debWriter.close();
-				if(response != null) response.close(); // Could be nothing that was downloaded
-			} catch (IOException e) {
+				
+				if(params.length != 1) throw new IllegalArgumentException("Please specify 1 parameter");
+				try {
+					downloadURL = new URL(params[0].url);
+				} catch (MalformedURLException e) {
+					e.printStackTrace();
+					return STATUS_DL_FAIL_MALFORMED_FILE;
+				}
+				
+				int fileSize = 0;
+				try {
+					connection = downloadURL.openConnection();
+					connection.connect();
+					fileSize = connection.getContentLength();
+				} catch (IOException e1) { }
+				
+				int downloaded = 0;
+				while(downloaded < fileSize) {
+					if(isCancelled()) {
+						done = false;
+						break;
+					}
+					try {
+						downloaded += tryDownload(downloaded, fileSize);
+					} catch (CancellationException e) {
+						done = false;
+						break;
+					} catch (IOException e) {
+						e.printStackTrace();
+						Log.w(TAG, "Download failed, trying to continue...");
+						try { Thread.sleep(300); } catch (InterruptedException e1) { }
+					}
+				}
+				
+				try {
+					debWriter.close();
+					if(response != null) response.close(); // Could be nothing that was downloaded
+				} catch (IOException e) {
+				}
+			} else { // Use local
+				File localFile = new File(params[0].url);
+				if(!localFile.exists()) return STATUS_DL_FAIL_IOERROR;
+				if(!localFile.renameTo(debian)) return STATUS_DL_FAIL_SDERROR;
 			}
 			
 			if(!downloadUnzipped) { // Don't bother extracting

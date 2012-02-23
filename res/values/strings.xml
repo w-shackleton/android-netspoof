@@ -32,10 +32,10 @@
     <string name="dlStarting">Download Starting</string>
     <string name="redownload">Redownload</string>
     <string name="redownloadnotify">The latest version is already installed. Are you sure you wish to redownload?</string>
-    <string name="ellipsis">...</string>
+    <string name="ellipsis">&#8230;</string>
     <string name="dlCancel">Cancel download</string>
     <string name="selecthack">Select Hack to use</string>
-    <string name="loading">Loading...</string>
+    <string name="loading">Loading&#8230;</string>
     <string name="selectgateway">Select gateway</string>
     <string name="wifiSettings">Change Wifi Settings</string>
     <string name="blank"></string>
@@ -44,7 +44,7 @@
     <string name="deviceIf">Wifi interface name:\n(usually eth0)</string>
     <string name="customIpSettings">Custom IP Settings</string>
     <string name="selectvictim">Select Victim</string>
-    <string name="scanning">Scanning for devices...</string>
+    <string name="scanning">Scanning for devices&#8230;</string>
     <string name="subnet">Subnet Mask:</string>
     <string name="allDevices">All Devices</string>
     <string name="allDevicesDesc">Run spoof on everything on the network. May slow down the phone a lot and cause the battery to melt.</string>
@@ -53,11 +53,10 @@
     <string name="refresh">Refresh</string>
     <string name="enterip">Enter IP Address</string>
     <string name="enteriptext">Please enter a custom IP address / hostname of victim to attack.</string>
-    <string name="spoofrunning">Spoof Running...</string>
     <string name="stop">Stop</string>
     <string name="output">Output:</string>
-    <string name="downloading">Downloading Installation files...</string>
-    <string name="downloadingfiles">Downloading files needed to run...</string>
+    <string name="downloading">Downloading Installation files&#8230;</string>
+    <string name="downloadingfiles">Downloading files needed to run&#8230;</string>
     <string name="loadfailedtitle">Oops!</string>
     <string name="loadfailed">Something went wrong whilst trying to load. Perhaps the SD card isn\'t plugged in, or you didn\'t accept the superuser command?\n\nCheck the log for more details.</string>
     <string name="preferences">Preferences</string>
@@ -117,9 +116,11 @@
     <string name="returntoyt">Return to Youtube</string>
     <string name="customText">Change page text</string>
     <string name="customTextDesc">Enter custom text values to change. Blank fields are ignored.</string>
-    <string name="configuring">Configuring...</string>
-    <string name="lookingupSite">Finding website...</string>
+    <string name="configuring">Configuring&#8230;</string>
+    <string name="lookingupSite">Finding website&#8230;</string>
     <string name="customwebsitedesc">Please enter a website to redirect to, not including http:// (eg. kittenwar.com).</string>
     <string name="warningTitle">Don\'t be evil!</string>
-    <string name="warningText">Remember, only run Network Spoofer when you have permission to do so, such as at work.</string>
+    <string name="warningText">Remember, only run Network Spoofer when you have permission to do so. Don\'t run at work, university, school etc. without the permission of your network administrators.</string>
+    <string name="useLocalFile">Use Local File</string>
+    <string name="chooseFile">Select downloaded file</string>
 </resources>

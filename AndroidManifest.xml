@@ -47,12 +47,13 @@
         <service android:name="NetSpoofService"></service>
         <activity android:name="RouterSelector" android:label="@string/selectgateway" android:noHistory="true"></activity>
         <activity android:label="@string/selectvictim" android:name="VictimSelector" android:noHistory="true"></activity>
-        <activity android:label="@string/spoofrunning" android:name="SpoofRunning" android:screenOrientation="portrait"></activity>
+        <activity android:label="@string/app_name" android:name="SpoofRunning" android:screenOrientation="portrait"></activity>
         <activity android:label="@string/preferences" android:name="Preferences"></activity>
         <activity android:name="About" android:theme="@android:style/Theme.Dialog" android:label="@string/about"></activity>
         <activity android:name="YoutubeSelector" android:label="@string/selectvideo">
         </activity>
         <activity android:name="MultiSpoofDialogRunner" android:label="@string/configuring"></activity>
+        <activity android:name="com.lamerman.FileDialog" android:label="@string/chooseFile"></activity>
 
     </application>
 </manifest>
