@@ -33,6 +33,7 @@ import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.content.Context;
 import android.os.Environment;
+import android.util.Log;
 
 public final class ConfigChecker implements Config {
 	
@@ -41,6 +42,7 @@ public final class ConfigChecker implements Config {
 			final File sd = context.getExternalFilesDir(null);
 			if(sd == null) return false;
 			File debian = new File(sd.getAbsolutePath() + "/" + DEB_VERSION_FILE);
+			Log.i(TAG, "Checking if file " + debian.getAbsolutePath() + " exists");
 			if(debian.exists()) return true;
 		}
 		return false;
@@ -51,6 +53,7 @@ public final class ConfigChecker implements Config {
 			final File sd = context.getExternalFilesDir(null);
 			if(sd == null) return false;
 			File version = new File(sd.getAbsolutePath() + "/" + DEB_VERSION_FILE);
+			Log.i(TAG, "Checking if file " + version.getAbsolutePath() + " is latest");
 			String ver;
 			try {
 				FileInputStream verReader = new FileInputStream(version);

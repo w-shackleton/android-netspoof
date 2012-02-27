@@ -21,12 +21,14 @@
 
 package uk.digitalsquid.netspoofer.config;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.Toast;
 
 /**
@@ -34,7 +36,7 @@ import android.widget.Toast;
  * @author william
  *
  */
-public final class ChrootConfig {
+public final class ChrootConfig implements Config {
 	static ChrootConfig DEFAULTS = null;
 	
 	private String loopdev;
@@ -48,11 +50,14 @@ public final class ChrootConfig {
 	private final Map<String, String> values = new HashMap<String, String>();
 	
 	public ChrootConfig(Context context) {
-		if(DEFAULTS == null) DEFAULTS = new ChrootConfig("/dev/block/loop2000", 250, "/data/local/mnt", context.getExternalFilesDir(null) + "/" + Config.DEB_IMG, "eth0");
+		if(DEFAULTS == null) DEFAULTS = new ChrootConfig("/dev/block/loop2000", 250, "/data/local/mnt", context.getExternalFilesDir(null).getAbsolutePath() + "/" + Config.DEB_IMG, "eth0");
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		loopdev = prefs.getString("loopdev", DEFAULTS.loopdev);
 		if(loopdev.equals("")) loopdev = DEFAULTS.loopdev;
 		values.put("LOOPDEV", loopdev);
+		
+		File folder = context.getExternalFilesDir(null);
+		Log.i(TAG, "Data folder is " + folder + ", absolute path is " + folder.getAbsolutePath());
 		
 		try {
 			// loopnum = prefs.getInt("loopnum", DEFAULTS.loopnum);

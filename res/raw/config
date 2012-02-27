@@ -28,7 +28,7 @@ debmount ()
 	
 	$BB ls -la $DEB
 
-	echo "Loading FS..."
+	echo "Loading FS from file $DEBIMG to loop $LOOPDEV ($LOOPNUM) at mountpoint $DEB"
 
 	$BB mknod $LOOPDEV b 7 $LOOPNUM
 	$BB losetup $LOOPDEV $DEBIMG
