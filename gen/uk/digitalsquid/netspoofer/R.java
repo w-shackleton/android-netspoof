@@ -155,6 +155,7 @@ public final class R {
         public static final int mount=0x7f050002;
         public static final int start=0x7f050003;
         public static final int umount=0x7f050004;
+        public static final int xdelta3=0x7f050005;
     }
     public static final class string {
         public static final int about=0x7f060042;
