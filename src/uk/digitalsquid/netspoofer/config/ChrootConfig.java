@@ -50,7 +50,7 @@ public final class ChrootConfig implements Config {
 	private final Map<String, String> values = new HashMap<String, String>();
 	
 	public ChrootConfig(Context context) {
-		if(DEFAULTS == null) DEFAULTS = new ChrootConfig("/dev/block/loop2000", 250, "/data/local/mnt", context.getExternalFilesDir(null).getAbsolutePath() + "/" + Config.DEB_IMG, "eth0");
+		if(DEFAULTS == null) DEFAULTS = new ChrootConfig("/dev/block/loop250", 250, "/data/local/mnt", context.getExternalFilesDir(null).getAbsolutePath() + "/" + Config.DEB_IMG, "eth0");
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		loopdev = prefs.getString("loopdev", DEFAULTS.loopdev);
 		if(loopdev.equals("")) loopdev = DEFAULTS.loopdev;

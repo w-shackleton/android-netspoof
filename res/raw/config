@@ -40,6 +40,8 @@ debmount ()
 	
 	# Debug
 	$BB ls -la $DEB
+	echo "Loop device:"
+	$BB ls -l $LOOPDEV
 }
 
 debumount ()
