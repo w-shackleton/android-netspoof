@@ -24,9 +24,12 @@ package uk.digitalsquid.netspoofer.config;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.HttpURLConnection;
 import java.net.InetAddress;
+import java.net.MalformedURLException;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
@@ -245,5 +248,27 @@ public final class NetHelpers implements LogConf {
 		}
 		
 		return routes;
+	}
+	
+	/**
+	 * Checks for a file's existance on an HTTP server.
+	 * @param file
+	 * @return
+	 */
+	public static final boolean checkFileExistsOnWeb(String file) {
+		try {
+			URL upgradeUrl = new URL(file);
+			HttpURLConnection.setFollowRedirects(false);
+			HttpURLConnection conn = (HttpURLConnection) upgradeUrl.openConnection();
+			conn.setConnectTimeout(2500);
+			conn.setRequestMethod("HEAD");
+			
+			return conn.getResponseCode() == HttpURLConnection.HTTP_OK;
+		} catch (MalformedURLException e) {
+			Log.e(TAG, "Malformed URL", e);
+		} catch (IOException e) {
+			Log.d(TAG, "Failed to check for HTTP file, probably no internet.");
+		}
+		return false;
 	}
 }

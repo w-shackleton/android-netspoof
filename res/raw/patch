@@ -1,0 +1,47 @@
+#!/bin/sh
+# This file is part of Network Spoofer for Android.
+# Network Spoofer - change and mess with webpages and the internet on
+# other people's computers
+# Copyright (C) 2011 Will Shackleton
+#
+# Network Spoofer is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Network Spoofer is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Network Spoofer, in the file COPYING.
+# If not, see <http://www.gnu.org/licenses/>.
+
+# Usage: patch <busybox> <xdelta3> <pv> <temp fifo> <orig archive> <orig unpacked size> <patch> <new file> <new archive>
+# Doesn't check space
+
+BB=$1
+
+XDELTA3=$2
+
+PV=$3
+
+FIFO=$4
+
+ORIG_GZ=$5
+ORIG_SIZE=$6
+
+PATCH=$7
+
+NEW=$8
+NEWGZ=$9
+
+# Create pipe from gzip 
+$BB mkfifo $FIFO
+
+$BB cat $ORIG_GZ | $BB gzip -d > $FIFO &
+
+$XDELTA3 -c -d -s $FIFO $PATCH | $PV -n -s $ORIG_SIZE | $BB tee $NEW | $BB gzip > $NEWGZ
+
+$BB rm $FIFO
