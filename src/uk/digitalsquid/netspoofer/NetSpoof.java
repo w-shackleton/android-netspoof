@@ -24,6 +24,7 @@ package uk.digitalsquid.netspoofer;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.Serializable;
 
 import uk.digitalsquid.netspoofer.config.Config;
 import uk.digitalsquid.netspoofer.config.ConfigChecker;
@@ -73,6 +74,8 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 	static final int DIALOG_ABOUT = 5;
 	
 	private Button startButton, setupButton;
+	
+	private LoadResult loadResult;
 
 	@SuppressWarnings("unused")
 	private SharedPreferences prefs;
@@ -114,7 +117,9 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 	public void onClick(View v) {
 		switch(v.getId()) {
 			case R.id.setupButton:
-				startActivity(new Intent(this, InstallStatus.class));
+				Intent intent = new Intent(this, InstallStatus.class);
+				intent.putExtra(InstallStatus.EXTRA_DL_INFO, loadResult);
+				startActivity(intent);
 				break;
 			case R.id.startButton:
 				startActivity(new Intent(this, SpoofSelector.class));
@@ -225,7 +230,9 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 	 * @author william
 	 *
 	 */
-	public class LoadResult {
+	public class LoadResult implements Serializable {
+		private static final long serialVersionUID = 6559183327061065064L;
+		
 		public int versionNumber = -1;
 		/**
 		 * An upgrade refers to a patch, not a new reinstall.
@@ -310,12 +317,19 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 		
 		@Override
 		protected void onPostExecute(LoadResult result) {
+			// Set button statuses
 			if(!ConfigChecker.checkInstalledLatest(getApplicationContext())) {
 				setupButton.setTypeface(setupButton.getTypeface(), Typeface.BOLD);
 			} else {
 				setupButton.setTypeface(setupButton.getTypeface(), Typeface.NORMAL);
 			}
+			if(result.doUpgrade) setupButton.setText(R.string.setup_upgrade);
+			if(result.doReinstall) setupButton.setText(R.string.setup_upgrade2);
+			
 			startButton.setEnabled(ConfigChecker.checkInstalled(getApplicationContext()));
+			setupButton.setEnabled(true);
+			
+			loadResult = result;
 			
 			findViewById(R.id.loading).setVisibility(View.INVISIBLE);
 		}

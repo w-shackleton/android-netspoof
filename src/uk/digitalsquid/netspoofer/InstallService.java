@@ -167,21 +167,27 @@ public class InstallService extends Service implements Config {
 	public static final class DLProgress implements Serializable {
 		private static final long serialVersionUID = -5366348392979726959L;
 		
-		private final boolean extracting;
+		public static final int STATUS_DOWNLOADING = 1;
+		public static final int STATUS_EXTRACTING = 2;
+		public static final int STATUS_PATCHING = 3;
+		public static final int STATUS_RECOVERING = 4;
+		
+		private final int status;
 		
 		public DLProgress(int bytesDone, int bytesTotal) {
 			this.bytesDone = bytesDone;
 			this.bytesTotal = bytesTotal;
-			extracting = false;
+			status = STATUS_DOWNLOADING;
 		}
-		public DLProgress(boolean extracting, int bytesDone, int bytesTotal) {
+		public DLProgress(int status, int bytesDone, int bytesTotal) {
 			this.bytesDone = bytesDone;
 			this.bytesTotal = bytesTotal;
-			this.extracting = extracting;
+			this.status = status;
 		}
 		
+		@Deprecated
 		public boolean isExtracting() {
-			return extracting;
+			return getStatus() == STATUS_DOWNLOADING;
 		}
 		
 		public int getBytesDone() {
@@ -202,10 +208,22 @@ public class InstallService extends Service implements Config {
 		public int getKBytesTotal() {
 			return bytesTotal / 1024;
 		}
+		public int getStatus() {
+			return status;
+		}
 		private int bytesDone, bytesTotal;
 	}
 	
-	private final AsyncTask<DlStartData, DLProgress, Integer> downloadTask = new AsyncTask<DlStartData, DLProgress, Integer>() {
+	public static interface DLProgressPublisher {
+		public void publishDLProgress(DLProgress progress);
+	}
+	
+	public final DownloadTask downloadTask = new DownloadTask();
+	
+	/**
+	 * Task to download and extract data. This should be split up into more modular sections at some point.
+	 */
+	private final class DownloadTask extends AsyncTask<DlStartData, DLProgress, Integer> implements DLProgressPublisher {
 		private InputStream response;
 		private URLConnection connection;
 		
@@ -214,6 +232,10 @@ public class InstallService extends Service implements Config {
 		
 		private URL downloadURL;
 		private FileOutputStream debWriter;
+		
+		public void publishDLProgress(DLProgress progress) {
+			publishProgress(progress);
+		}
 		
 		@Override
 		protected Integer doInBackground(DlStartData... params) {
@@ -370,7 +392,7 @@ public class InstallService extends Service implements Config {
 		{
 		    InputStream gzipInputStream = new BufferedInputStream(new GZIPInputStream(new FileInputStream(inFile)));
 		 
-			DLProgress progress = new DLProgress(true, 0, Config.DEB_IMG_URL_SIZE);
+			DLProgress progress = new DLProgress(DLProgress.STATUS_EXTRACTING, 0, Config.DEB_IMG_URL_SIZE);
 		 
 		    String outFilePath = inFile.getAbsolutePath().replace(".gz", "");
 		    OutputStream out = new FileOutputStream(outFilePath);

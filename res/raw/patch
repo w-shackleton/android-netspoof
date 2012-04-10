@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/system/bin/sh -e
 # This file is part of Network Spoofer for Android.
 # Network Spoofer - change and mess with webpages and the internet on
 # other people's computers
@@ -38,7 +38,7 @@ NEW=$8
 NEWGZ=$9
 
 # Create pipe from gzip 
-$BB mkfifo $FIFO
+$BB mkfifo $FIFO || $BB rm $FIFO || echo "Couldn't delete old fifo
 
 $BB cat $ORIG_GZ | $BB gzip -d > $FIFO &
 

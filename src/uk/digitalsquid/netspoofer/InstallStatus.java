@@ -53,6 +53,8 @@ import android.widget.Toast;
 public class InstallStatus extends Activity implements OnClickListener, Config {
 	private Button dlButton;
 	
+	public static final String EXTRA_DL_INFO = "uk.digitalsquid.netspoofer.InstallStatus.DlInfo";
+	
 	private ProgressBar dlProgress;
 	
 	private WebView webView;
@@ -167,10 +169,19 @@ public class InstallStatus extends Activity implements OnClickListener, Config {
 					dlProgress.setProgress(progress.getKBytesDone());
 					float mbDone = (float)progress.getKBytesDone() / 1024;
 					float mbTotal = (float)progress.getKBytesTotal() / 1024;
-					if(!progress.isExtracting()) {
+					switch(progress.getStatus()) {
+					case DLProgress.STATUS_DOWNLOADING:
 						dlProgressText.setText(String.format("%.1f / %.0fMB\nDownloading", mbDone, mbTotal));
-					} else {
+						break;
+					case DLProgress.STATUS_EXTRACTING:
 						dlProgressText.setText(String.format("%.1f / %.0fMB\nExtracting", mbDone, mbTotal));
+						break;
+					case DLProgress.STATUS_PATCHING:
+						dlProgressText.setText(String.format("%.1f / %.0fMB\nUpgrading", mbDone, mbTotal));
+						break;
+					case DLProgress.STATUS_RECOVERING:
+						dlProgressText.setText(String.format("%.1f / %.0fMB\nRecovering from failed upgrade", mbDone, mbTotal));
+						break;
 					}
 				}
 				break;
