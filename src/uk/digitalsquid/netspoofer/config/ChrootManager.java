@@ -68,7 +68,7 @@ public class ChrootManager implements Config {
 		FileFinder.initialise(context.getApplicationContext()); // In case of weird android instancing
 		ProcessRunner.runProcess(env, FileFinder.SU, "-c", FileInstaller.getScriptPath(context, "mount") + " " + FileInstaller.getScriptPath(context, "config")); // Pass config script as arg.
 		
-		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+		try { Thread.sleep(700); } catch (InterruptedException e) { e.printStackTrace(); }
 		return new File(config.getDebianMount() + "/rewriters").exists();
 	}
 	
