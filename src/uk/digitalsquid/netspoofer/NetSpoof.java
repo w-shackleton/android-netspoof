@@ -293,7 +293,9 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 			
 			// Check for possible upgrade file. Otherwise just prompt user to redownload whole file.
 			String url = String.format(Config.UPGRADE_URI_FORMAT, result.versionNumber, Config.DEB_IMG_URL_VERSION);
-			result.doUpgrade = NetHelpers.checkFileExistsOnWeb(url);
+			if(ConfigChecker.hasInstallationData(getApplicationContext())) {
+				result.doUpgrade = NetHelpers.checkFileExistsOnWeb(url);
+			}
 			result.upgradeUrl = url;
 			
 			// If can't upgrade, reinstall.

@@ -48,6 +48,17 @@ public final class ConfigChecker implements Config {
 		return false;
 	}
 	
+	public static final boolean hasInstallationData(Context context) {
+		if(getSDStatus(false)) {
+			final File sd = context.getExternalFilesDir(null);
+			if(sd == null) return false;
+			File debianGz = new File(sd.getAbsolutePath() + "/" + DEB_IMG_GZ);
+			Log.i(TAG, "Checking if file " + debianGz.getAbsolutePath() + " exists");
+			if(debianGz.exists()) return true;
+		}
+		return false;
+	}
+	
 	public static final int getVersionNumber(Context context) {
 		if(getSDStatus(false)) {
 			final File sd = context.getExternalFilesDir(null);

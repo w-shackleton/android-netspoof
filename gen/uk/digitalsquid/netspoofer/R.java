@@ -214,6 +214,8 @@ public final class R {
         public static final int ifaceDesc=0x7f060058;
         public static final int ipScanThreads=0x7f060042;
         public static final int ipScanThreadsDesc=0x7f060043;
+        public static final int keepInstallText=0x7f06006c;
+        public static final int keepInstallTitle=0x7f06006b;
         public static final int loadfailed=0x7f060033;
         public static final int loadfailedtitle=0x7f060032;
         public static final int loading=0x7f06001c;
