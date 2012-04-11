@@ -136,6 +136,7 @@ public class InstallStatus extends Activity implements OnClickListener, Config {
 		Intent intent = new Intent(getApplicationContext(), InstallService.class);
 		intent.putExtra(InstallService.INTENT_START_URL, url);
 		intent.putExtra(InstallService.INTENT_START_URL_UNZIPPED, downloadUnzipped);
+		intent.putExtra(InstallService.INTENT_START_URL_UPGRADE, upgrade);
 		startService(intent);
 		status.setText(R.string.dlStarting);
 		dlButton.setText(R.string.dlCancel);
