@@ -230,7 +230,7 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 	 * @author william
 	 *
 	 */
-	public class LoadResult implements Serializable {
+	public static class LoadResult implements Serializable {
 		private static final long serialVersionUID = 6559183327061065064L;
 		
 		public int versionNumber = -1;
@@ -351,7 +351,6 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 				fi.installScript("busybox", R.raw.busybox);
 				fi.installScript("xdelta3", R.raw.xdelta3);
 				fi.installScript("pv", R.raw.pv);
-				
 				fi.installScript("patch", R.raw.patch);
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();

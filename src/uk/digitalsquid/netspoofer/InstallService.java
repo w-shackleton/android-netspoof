@@ -267,8 +267,7 @@ public class InstallService extends Service implements Config {
 			
 			if(upgrade) {
 				dlDestination = new File(getFilesDir() + "/" + "upgrade.vcdiff");
-			}
-			if(downloadUnzipped) {
+			} else if(downloadUnzipped) {
 				dlDestination = new File(sd.getAbsolutePath() + "/" + DEB_IMG); // Save directly to new location
 			} else {
 				dlDestination = new File(sd.getAbsolutePath() + "/" + DEB_IMG_GZ);
@@ -347,7 +346,9 @@ public class InstallService extends Service implements Config {
 			
 			if(upgrade) { // Perform XDelta based upgrade
 				try {
-					if(!XDelta.patchFile(this, getBaseContext(), dlDestination.getAbsolutePath(), DEB_IMG, DEB_IMG_GZ))
+					String img = sd.getAbsolutePath() + "/" + DEB_IMG;
+					String imgGz = sd.getAbsolutePath() + "/" + DEB_IMG_GZ;
+					if(!XDelta.patchFile(this, getBaseContext(), dlDestination.getAbsolutePath(), img, imgGz))
 						throw new IOException("File patching failed");
 				} catch (IOException e) {
 					Log.w(TAG, "File patch failed", e);

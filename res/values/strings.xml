@@ -25,8 +25,7 @@
     <string name="app_name">Network Spoofer</string>
     <string name="setup">Setup &amp; Install</string>
     <string name="setup_upgrade">Update available</string>
-    <string name="setup_upgrade2">Update available
-Reinstall required</string>
+    <string name="setup_upgrade2">Update available\nReinstall required</string>
     <string name="start">Start</string>
     <string name="setupt1">Please press Start to begin downloading necessary files. This is quite a big download, so you may want to connect to Wifi first.</string>
     <string name="startdl">Start Download</string>

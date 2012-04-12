@@ -30,7 +30,7 @@ public final class XDelta implements Config {
 		// To start off with we have an old archive, old file and patch.
 		
 		File newArchive = new File(archive);
-		if(!newArchive.exists()) throw new IOException("Old file doesn't exist"); // Old file is actually new file here
+		if(!newArchive.exists()) throw new IOException("Old file " + archive + " doesn't exist"); // Old file is actually new file here
 		File oldArchive = new File(newArchive.getAbsolutePath() + ".old");
 		newArchive.renameTo(oldArchive); // Now old is old file and new doesn't exist.
 		
@@ -43,6 +43,7 @@ public final class XDelta implements Config {
 				throw new IOException("Failed to patch file");
 			}
 		} catch (IOException e) {
+			Log.d(TAG, "Exception was thrown during patching process", e);
 			oldArchive.renameTo(newArchive); // Undo
 			unzipRecover(callback, newArchive, newFile, Config.DEB_IMG_URL_SIZE);
 			return false;
@@ -71,7 +72,7 @@ public final class XDelta implements Config {
 					// Cerr will contain percentages
 					try {
 						int num = Integer.parseInt(line);
-						callback.publishDLProgress(new DLProgress(DLProgress.STATUS_PATCHING, num * Config.DEB_IMG_URL_SIZE / 100, Config.DEB_IMG_URL_SIZE)); // Here we are given a percentage by pv, need rough number of bytes
+						callback.publishDLProgress(new DLProgress(DLProgress.STATUS_PATCHING, (int) ((float)num * (float)Config.DEB_IMG_URL_SIZE / 100f), Config.DEB_IMG_URL_SIZE)); // Here we are given a percentage by pv, need rough number of bytes
 					} catch (NumberFormatException e) {
 						Log.i(TAG, "Failed to parse patch status line \"" + line + "\"");
 					}

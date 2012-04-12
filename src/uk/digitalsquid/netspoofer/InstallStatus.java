@@ -324,12 +324,22 @@ public class InstallStatus extends Activity implements OnClickListener, Config {
 		switch(id) {
 			case DIALOG_KEEP_INSTALL_DATA:
 				// Bundle contains boolean upgrade and String url.
+				final boolean upgrade = args.getBoolean("upgrade");
+				final String url = args.getString("url");
+				
 				builder = new Builder(this);
 				builder.setTitle(R.string.keepInstallTitle);
 				builder.setMessage(R.string.keepInstallText);
-				builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+				builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
+						startServiceForUrl(upgrade, true, url);
+					}
+				});
+				builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						startServiceForUrl(upgrade, false, url);
 					}
 				});
 				return builder.create();
