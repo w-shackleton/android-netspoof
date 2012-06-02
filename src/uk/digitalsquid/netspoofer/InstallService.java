@@ -38,7 +38,6 @@ import java.util.zip.GZIPInputStream;
 
 import uk.digitalsquid.netspoofer.config.Config;
 import uk.digitalsquid.netspoofer.config.ConfigChecker;
-import uk.digitalsquid.netspoofer.misc.XDelta;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -61,7 +60,6 @@ public class InstallService extends Service implements Config {
 	public static final String INTENT_START_FILE = "uk.digitalsquid.netspoofer.config.InstallStatus.isFile";
 	public static final String INTENT_START_URL_UNZIPPED = "uk.digitalsquid.netspoofer.config.InstallStatus.URLUnzipped";
 	public static final String INTENT_START_URL_UPGRADE = "uk.digitalsquid.netspoofer.config.InstallStatus.isUpgrade";
-	public static final String INTENT_START_KEEP_INSTALLATION_FILE = "uk.digitalsquid.netspoofer.config.InstallStatus.keepInstallationFile";
 	public static final int STATUS_STARTED = 0;
 	public static final int STATUS_DOWNLOADING = 1;
 	public static final int STATUS_FINISHED = 2;
@@ -121,11 +119,10 @@ public class InstallService extends Service implements Config {
 		boolean downloadUnzipped = intent.getBooleanExtra(INTENT_START_URL_UNZIPPED, false);
 		boolean isUpgrade = intent.getBooleanExtra(INTENT_START_URL_UPGRADE, false);
 		boolean useLocalFile = intent.getBooleanExtra(INTENT_START_FILE, false);
-		boolean keepInstallationFile = intent.getBooleanExtra(INTENT_START_KEEP_INSTALLATION_FILE, false);
 		if(downloadUrl == null) throw new IllegalArgumentException("Start URL was null");
 		Log.v(TAG, "Downloading file " + downloadUrl);
 		// if(downloadUrl.equals("")) downloadUrl = DEB_IMG_URL;
-		downloadTask.execute(new DlStartData(downloadUrl, downloadUnzipped, isUpgrade, useLocalFile, keepInstallationFile));
+		downloadTask.execute(new DlStartData(downloadUrl, downloadUnzipped, isUpgrade, useLocalFile));
 	}
 	
 	/**
@@ -143,17 +140,12 @@ public class InstallService extends Service implements Config {
 		public final boolean upgrade;
 		public final boolean useLocalFile;
 		
-		/**
-		 * When <code>true</code>, the gz file is kept for use in an upgrade.
-		 */
-		public final boolean keepInstallationFile;
 		
-		public DlStartData(String url, boolean unzipped, boolean isUpgrade, boolean useLocal, boolean keepInstallationFile) {
+		public DlStartData(String url, boolean unzipped, boolean isUpgrade, boolean useLocal) {
 			this.url = url;
 			this.unzipped = unzipped;
 			this.upgrade = isUpgrade;
 			useLocalFile = useLocal;
-			this.keepInstallationFile = keepInstallationFile;
 		}
 	}
 	
@@ -258,7 +250,6 @@ public class InstallService extends Service implements Config {
 			boolean downloadUnzipped = params[0].unzipped;
 			boolean useLocalFile = params[0].useLocalFile;
 			final boolean upgrade = params[0].upgrade;
-			final boolean keepInstallationFile = params[0].keepInstallationFile;
 			if(upgrade) { // Never use local file when upgrading, and don't extract
 				useLocalFile = false;
 				downloadUnzipped = true;
@@ -266,7 +257,7 @@ public class InstallService extends Service implements Config {
 			sd = getExternalFilesDir(null);
 			
 			if(upgrade) {
-				dlDestination = new File(getFilesDir() + "/" + "upgrade.vcdiff");
+				dlDestination = new File(getFilesDir() + "/" + "upgrade.zip");
 			} else if(downloadUnzipped) {
 				dlDestination = new File(sd.getAbsolutePath() + "/" + DEB_IMG); // Save directly to new location
 			} else {
@@ -337,35 +328,15 @@ public class InstallService extends Service implements Config {
 			
 			if(!downloadUnzipped) { // Don't bother extracting
 				try {
-					unzip(dlDestination, !keepInstallationFile);
+					unzip(dlDestination);
 				} catch (IOException e1) {
 					e1.printStackTrace();
 					done = false;
 				}
 			}
 			
-			if(upgrade) { // Perform XDelta based upgrade
-				try {
-					String img = sd.getAbsolutePath() + "/" + DEB_IMG;
-					String imgGz = sd.getAbsolutePath() + "/" + DEB_IMG_GZ;
-					if(!XDelta.patchFile(this, getBaseContext(), dlDestination.getAbsolutePath(), img, imgGz))
-						throw new IOException("File patching failed");
-				} catch (IOException e) {
-					Log.w(TAG, "File patch failed", e);
-					done = false;
-					File version = new File(sd.getAbsolutePath() + "/" + DEB_VERSION_FILE);
-					try {
-						version.createNewFile(); // Make sure exists
-						FileOutputStream versionWriter = new FileOutputStream(version);
-						versionWriter.write(("" + oldVersionNumber).getBytes()); // Write previous version
-						versionWriter.close();
-					} catch (FileNotFoundException e1) {
-						e1.printStackTrace();
-					} catch (IOException e1) {
-						e1.printStackTrace();
-						Log.e(TAG, "Couldn't write version file");
-					}
-				}
+			if(upgrade) { // Perform zip based upgrade
+				// TODO: Upgrade code here
 			}
 			
 			if(done) {
@@ -439,7 +410,7 @@ public class InstallService extends Service implements Config {
 			return bytesDone;
 		}
 		
-		private String unzip(File inFile, boolean deleteOld) throws IOException
+		private String unzip(File inFile) throws IOException
 		{
 		    InputStream gzipInputStream = new BufferedInputStream(new GZIPInputStream(new FileInputStream(inFile)));
 		 
@@ -464,7 +435,7 @@ public class InstallService extends Service implements Config {
 		    gzipInputStream.close();
 		    out.close();
 		 
-		    if(deleteOld) inFile.delete();
+		    inFile.delete();
 		 
 		    return outFilePath;
 		}

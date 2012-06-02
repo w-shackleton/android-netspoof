@@ -125,6 +125,4 @@
     <string name="warningText">Remember, only run Network Spoofer when you have permission to do so. Don\'t run at work, university, school etc. without the permission of your network administrators.</string>
     <string name="useLocalFile">Use Local File</string>
     <string name="chooseFile">Select downloaded file</string>
-    <string name="keepInstallTitle">Keep installation files?</string>
-    <string name="keepInstallText">Do you want to keep the installation files? This will allow for a smaller download when upgrading later.</string>
 </resources>

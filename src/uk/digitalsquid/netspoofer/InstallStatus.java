@@ -29,12 +29,8 @@ import uk.digitalsquid.netspoofer.NetSpoof.LoadResult;
 import uk.digitalsquid.netspoofer.config.Config;
 import uk.digitalsquid.netspoofer.config.ConfigChecker;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
-import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -59,8 +55,6 @@ public class InstallStatus extends Activity implements OnClickListener, Config {
 	private Button dlButton;
 	
 	public static final String EXTRA_DL_INFO = "uk.digitalsquid.netspoofer.InstallStatus.DlInfo";
-	
-	public static final int DIALOG_KEEP_INSTALL_DATA = 1;
 	
 	/**
 	 * When <code>true</code>, this is put in upgrade mode, ie. downloading a patch, not reinstalling
@@ -115,10 +109,7 @@ public class InstallStatus extends Activity implements OnClickListener, Config {
         		if(url.startsWith("http://downloads.sourceforge.net/project/netspoof/debian-images/debian")) {
 	        		Log.i("android-netspoof", "Found SF DL URL: " + url);
 					if(!ConfigChecker.isInstallServiceRunning(getApplicationContext())) {
-						Bundle bundle = new Bundle();
-						bundle.putBoolean("upgrade", false);
-						bundle.putString("url", url);
-						showDialog(DIALOG_KEEP_INSTALL_DATA, bundle);
+						startServiceForUrl(false, loadResult.upgradeUrl);
 					}
 					else possibleSfURLs.add(url);
         		}
@@ -141,12 +132,11 @@ public class InstallStatus extends Activity implements OnClickListener, Config {
 	
 	private boolean downloadUnzipped;
 	
-	private void startServiceForUrl(boolean upgrade, boolean keepInstallationFile, String url) {
+	private void startServiceForUrl(boolean upgrade, String url) {
 		Intent intent = new Intent(getApplicationContext(), InstallService.class);
 		intent.putExtra(InstallService.INTENT_START_URL, url);
 		intent.putExtra(InstallService.INTENT_START_URL_UNZIPPED, downloadUnzipped);
 		intent.putExtra(InstallService.INTENT_START_URL_UPGRADE, upgrade);
-		intent.putExtra(InstallService.INTENT_START_KEEP_INSTALLATION_FILE, keepInstallationFile);
 		startService(intent);
 		status.setText(R.string.dlStarting);
 		dlButton.setText(R.string.dlCancel);
@@ -161,16 +151,10 @@ public class InstallStatus extends Activity implements OnClickListener, Config {
 					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 					String downloadUrl = prefs.getString("debImgUrl", "");
 					if(!downloadUrl.equals("")) {
-						Bundle bundle = new Bundle();
-						bundle.putBoolean("upgrade", false);
-						bundle.putString("url", downloadUrl);
-						showDialog(DIALOG_KEEP_INSTALL_DATA, bundle);
+						startServiceForUrl(false, loadResult.upgradeUrl);
 					} else activateSFWV();
 				} else {
-					Bundle bundle = new Bundle();
-					bundle.putBoolean("upgrade", true);
-					bundle.putString("url", loadResult.upgradeUrl);
-					showDialog(DIALOG_KEEP_INSTALL_DATA, bundle);
+					startServiceForUrl(true, loadResult.upgradeUrl);
 				}
 			} else {
 				stopService(new Intent(getApplicationContext(), InstallService.class));
@@ -314,38 +298,6 @@ public class InstallStatus extends Activity implements OnClickListener, Config {
 			return true;
 		}
 		return false;
-	}
-	
-	@Override
-	protected Dialog onCreateDialog(int id, Bundle args) {
-		super.onCreateDialog(id, args);
-		if(args == null) throw new IllegalArgumentException("args is null");
-		AlertDialog.Builder builder;
-		switch(id) {
-			case DIALOG_KEEP_INSTALL_DATA:
-				// Bundle contains boolean upgrade and String url.
-				final boolean upgrade = args.getBoolean("upgrade");
-				final String url = args.getString("url");
-				
-				builder = new Builder(this);
-				builder.setTitle(R.string.keepInstallTitle);
-				builder.setMessage(R.string.keepInstallText);
-				builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						startServiceForUrl(upgrade, true, url);
-					}
-				});
-				builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						startServiceForUrl(upgrade, false, url);
-					}
-				});
-				return builder.create();
-			default:
-				return null;
-		}
 	}
 	
 	public void onActivityResult(final int requestCode,

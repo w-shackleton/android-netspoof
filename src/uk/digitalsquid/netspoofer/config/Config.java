@@ -36,8 +36,8 @@ public interface Config extends LogConf {
 	/**
 	 * For incremental upgrades
 	 */
-	public static final String UPGRADE_URI_FORMAT = "http://digitalsquid.co.uk/download/android-netspoof/upgrade/%d-%d.vcdiff";
+	public static final String UPGRADE_URI_FORMAT = "http://digitalsquid.co.uk/download/android-netspoof/upgrade/%d-%d.zip";
 	
 	public static final int DEB_IMG_URL_SIZE = 440320000;
-	public static final int DEB_IMG_URL_VERSION = 13;
+	public static final int DEB_IMG_URL_VERSION = 12;
 }

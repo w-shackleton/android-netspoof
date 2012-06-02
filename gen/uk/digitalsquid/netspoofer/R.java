@@ -153,11 +153,8 @@ public final class R {
         public static final int busybox=0x7f050000;
         public static final int config=0x7f050001;
         public static final int mount=0x7f050002;
-        public static final int patch=0x7f050003;
-        public static final int pv=0x7f050004;
-        public static final int start=0x7f050005;
-        public static final int umount=0x7f050006;
-        public static final int xdelta3=0x7f050007;
+        public static final int start=0x7f050003;
+        public static final int umount=0x7f050004;
     }
     public static final class string {
         public static final int about=0x7f060044;
@@ -214,8 +211,6 @@ public final class R {
         public static final int ifaceDesc=0x7f060058;
         public static final int ipScanThreads=0x7f060042;
         public static final int ipScanThreadsDesc=0x7f060043;
-        public static final int keepInstallText=0x7f06006c;
-        public static final int keepInstallTitle=0x7f06006b;
         public static final int loadfailed=0x7f060033;
         public static final int loadfailedtitle=0x7f060032;
         public static final int loading=0x7f06001c;
