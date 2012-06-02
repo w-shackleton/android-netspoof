@@ -26,7 +26,14 @@
 	    android:gravity="center_horizontal" android:layout_height="wrap_content" android:background="@drawable/bg" android:layout_width="wrap_content" android:layout_gravity="center">
 		<LinearLayout android:layout_height="match_parent" android:orientation="vertical" android:layout_width="wrap_content" android:gravity="center_horizontal" android:paddingTop="10dip">
 			<Button android:id="@+id/startButton" android:layout_width="wrap_content" android:text="@string/start" android:layout_height="wrap_content" android:enabled="false"></Button>
-			<Button android:id="@+id/setupButton" android:layout_width="wrap_content" android:text="@string/setup" android:layout_height="wrap_content"></Button>
+
+			<Button
+			    android:id="@+id/setupButton"
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:enabled="false"
+			    android:text="@string/setup" >
+</Button>
 			<TextView android:id="@+id/loading" android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="@string/loading"></TextView>
 		</LinearLayout>
 	</LinearLayout>

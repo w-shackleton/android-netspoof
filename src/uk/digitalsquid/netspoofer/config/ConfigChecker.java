@@ -48,6 +48,49 @@ public final class ConfigChecker implements Config {
 		return false;
 	}
 	
+	public static final boolean hasInstallationData(Context context) {
+		if(getSDStatus(false)) {
+			final File sd = context.getExternalFilesDir(null);
+			if(sd == null) return false;
+			File debianGz = new File(sd.getAbsolutePath() + "/" + DEB_IMG_GZ);
+			Log.i(TAG, "Checking if file " + debianGz.getAbsolutePath() + " exists");
+			if(debianGz.exists()) return true;
+		}
+		return false;
+	}
+	
+	public static final int getVersionNumber(Context context) {
+		if(getSDStatus(false)) {
+			final File sd = context.getExternalFilesDir(null);
+			if(sd == null) return -1;
+			File version = new File(sd.getAbsolutePath() + "/" + DEB_VERSION_FILE);
+			Log.i(TAG, "Getting version number from file");
+			String ver;
+			try {
+				FileInputStream verReader = new FileInputStream(version);
+				BufferedReader reader = new BufferedReader(new InputStreamReader(verReader));
+				ver = reader.readLine();
+				reader.close();
+				verReader.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+				return -1;
+			} catch (IOException e) {
+				e.printStackTrace();
+				return -1;
+			}
+			if(ver != null) {
+				try {
+					return Integer.parseInt(ver);
+				} catch(NumberFormatException e) {
+					e.printStackTrace();
+					return -1;
+				}
+			}
+		}
+		return -1;
+	}
+	
 	public static final boolean checkInstalledLatest(Context context) {
 		if(getSDStatus(false)) {
 			final File sd = context.getExternalFilesDir(null);
@@ -70,7 +113,7 @@ public final class ConfigChecker implements Config {
 			}
 			if(ver != null) {
 				try {
-				if(Integer.parseInt(ver) >= DEB_IMG_URL_VERSION) return true;
+					if(Integer.parseInt(ver) >= DEB_IMG_URL_VERSION) return true;
 				} catch(NumberFormatException e) {
 					e.printStackTrace();
 					return false;

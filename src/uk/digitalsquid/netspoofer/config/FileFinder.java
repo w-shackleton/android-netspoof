@@ -140,6 +140,9 @@ public final class FileFinder implements LogConf {
 		boolean mountFound = false;
 		boolean mkdirFound = false;
 		boolean mknodFound = false;
+		boolean mkfifoFound = false;
+		boolean gzipFound = false;
+		boolean teeFound = false;
 		for(String line : result) {
 			if(line.contains("chroot"))
 				chrootFound = true;
@@ -151,12 +154,21 @@ public final class FileFinder implements LogConf {
 				mkdirFound = true;
 			if(line.contains("mknod"))
 				mknodFound = true;
+			if(line.contains("mkfifo"))
+				mkfifoFound = true;
+			if(line.contains("gzip"))
+				gzipFound = true;
+			if(line.contains("tee"))
+				teeFound = true;
 		}
 		if(!chrootFound) throw new FileNotFoundException("bb:chroot");
 		if(!losetupFound) throw new FileNotFoundException("bb:losetup");
 		if(!mountFound) throw new FileNotFoundException("bb:mount");
 		if(!mkdirFound) throw new FileNotFoundException("bb:mkdir");
 		if(!mknodFound) throw new FileNotFoundException("bb:mknod");
+		if(!mkfifoFound) throw new FileNotFoundException("bb:mkfifo");
+		if(!gzipFound) throw new FileNotFoundException("bb:gzip");
+		if(!teeFound) throw new FileNotFoundException("bb:tee");
 	}
 	
 	/**
