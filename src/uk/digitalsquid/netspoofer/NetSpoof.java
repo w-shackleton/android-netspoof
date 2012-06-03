@@ -347,6 +347,7 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 				fi.installScript("umount", R.raw.umount);
 				
 				fi.installScript("busybox", R.raw.busybox);
+				fi.installScript("applyupgrade", R.raw.applyupgrade);
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (NotFoundException e) {

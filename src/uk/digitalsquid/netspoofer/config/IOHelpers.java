@@ -22,6 +22,7 @@
 package uk.digitalsquid.netspoofer.config;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -98,5 +99,21 @@ public final class IOHelpers {
 			e.printStackTrace();
 		}
 		return -1;
+	}
+	
+	public static final void deleteFolder(File dir) {
+		if(!dir.exists()) return;
+		if(!dir.isDirectory()) {
+			dir.delete();
+			return;
+		}
+		for(String child : dir.list()) {
+			File sub = new File(dir, child);
+			if(sub.isDirectory()) {
+				deleteFolder(sub);
+				sub.delete();
+			}
+			else sub.delete();
+		}
 	}
 }

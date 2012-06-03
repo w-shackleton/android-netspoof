@@ -38,6 +38,9 @@ import java.util.zip.GZIPInputStream;
 
 import uk.digitalsquid.netspoofer.config.Config;
 import uk.digitalsquid.netspoofer.config.ConfigChecker;
+import uk.digitalsquid.netspoofer.config.IOHelpers;
+import uk.digitalsquid.netspoofer.config.UpgradeInstaller;
+import uk.digitalsquid.netspoofer.misc.UnZip;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -69,7 +72,8 @@ public class InstallService extends Service implements Config {
 	public static final int STATUS_DL_FAIL_IOERROR = 2;
 	public static final int STATUS_DL_FAIL_SDERROR = 3;
 	public static final int STATUS_DL_FAIL_DLERROR = 4;
-	public static final int STATUS_DL_CANCEL = 5;
+	public static final int STATUS_UPGRADE_ERROR = 5;
+	public static final int STATUS_DL_CANCEL = 6;
 	
 	private static final int DL_NOTIFY = 1;
 	
@@ -250,6 +254,7 @@ public class InstallService extends Service implements Config {
 			boolean downloadUnzipped = params[0].unzipped;
 			boolean useLocalFile = params[0].useLocalFile;
 			final boolean upgrade = params[0].upgrade;
+			boolean writeOldVersion = false;
 			if(upgrade) { // Never use local file when upgrading, and don't extract
 				useLocalFile = false;
 				downloadUnzipped = true;
@@ -336,7 +341,20 @@ public class InstallService extends Service implements Config {
 			}
 			
 			if(upgrade) { // Perform zip based upgrade
-				// TODO: Upgrade code here
+				File destDir = new File(sd, "upgrade");
+				if(destDir.exists()) IOHelpers.deleteFolder(destDir);
+				DLProgress progress = new DLProgress(DLProgress.STATUS_EXTRACTING, 0, 1);
+				publishProgress(progress);
+				destDir.mkdir();
+				try {
+					if(!UnZip.unzipArchive(dlDestination, destDir))
+						throw new IOException("Failed to extract");
+					UpgradeInstaller.copyUpgrade(getBaseContext(), this, destDir);
+				} catch (IOException e) {
+					e.printStackTrace();
+					done = false;
+					writeOldVersion = true;
+				}
 			}
 			
 			if(done) {
@@ -357,9 +375,29 @@ public class InstallService extends Service implements Config {
 					Log.e(TAG, "Couldn't write version file");
 				}
 			}
+			if(writeOldVersion) {
+				File version = new File(sd.getAbsolutePath() + "/" + DEB_VERSION_FILE);
+				try {
+					version.createNewFile(); // Make sure exists
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				try {
+					FileOutputStream versionWriter = new FileOutputStream(version);
+					versionWriter.write(("" + oldVersionNumber).getBytes());
+					versionWriter.close();
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+					Log.e(TAG, "Couldn't write version file");
+				}
+			}
 			
 			Log.i(TAG, "Finished download");
-			return STATUS_DL_SUCCESS;
+			if(done) return STATUS_DL_SUCCESS;
+			if(upgrade) return STATUS_UPGRADE_ERROR;
+			return STATUS_DL_FAIL_IOERROR;
 		}
 		
 		/**

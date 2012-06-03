@@ -193,7 +193,8 @@ public class InstallStatus extends Activity implements OnClickListener, Config {
 						dlProgressText.setText(String.format("%.1f / %.0fMB\nExtracting", mbDone, mbTotal));
 						break;
 					case DLProgress.STATUS_PATCHING:
-						dlProgressText.setText(String.format("%.1f / %.0fMB\nUpgrading", mbDone, mbTotal));
+						if(mbTotal != 0) dlProgressText.setText(String.format("%.1f / %.0fMB\nUpgrading", mbDone, mbTotal));
+						else dlProgressText.setText("Upgrading");
 						break;
 					case DLProgress.STATUS_RECOVERING:
 						dlProgressText.setText(String.format("%.1f / %.0fMB\nRecovering from failed upgrade", mbDone, mbTotal));
@@ -225,6 +226,12 @@ public class InstallStatus extends Activity implements OnClickListener, Config {
 					Toast.makeText(
 							InstallStatus.this,
 							"Couldn't open file for writing on SD card",
+							Toast.LENGTH_LONG).show();
+					break;
+				case InstallService.STATUS_UPGRADE_ERROR:
+					Toast.makeText(
+							InstallStatus.this,
+							"An error occured while upgrading.",
 							Toast.LENGTH_LONG).show();
 					break;
 				case InstallService.STATUS_DL_SUCCESS:

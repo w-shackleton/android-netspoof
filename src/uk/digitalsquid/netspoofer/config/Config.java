@@ -39,5 +39,5 @@ public interface Config extends LogConf {
 	public static final String UPGRADE_URI_FORMAT = "http://digitalsquid.co.uk/download/android-netspoof/upgrade/%d-%d.zip";
 	
 	public static final int DEB_IMG_URL_SIZE = 440320000;
-	public static final int DEB_IMG_URL_VERSION = 12;
+	public static final int DEB_IMG_URL_VERSION = 13;
 }
