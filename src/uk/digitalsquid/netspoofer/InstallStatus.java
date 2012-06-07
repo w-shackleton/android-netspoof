@@ -24,9 +24,8 @@ package uk.digitalsquid.netspoofer;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.lamerman.FileDialog;
-
 import uk.digitalsquid.netspoofer.InstallService.DLProgress;
+import uk.digitalsquid.netspoofer.NetSpoof.LoadResult;
 import uk.digitalsquid.netspoofer.config.Config;
 import uk.digitalsquid.netspoofer.config.ConfigChecker;
 import android.app.Activity;
@@ -50,8 +49,18 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.lamerman.FileDialog;
+
 public class InstallStatus extends Activity implements OnClickListener, Config {
 	private Button dlButton;
+	
+	public static final String EXTRA_DL_INFO = "uk.digitalsquid.netspoofer.InstallStatus.DlInfo";
+	
+	/**
+	 * When <code>true</code>, this is put in upgrade mode, ie. downloading a patch, not reinstalling
+	 */
+	boolean upgrading;
+	LoadResult loadResult;
 	
 	private ProgressBar dlProgress;
 	
@@ -65,6 +74,10 @@ public class InstallStatus extends Activity implements OnClickListener, Config {
 		
 	    statusFilter = new IntentFilter();
 	    statusFilter.addAction(InstallService.INTENT_STATUSUPDATE);
+	    
+	    LoadResult loadResult = (LoadResult) getIntent().getSerializableExtra(EXTRA_DL_INFO);
+	    this.loadResult = loadResult;
+	    upgrading = loadResult == null ? false : loadResult.doUpgrade;
 	    
 		webView = (WebView)findViewById(R.id.sfWebView);
 		
@@ -94,9 +107,9 @@ public class InstallStatus extends Activity implements OnClickListener, Config {
         	public void onLoadResource(WebView view, String url) {
         		// Note to self: check this every now and then, as SF may change a bit once in a while.
         		if(url.startsWith("http://downloads.sourceforge.net/project/netspoof/debian-images/debian")) {
-	        		Log.i("android-netspoof", "Found SF DL URL: " + url);
+	        		Log.i(TAG, "Found SF DL URL: " + url);
 					if(!ConfigChecker.isInstallServiceRunning(getApplicationContext())) {
-						startServiceForUrl(url);
+						startServiceForUrl(false, url);
 					}
 					else possibleSfURLs.add(url);
         		}
@@ -119,10 +132,11 @@ public class InstallStatus extends Activity implements OnClickListener, Config {
 	
 	private boolean downloadUnzipped;
 	
-	private void startServiceForUrl(String url) {
+	private void startServiceForUrl(boolean upgrade, String url) {
 		Intent intent = new Intent(getApplicationContext(), InstallService.class);
 		intent.putExtra(InstallService.INTENT_START_URL, url);
 		intent.putExtra(InstallService.INTENT_START_URL_UNZIPPED, downloadUnzipped);
+		intent.putExtra(InstallService.INTENT_START_URL_UPGRADE, upgrade);
 		startService(intent);
 		status.setText(R.string.dlStarting);
 		dlButton.setText(R.string.dlCancel);
@@ -133,11 +147,15 @@ public class InstallStatus extends Activity implements OnClickListener, Config {
 		switch(v.getId()) {
 		case R.id.dlButton:
 			if(!ConfigChecker.isInstallServiceRunning(getApplicationContext())) {
-				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-				String downloadUrl = prefs.getString("debImgUrl", "");
-				if(!downloadUrl.equals("")) {
-					startServiceForUrl(downloadUrl);
-				} else activateSFWV();
+				if(!upgrading) {
+					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+					String downloadUrl = prefs.getString("debImgUrl", "");
+					if(!downloadUrl.equals("")) {
+						startServiceForUrl(false, downloadUrl);
+					} else activateSFWV();
+				} else {
+					startServiceForUrl(true, loadResult.upgradeUrl);
+				}
 			} else {
 				stopService(new Intent(getApplicationContext(), InstallService.class));
 				findViewById(R.id.sfWebView).setVisibility(View.GONE);
@@ -167,10 +185,20 @@ public class InstallStatus extends Activity implements OnClickListener, Config {
 					dlProgress.setProgress(progress.getKBytesDone());
 					float mbDone = (float)progress.getKBytesDone() / 1024;
 					float mbTotal = (float)progress.getKBytesTotal() / 1024;
-					if(!progress.isExtracting()) {
+					switch(progress.getStatus()) {
+					case DLProgress.STATUS_DOWNLOADING:
 						dlProgressText.setText(String.format("%.1f / %.0fMB\nDownloading", mbDone, mbTotal));
-					} else {
+						break;
+					case DLProgress.STATUS_EXTRACTING:
 						dlProgressText.setText(String.format("%.1f / %.0fMB\nExtracting", mbDone, mbTotal));
+						break;
+					case DLProgress.STATUS_PATCHING:
+						if(mbTotal != 0) dlProgressText.setText(String.format("%.1f / %.0fMB\nUpgrading", mbDone, mbTotal));
+						else dlProgressText.setText("Upgrading");
+						break;
+					case DLProgress.STATUS_RECOVERING:
+						dlProgressText.setText(String.format("%.1f / %.0fMB\nRecovering from failed upgrade", mbDone, mbTotal));
+						break;
 					}
 				}
 				break;
@@ -198,6 +226,12 @@ public class InstallStatus extends Activity implements OnClickListener, Config {
 					Toast.makeText(
 							InstallStatus.this,
 							"Couldn't open file for writing on SD card",
+							Toast.LENGTH_LONG).show();
+					break;
+				case InstallService.STATUS_UPGRADE_ERROR:
+					Toast.makeText(
+							InstallStatus.this,
+							"An error occured while upgrading.",
 							Toast.LENGTH_LONG).show();
 					break;
 				case InstallService.STATUS_DL_SUCCESS:

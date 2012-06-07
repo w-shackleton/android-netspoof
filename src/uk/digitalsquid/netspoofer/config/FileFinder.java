@@ -135,28 +135,28 @@ public final class FileFinder implements LogConf {
 			Log.e(TAG, "Failed to check BB programs, probably as BB doesn't exist?");
 			e.printStackTrace();
 		}
-		boolean chrootFound = false;
-		boolean losetupFound = false;
-		boolean mountFound = false;
-		boolean mkdirFound = false;
-		boolean mknodFound = false;
+		String requiredApplets[] = {
+				"chroot",
+				"losetup",
+				"mount",
+				"mkdir",
+				"mknod",
+				"cp",
+		};
+		boolean foundApplets[] = new boolean[requiredApplets.length];
 		for(String line : result) {
-			if(line.contains("chroot"))
-				chrootFound = true;
-			if(line.contains("losetup"))
-				losetupFound = true;
-			if(line.contains("mount"))
-				mountFound = true;
-			if(line.contains("mkdir"))
-				mkdirFound = true;
-			if(line.contains("mknod"))
-				mknodFound = true;
+			int i = 0;
+			for(String applet : requiredApplets) {
+				if(line.contains(applet))
+					foundApplets[i] = true;
+				i++;
+			}
 		}
-		if(!chrootFound) throw new FileNotFoundException("bb:chroot");
-		if(!losetupFound) throw new FileNotFoundException("bb:losetup");
-		if(!mountFound) throw new FileNotFoundException("bb:mount");
-		if(!mkdirFound) throw new FileNotFoundException("bb:mkdir");
-		if(!mknodFound) throw new FileNotFoundException("bb:mknod");
+		int i = 0;
+		for(boolean found : foundApplets) {
+			if(!found) throw new FileNotFoundException("bb:"+requiredApplets[i]);
+			i++;
+		}
 	}
 	
 	/**

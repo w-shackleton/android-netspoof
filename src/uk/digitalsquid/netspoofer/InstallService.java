@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -37,6 +38,10 @@ import java.util.concurrent.CancellationException;
 import java.util.zip.GZIPInputStream;
 
 import uk.digitalsquid.netspoofer.config.Config;
+import uk.digitalsquid.netspoofer.config.ConfigChecker;
+import uk.digitalsquid.netspoofer.config.IOHelpers;
+import uk.digitalsquid.netspoofer.config.UpgradeInstaller;
+import uk.digitalsquid.netspoofer.misc.UnZip;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -58,6 +63,7 @@ public class InstallService extends Service implements Config {
 	 */
 	public static final String INTENT_START_FILE = "uk.digitalsquid.netspoofer.config.InstallStatus.isFile";
 	public static final String INTENT_START_URL_UNZIPPED = "uk.digitalsquid.netspoofer.config.InstallStatus.URLUnzipped";
+	public static final String INTENT_START_URL_UPGRADE = "uk.digitalsquid.netspoofer.config.InstallStatus.isUpgrade";
 	public static final int STATUS_STARTED = 0;
 	public static final int STATUS_DOWNLOADING = 1;
 	public static final int STATUS_FINISHED = 2;
@@ -67,7 +73,8 @@ public class InstallService extends Service implements Config {
 	public static final int STATUS_DL_FAIL_IOERROR = 2;
 	public static final int STATUS_DL_FAIL_SDERROR = 3;
 	public static final int STATUS_DL_FAIL_DLERROR = 4;
-	public static final int STATUS_DL_CANCEL = 5;
+	public static final int STATUS_UPGRADE_ERROR = 5;
+	public static final int STATUS_DL_CANCEL = 6;
 	
 	private static final int DL_NOTIFY = 1;
 	
@@ -115,11 +122,12 @@ public class InstallService extends Service implements Config {
 		// String downloadUrl = prefs.getString("debImgUrl", DEB_IMG_URL);
 		String downloadUrl = intent.getStringExtra(INTENT_START_URL);
 		boolean downloadUnzipped = intent.getBooleanExtra(INTENT_START_URL_UNZIPPED, false);
+		boolean isUpgrade = intent.getBooleanExtra(INTENT_START_URL_UPGRADE, false);
 		boolean useLocalFile = intent.getBooleanExtra(INTENT_START_FILE, false);
 		if(downloadUrl == null) throw new IllegalArgumentException("Start URL was null");
 		Log.v(TAG, "Downloading file " + downloadUrl);
 		// if(downloadUrl.equals("")) downloadUrl = DEB_IMG_URL;
-		downloadTask.execute(new DlStartData(downloadUrl, downloadUnzipped, useLocalFile));
+		downloadTask.execute(new DlStartData(downloadUrl, downloadUnzipped, isUpgrade, useLocalFile));
 	}
 	
 	/**
@@ -131,11 +139,17 @@ public class InstallService extends Service implements Config {
 		private static final long serialVersionUID = 6287320665354658386L;
 		public final String url;
 		public final boolean unzipped;
+		/**
+		 * When <code>true</code>, indicates an incremental upgrade (ie. a patch).
+		 */
+		public final boolean upgrade;
 		public final boolean useLocalFile;
 		
-		public DlStartData(String url, boolean unzipped, boolean useLocal) {
+		
+		public DlStartData(String url, boolean unzipped, boolean isUpgrade, boolean useLocal) {
 			this.url = url;
 			this.unzipped = unzipped;
+			this.upgrade = isUpgrade;
 			useLocalFile = useLocal;
 		}
 	}
@@ -167,21 +181,22 @@ public class InstallService extends Service implements Config {
 	public static final class DLProgress implements Serializable {
 		private static final long serialVersionUID = -5366348392979726959L;
 		
-		private final boolean extracting;
+		public static final int STATUS_DOWNLOADING = 1;
+		public static final int STATUS_EXTRACTING = 2;
+		public static final int STATUS_PATCHING = 3;
+		public static final int STATUS_RECOVERING = 4;
+		
+		private final int status;
 		
 		public DLProgress(int bytesDone, int bytesTotal) {
 			this.bytesDone = bytesDone;
 			this.bytesTotal = bytesTotal;
-			extracting = false;
+			status = STATUS_DOWNLOADING;
 		}
-		public DLProgress(boolean extracting, int bytesDone, int bytesTotal) {
+		public DLProgress(int status, int bytesDone, int bytesTotal) {
 			this.bytesDone = bytesDone;
 			this.bytesTotal = bytesTotal;
-			this.extracting = extracting;
-		}
-		
-		public boolean isExtracting() {
-			return extracting;
+			this.status = status;
 		}
 		
 		public int getBytesDone() {
@@ -202,47 +217,78 @@ public class InstallService extends Service implements Config {
 		public int getKBytesTotal() {
 			return bytesTotal / 1024;
 		}
+		public int getStatus() {
+			return status;
+		}
 		private int bytesDone, bytesTotal;
 	}
 	
-	private final AsyncTask<DlStartData, DLProgress, Integer> downloadTask = new AsyncTask<DlStartData, DLProgress, Integer>() {
+	public static interface DLProgressPublisher {
+		public void publishDLProgress(DLProgress progress);
+	}
+	
+	public final DownloadTask downloadTask = new DownloadTask();
+	
+	/**
+	 * Task to download and extract data. This should be split up into more modular sections at some point.
+	 */
+	private final class DownloadTask extends AsyncTask<DlStartData, DLProgress, Integer> implements DLProgressPublisher {
 		private InputStream response;
 		private URLConnection connection;
 		
 		private File sd;
-		private File debian;
+		/**
+		 * This is the destination to download to. In the case of an upgrade, it is the upgrade file.
+		 */
+		private File dlDestination;
 		
 		private URL downloadURL;
-		private FileOutputStream debWriter;
+		private FileOutputStream dlWriter;
+		
+		public void publishDLProgress(DLProgress progress) {
+			publishProgress(progress);
+		}
 		
 		@Override
 		protected Integer doInBackground(DlStartData... params) {
+			if(params.length != 1) throw new IllegalArgumentException("Please specify 1 parameter");
 			boolean downloadUnzipped = params[0].unzipped;
 			boolean useLocalFile = params[0].useLocalFile;
+			final boolean upgrade = params[0].upgrade;
+			boolean writeOldVersion = false;
+			if(upgrade) { // Never use local file when upgrading, and don't extract
+				useLocalFile = false;
+				downloadUnzipped = true;
+			}
 			sd = getExternalFilesDir(null);
-			debian = downloadUnzipped ?
-					new File(sd.getAbsolutePath() + "/" + DEB_IMG) : // Save directly to new location
-					new File(sd.getAbsolutePath() + "/" + DEB_IMG_GZ);
+			
+			if(upgrade) {
+				dlDestination = new File(getFilesDir() + "/" + "upgrade.zip");
+			} else if(downloadUnzipped) {
+				dlDestination = new File(sd.getAbsolutePath() + "/" + DEB_IMG); // Save directly to new location
+			} else {
+				dlDestination = new File(sd.getAbsolutePath() + "/" + DEB_IMG_GZ);
+			}
 			try {
-				debian.createNewFile();
+				dlDestination.createNewFile();
 			} catch (IOException e) {
 				e.printStackTrace();
 				return STATUS_DL_FAIL_SDERROR;
 			}
 			
 			// Delete version file
+			final int oldVersionNumber = ConfigChecker.getVersionNumber(getBaseContext());
 			File oldversion = new File(sd.getAbsolutePath() + "/" + DEB_VERSION_FILE);
 			oldversion.delete();
 			
 			boolean done = true;
 			if(!useLocalFile) {
 				try {
-					debWriter = new FileOutputStream(debian);
+					dlWriter = new FileOutputStream(dlDestination);
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
 				}
 				
-				if(params.length != 1) throw new IllegalArgumentException("Please specify 1 parameter");
 				try {
 					downloadURL = new URL(params[0].url);
 				} catch (MalformedURLException e) {
@@ -252,12 +298,17 @@ public class InstallService extends Service implements Config {
 				
 				int fileSize = 0;
 				try {
+					HttpURLConnection.setFollowRedirects(true);
 					connection = downloadURL.openConnection();
 					connection.connect();
 					fileSize = connection.getContentLength();
-				} catch (IOException e1) { }
+					Log.i(TAG, String.format("Downloading %d bytes of %s from %s", fileSize, connection.getContentType(), downloadURL));
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
 				
 				int downloaded = 0;
+				
 				while(downloaded < fileSize) {
 					if(isCancelled()) {
 						done = false;
@@ -276,22 +327,39 @@ public class InstallService extends Service implements Config {
 				}
 				
 				try {
-					debWriter.close();
+					dlWriter.close();
 					if(response != null) response.close(); // Could be nothing that was downloaded
 				} catch (IOException e) {
 				}
 			} else { // Use local
 				File localFile = new File(params[0].url);
 				if(!localFile.exists()) return STATUS_DL_FAIL_IOERROR;
-				if(!localFile.renameTo(debian)) return STATUS_DL_FAIL_SDERROR;
+				if(!localFile.renameTo(dlDestination)) return STATUS_DL_FAIL_SDERROR;
 			}
 			
 			if(!downloadUnzipped) { // Don't bother extracting
 				try {
-					unzip(debian);
+					unzip(dlDestination);
 				} catch (IOException e1) {
 					e1.printStackTrace();
 					done = false;
+				}
+			}
+			
+			if(upgrade) { // Perform zip based upgrade
+				File destDir = new File(sd, "upgrade");
+				if(destDir.exists()) IOHelpers.deleteFolder(destDir);
+				DLProgress progress = new DLProgress(DLProgress.STATUS_EXTRACTING, 0, 1);
+				publishProgress(progress);
+				destDir.mkdir();
+				try {
+					if(!UnZip.unzipArchive(dlDestination, destDir))
+						throw new IOException("Failed to extract");
+					UpgradeInstaller.copyUpgrade(getBaseContext(), this, destDir);
+				} catch (IOException e) {
+					e.printStackTrace();
+					done = false;
+					writeOldVersion = true;
 				}
 			}
 			
@@ -313,9 +381,29 @@ public class InstallService extends Service implements Config {
 					Log.e(TAG, "Couldn't write version file");
 				}
 			}
+			if(writeOldVersion) {
+				File version = new File(sd.getAbsolutePath() + "/" + DEB_VERSION_FILE);
+				try {
+					version.createNewFile(); // Make sure exists
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				try {
+					FileOutputStream versionWriter = new FileOutputStream(version);
+					versionWriter.write(("" + oldVersionNumber).getBytes());
+					versionWriter.close();
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+					Log.e(TAG, "Couldn't write version file");
+				}
+			}
 			
 			Log.i(TAG, "Finished download");
-			return STATUS_DL_SUCCESS;
+			if(done) return STATUS_DL_SUCCESS;
+			if(upgrade) return STATUS_UPGRADE_ERROR;
+			return STATUS_DL_FAIL_IOERROR;
 		}
 		
 		/**
@@ -337,7 +425,7 @@ public class InstallService extends Service implements Config {
 			try {
 				while((bytesRead = response.read(dlData)) != -1) {
 					bytesDone += bytesRead;
-					debWriter.write(dlData, 0, bytesRead);
+					dlWriter.write(dlData, 0, bytesRead);
 					if(i++ > 6) {
 						i = 0;
 						progress.setBytesDone(bytesDone + bytesSoFar);
@@ -346,7 +434,7 @@ public class InstallService extends Service implements Config {
 					
 					if(isCancelled()) {
 						response.close();
-						debWriter.close();
+						dlWriter.close();
 						// Remove old files
 						File delversion = new File(sd.getAbsolutePath() + "/" + DEB_VERSION_FILE);
 						delversion.delete();
@@ -370,7 +458,7 @@ public class InstallService extends Service implements Config {
 		{
 		    InputStream gzipInputStream = new BufferedInputStream(new GZIPInputStream(new FileInputStream(inFile)));
 		 
-			DLProgress progress = new DLProgress(true, 0, Config.DEB_IMG_URL_SIZE);
+			DLProgress progress = new DLProgress(DLProgress.STATUS_EXTRACTING, 0, Config.DEB_IMG_URL_SIZE);
 		 
 		    String outFilePath = inFile.getAbsolutePath().replace(".gz", "");
 		    OutputStream out = new FileOutputStream(outFilePath);

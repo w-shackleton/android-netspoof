@@ -98,18 +98,34 @@ public final class ChrootConfig implements Config {
 		// values.put("WLAN", iface); - Set in other places
 	}
 
+	/**
+	 * Gets the location of the loop device
+	 * @return
+	 */
 	public String getLoopdev() {
 		return loopdev;
 	}
 
+	/**
+	 * Gets the loop device number
+	 * @return
+	 */
 	public int getLoopNum() {
 		return loopnum;
 	}
 
+	/**
+	 * Gets the location where debian is mounted
+	 * @return
+	 */
 	public String getDebianMount() {
 		return debianMount;
 	}
 
+	/**
+	 * Gets the location of the debian image on the SD card
+	 * @return
+	 */
 	public String getDebianImage() {
 		return debianImage;
 	}

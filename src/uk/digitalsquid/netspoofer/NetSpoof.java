@@ -24,11 +24,14 @@ package uk.digitalsquid.netspoofer;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.Serializable;
 
+import uk.digitalsquid.netspoofer.config.Config;
 import uk.digitalsquid.netspoofer.config.ConfigChecker;
 import uk.digitalsquid.netspoofer.config.FileFinder;
 import uk.digitalsquid.netspoofer.config.FileInstaller;
 import uk.digitalsquid.netspoofer.config.LogConf;
+import uk.digitalsquid.netspoofer.config.NetHelpers;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -71,6 +74,8 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 	static final int DIALOG_ABOUT = 5;
 	
 	private Button startButton, setupButton;
+	
+	private LoadResult loadResult;
 
 	@SuppressWarnings("unused")
 	private SharedPreferences prefs;
@@ -112,7 +117,9 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 	public void onClick(View v) {
 		switch(v.getId()) {
 			case R.id.setupButton:
-				startActivity(new Intent(this, InstallStatus.class));
+				Intent intent = new Intent(this, InstallStatus.class);
+				intent.putExtra(InstallStatus.EXTRA_DL_INFO, loadResult);
+				startActivity(intent);
 				break;
 			case R.id.startButton:
 				startActivity(new Intent(this, SpoofSelector.class));
@@ -218,10 +225,30 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 	    }
 	}
 	
-	private AsyncTask<Void, Integer, Void> loadTask = new AsyncTask<Void, Integer, Void>() {
+	/**
+	 * Results acquired while loading
+	 * @author william
+	 *
+	 */
+	public static class LoadResult implements Serializable {
+		private static final long serialVersionUID = 6559183327061065064L;
+		
+		public int versionNumber = -1;
+		/**
+		 * An upgrade refers to a patch, not a new reinstall.
+		 */
+		public boolean doUpgrade = false;
+		public String upgradeUrl = "";
+		
+		public boolean doReinstall = false;
+		
+		public boolean firstTime = false;
+	}
+		
+	private AsyncTask<Void, Integer, LoadResult> loadTask = new AsyncTask<Void, Integer, LoadResult>() {
 		
 		@Override
-		protected Void doInBackground(Void... params) {
+		protected LoadResult doInBackground(Void... params) {
 			prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 			
 			// Install scripts & BB
@@ -255,8 +282,24 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 					
 				}
 			}
+			
+			LoadResult result = new LoadResult();
+			
+			// Get current version and check for upgrade availability.
+			result.versionNumber = ConfigChecker.getVersionNumber(getApplicationContext());
+			if(result.versionNumber >= Config.DEB_IMG_URL_VERSION) { // If current version
+				return result;
+			}
+			
+			// Check for possible upgrade file. Otherwise just prompt user to redownload whole file.
+			String url = String.format(Config.UPGRADE_URI_FORMAT, result.versionNumber, Config.DEB_IMG_URL_VERSION);
+			result.doUpgrade = NetHelpers.checkFileExistsOnWeb(url);
+			result.upgradeUrl = url;
+			
+			// If can't upgrade, reinstall.
+			if(!result.doUpgrade) result.doReinstall = true;
 		
-			return null;
+			return result;
 		}
 		
 		/**
@@ -273,13 +316,20 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 		}
 		
 		@Override
-		protected void onPostExecute(Void result) {
+		protected void onPostExecute(LoadResult result) {
+			// Set button statuses
 			if(!ConfigChecker.checkInstalledLatest(getApplicationContext())) {
 				setupButton.setTypeface(setupButton.getTypeface(), Typeface.BOLD);
 			} else {
 				setupButton.setTypeface(setupButton.getTypeface(), Typeface.NORMAL);
 			}
+			if(result.doUpgrade) setupButton.setText(R.string.setup_upgrade);
+			if(result.doReinstall) setupButton.setText(R.string.setup_upgrade2);
+			
 			startButton.setEnabled(ConfigChecker.checkInstalled(getApplicationContext()));
+			setupButton.setEnabled(true);
+			
+			loadResult = result;
 			
 			findViewById(R.id.loading).setVisibility(View.INVISIBLE);
 		}
@@ -297,6 +347,7 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 				fi.installScript("umount", R.raw.umount);
 				
 				fi.installScript("busybox", R.raw.busybox);
+				fi.installScript("applyupgrade", R.raw.applyupgrade);
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (NotFoundException e) {
