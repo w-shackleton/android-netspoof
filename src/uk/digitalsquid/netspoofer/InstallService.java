@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -297,12 +298,17 @@ public class InstallService extends Service implements Config {
 				
 				int fileSize = 0;
 				try {
+					HttpURLConnection.setFollowRedirects(true);
 					connection = downloadURL.openConnection();
 					connection.connect();
 					fileSize = connection.getContentLength();
-				} catch (IOException e1) { }
+					Log.i(TAG, String.format("Downloading %d bytes of %s from %s", fileSize, connection.getContentType(), downloadURL));
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
 				
 				int downloaded = 0;
+				
 				while(downloaded < fileSize) {
 					if(isCancelled()) {
 						done = false;
