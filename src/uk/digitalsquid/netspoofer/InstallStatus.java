@@ -66,7 +66,7 @@ public class InstallStatus extends Activity implements OnClickListener, Config {
 	
 	private WebView webView;
 	
-	TextView status, dlProgressText;
+	TextView status, dlProgressText, description;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -82,6 +82,8 @@ public class InstallStatus extends Activity implements OnClickListener, Config {
 		webView = (WebView)findViewById(R.id.sfWebView);
 		
 		status = (TextView) findViewById(R.id.dlStatus);
+		description = (TextView) findViewById(R.id.description);
+		if(upgrading) description.setText(R.string.setupUpgrade);
 		dlProgressText = (TextView) findViewById(R.id.dlprogresstext);
 		dlProgress = (ProgressBar) findViewById(R.id.dlprogress);
 		dlButton = (Button) findViewById(R.id.dlButton);

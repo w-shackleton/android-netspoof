@@ -41,6 +41,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources.NotFoundException;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
@@ -72,12 +73,15 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 	 */
 	static final int DIALOG_BB_2 = 6;
 	static final int DIALOG_ABOUT = 5;
+	static final int DIALOG_AGREEMENT = 7;
+	static final int DIALOG_CHANGELOG = 8;
 	
 	private Button startButton, setupButton;
 	
 	private LoadResult loadResult;
+	
+	private boolean showChangelog = false;
 
-	@SuppressWarnings("unused")
 	private SharedPreferences prefs;
 	/** Called when the activity is first created. */
 	@Override
@@ -105,12 +109,40 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 	    statusFilter.addAction(InstallService.INTENT_STATUSUPDATE);
 		
 		registerReceiver(statusReceiver, statusFilter);
+		
+		// Changelog dialog
+		int versionCode = -1;
+		try {
+			versionCode = getPackageManager().getPackageInfo(getPackageName(), 0).versionCode;
+		} catch (NameNotFoundException e) {
+			e.printStackTrace();
+		}
+		prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		int oldVersionCode = prefs.getInt("oldVersion", -1);
+		Log.v(TAG, "Old version is " + oldVersionCode + ", new version is " + versionCode);
+		if(versionCode != -1 && versionCode > oldVersionCode) {
+			Log.i(TAG, "Displaying changelog");
+			prefs.edit().putInt("oldVersion", versionCode).commit();
+			showChangelog = true;
+		}
+		
+		if(prefs.getBoolean("firstTime", true)) { // First time, show license thing
+			showDialog(DIALOG_AGREEMENT);
+		} else postInit(); // This isn't called on first time, as new users don't need to see changelog
 	}
 	
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
 		unregisterReceiver(statusReceiver);
+	}
+	
+	/**
+	 * Non-important tasks after initialisation & agreement
+	 */
+	public void postInit() {
+		if(showChangelog)
+			showDialog(DIALOG_CHANGELOG);
 	}
 
 	@Override
@@ -130,6 +162,7 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 	protected Dialog onCreateDialog(int id) {
 		Dialog dialog = null;
 		AlertDialog.Builder builder;
+		View view;
 		switch(id) {
 			case DIALOG_R_SD:
 				builder = new AlertDialog.Builder(this);
@@ -177,6 +210,39 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 					.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int id) { }
 					});
+				dialog = builder.create();
+				break;
+			case DIALOG_AGREEMENT:
+				builder = new AlertDialog.Builder(this);
+				view = getLayoutInflater().inflate(R.layout.agreement, null);
+				builder.setView(view);
+				builder.setTitle(R.string.agreementTitle);
+				builder.setCancelable(false);
+				builder.setPositiveButton(R.string.agreementPositive, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						prefs.edit().putBoolean("firstTime", false).commit();
+						postInit();
+					}
+				});
+				builder.setNegativeButton(R.string.agreementNegative, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						finish();
+					}
+				});
+				dialog = builder.create();
+				break;
+			case DIALOG_CHANGELOG:
+				builder = new AlertDialog.Builder(this);
+				view = getLayoutInflater().inflate(R.layout.changelog, null);
+				builder.setView(view);
+				builder.setTitle(R.string.agreementTitle);
+				builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+					}
+				});
 				dialog = builder.create();
 				break;
 		}
@@ -249,7 +315,7 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 		
 		@Override
 		protected LoadResult doInBackground(Void... params) {
-			prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+			if(prefs == null) prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 			
 			// Install scripts & BB
 			installFiles();
@@ -295,6 +361,7 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 			String url = String.format(Config.UPGRADE_URI_FORMAT, result.versionNumber, Config.DEB_IMG_URL_VERSION);
 			result.doUpgrade = NetHelpers.checkFileExistsOnWeb(url);
 			result.upgradeUrl = url;
+			result.firstTime = !ConfigChecker.checkInstalled(getApplicationContext());
 			
 			// If can't upgrade, reinstall.
 			if(!result.doUpgrade) result.doReinstall = true;
@@ -325,6 +392,7 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 			}
 			if(result.doUpgrade) setupButton.setText(R.string.setup_upgrade);
 			if(result.doReinstall) setupButton.setText(R.string.setup_upgrade2);
+			if(result.firstTime) setupButton.setText(R.string.setup);
 			
 			startButton.setEnabled(ConfigChecker.checkInstalled(getApplicationContext()));
 			setupButton.setEnabled(true);
