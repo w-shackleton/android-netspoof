@@ -1,7 +1,7 @@
 /*
  * This file is part of Network Spoofer for Android.
- * Network Spoofer - change and mess with webpages and the internet on
- * other people's computers
+ * Network Spoofer lets you change websites on other people’s computers
+ * from an Android phone.
  * Copyright (C) 2011 Will Shackleton
  *
  * Network Spoofer is free software: you can redistribute it and/or modify
