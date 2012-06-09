@@ -41,6 +41,7 @@ import uk.digitalsquid.netspoofer.config.Config;
 import uk.digitalsquid.netspoofer.config.ConfigChecker;
 import uk.digitalsquid.netspoofer.config.IOHelpers;
 import uk.digitalsquid.netspoofer.config.UpgradeInstaller;
+import uk.digitalsquid.netspoofer.misc.AsyncTaskHelper;
 import uk.digitalsquid.netspoofer.misc.UnZip;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -127,7 +128,7 @@ public class InstallService extends Service implements Config {
 		if(downloadUrl == null) throw new IllegalArgumentException("Start URL was null");
 		Log.v(TAG, "Downloading file " + downloadUrl);
 		// if(downloadUrl.equals("")) downloadUrl = DEB_IMG_URL;
-		downloadTask.execute(new DlStartData(downloadUrl, downloadUnzipped, isUpgrade, useLocalFile));
+		AsyncTaskHelper.execute(downloadTask, new DlStartData(downloadUrl, downloadUnzipped, isUpgrade, useLocalFile));
 	}
 	
 	/**

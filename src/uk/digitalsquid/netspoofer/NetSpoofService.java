@@ -35,6 +35,7 @@ import uk.digitalsquid.netspoofer.config.ChrootManager;
 import uk.digitalsquid.netspoofer.config.FileFinder;
 import uk.digitalsquid.netspoofer.config.IOHelpers;
 import uk.digitalsquid.netspoofer.config.LogConf;
+import uk.digitalsquid.netspoofer.misc.AsyncTaskHelper;
 import uk.digitalsquid.netspoofer.servicemsg.ImageLoader;
 import uk.digitalsquid.netspoofer.servicemsg.ServiceMsg;
 import uk.digitalsquid.netspoofer.servicemsg.SpoofStarter;
@@ -144,7 +145,7 @@ public class NetSpoofService extends Service implements LogConf {
     private void start() {
     	Toast.makeText(getApplicationContext(), "Loaded setup", Toast.LENGTH_LONG).show();
     	
-    	mainLoopManager.execute(new ChrootConfig(getBaseContext()));
+    	AsyncTaskHelper.execute(mainLoopManager, new ChrootConfig(getBaseContext()));
     	setStatus(STATUS_LOADING);
     	
 		notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);

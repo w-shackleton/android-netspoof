@@ -33,6 +33,7 @@ import java.util.concurrent.TimeUnit;
 
 import uk.digitalsquid.netspoofer.config.LogConf;
 import uk.digitalsquid.netspoofer.config.NetHelpers;
+import uk.digitalsquid.netspoofer.misc.AsyncTaskHelper;
 import uk.digitalsquid.netspoofer.spoofs.SpoofData;
 import android.app.Activity;
 import android.app.AlertDialog.Builder;
@@ -99,7 +100,7 @@ public class VictimSelector extends Activity implements OnClickListener, LogConf
 		scanProgressRefresh.setOnClickListener(this);
 		
 		startScanners();
-		hostnameFinder.execute();
+		AsyncTaskHelper.execute(hostnameFinder);
 	}
 	
 	@Override
@@ -355,7 +356,7 @@ public class VictimSelector extends Activity implements OnClickListener, LogConf
 		
 		// Start
 		for(IPScanner scanner : scanners) {
-			scanner.execute();
+			AsyncTaskHelper.execute(scanner);
 		}
 		
 		scanProgressBar.setVisibility(View.VISIBLE);

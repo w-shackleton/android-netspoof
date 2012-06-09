@@ -27,6 +27,7 @@ import java.util.Map;
 
 import uk.digitalsquid.netspoofer.R;
 import uk.digitalsquid.netspoofer.config.LogConf;
+import uk.digitalsquid.netspoofer.misc.AsyncTaskHelper;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -134,7 +135,7 @@ public class IPRedirectSpoof extends SquidScriptSpoof implements LogConf {
 						v.setVisibility(View.VISIBLE);
 					}
 					if(bg.getStatus() != Status.RUNNING)
-						bg.execute();
+						AsyncTaskHelper.execute(bg);
 				}
 			});
 			cancel.setOnClickListener(new OnClickListener() {

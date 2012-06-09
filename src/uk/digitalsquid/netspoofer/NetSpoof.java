@@ -32,6 +32,7 @@ import uk.digitalsquid.netspoofer.config.FileFinder;
 import uk.digitalsquid.netspoofer.config.FileInstaller;
 import uk.digitalsquid.netspoofer.config.LogConf;
 import uk.digitalsquid.netspoofer.config.NetHelpers;
+import uk.digitalsquid.netspoofer.misc.AsyncTaskHelper;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -103,7 +104,7 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 			setupButton.setTypeface(setupButton.getTypeface(), Typeface.NORMAL);
 		}
 		
-		loadTask.execute();
+		AsyncTaskHelper.execute(loadTask);
 		
 	    statusFilter = new IntentFilter();
 	    statusFilter.addAction(InstallService.INTENT_STATUSUPDATE);
