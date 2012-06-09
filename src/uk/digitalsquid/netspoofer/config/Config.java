@@ -30,13 +30,15 @@ public interface Config extends LogConf {
 	public static final String DEB_IMG = "img/debian.img";
 	public static final String DEB_IMG_GZ = "img/debian.img.gz";
 	public static final String DEB_VERSION_FILE = "img/version";
-	public static final String SF_DEB_IMG_URL = "http://sourceforge.net/projects/netspoof/files/debian-images/debian-0.8.1.img.gz/download";
-	public static final String SF_DEB_IMG_URL_NOZIP = "http://sourceforge.net/projects/netspoof/files/debian-images/debian-0.8.1.img/download";
+	public static final String SF_DEB_IMG_URL = "http://sourceforge.net/projects/netspoof/files/debian-images/debian-0.8.2.img.gz/download";
+	public static final String SF_DEB_IMG_URL_NOZIP = "http://sourceforge.net/projects/netspoof/files/debian-images/debian-0.8.2.img/download";
 	
 	/**
 	 * For incremental upgrades
 	 */
-	public static final String UPGRADE_URI_FORMAT = "http://digitalsquid.co.uk/download/android-netspoof/upgrade/%d-%d.zip";
+	public static final String UPGRADE_URI_FORMAT = "http://sourceforge.net/projects/netspoof/files/update/%d-%d.zip/download";
+	// public static final String UPGRADE_URI_FORMAT = "http://digitalsquid.co.uk/download/android-netspoof/upgrade/%d-%d.zip";
+	public static final String UPGRADE_URI_FAIL = "http://sourceforge.net/projects/netspoof/files/";
 	
 	public static final int DEB_IMG_URL_SIZE = 440320000;
 	public static final int DEB_IMG_URL_VERSION = 13;

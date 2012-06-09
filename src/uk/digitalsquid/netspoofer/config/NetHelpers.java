@@ -251,19 +251,25 @@ public final class NetHelpers implements LogConf {
 	}
 	
 	/**
-	 * Checks for a file's existance on an HTTP server.
+	 * Checks for a file's existence on an HTTP server.
 	 * @param file
+	 * @param isFail If the redirected url = isFail, returns false
 	 * @return
 	 */
-	public static final boolean checkFileExistsOnWeb(String file) {
+	public static final boolean checkFileExistsOnWeb(String file, String isFail) {
 		try {
 			URL upgradeUrl = new URL(file);
-			HttpURLConnection.setFollowRedirects(false);
+			HttpURLConnection.setFollowRedirects(true);
 			HttpURLConnection conn = (HttpURLConnection) upgradeUrl.openConnection();
-			conn.setConnectTimeout(2500);
+			conn.setConnectTimeout(5000);
 			conn.setRequestMethod("HEAD");
 			
-			return conn.getResponseCode() == HttpURLConnection.HTTP_OK;
+			int code = conn.getResponseCode();
+			URL url = conn.getURL();
+			
+			if(isFail == null) isFail = "";
+			
+			return code == HttpURLConnection.HTTP_OK && !url.toExternalForm().equals(isFail);
 		} catch (MalformedURLException e) {
 			Log.e(TAG, "Malformed URL", e);
 		} catch (IOException e) {

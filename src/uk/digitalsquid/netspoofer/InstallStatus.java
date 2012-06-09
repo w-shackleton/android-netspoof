@@ -101,17 +101,31 @@ public class InstallStatus extends Activity implements OnClickListener, Config {
 	private final List<String> possibleSfURLs = new LinkedList<String>();
 	
 	/**
-	 * Activates the WebView used to get the DL url from sourceforge, if needed.
+	 * Ativates the WebView with the default download URL
 	 */
 	private void activateSFWV() {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		// If user wants to download larger file
+		downloadUnzipped = prefs.getBoolean("downloadUnzipped", false);
+		if(downloadUnzipped)
+	        activateSFWV(SF_DEB_IMG_URL_NOZIP);
+		else
+	        activateSFWV(SF_DEB_IMG_URL);
+	}
+	
+	/**
+	 * Activates the WebView used to get the DL url from sourceforge, if needed.
+	 */
+	private void activateSFWV(String url) {
 		final WebViewClient wvc = new WebViewClient() {
         	@Override
         	public void onLoadResource(WebView view, String url) {
         		// Note to self: check this every now and then, as SF may change a bit once in a while.
-        		if(url.startsWith("http://downloads.sourceforge.net/project/netspoof/debian-images/debian")) {
+        		if(url.startsWith("http://downloads.sourceforge.net/project/netspoof/debian-images/debian") ||
+        				url.startsWith("http://downloads.sourceforge.net/project/netspoof/update")) {
 	        		Log.i(TAG, "Found SF DL URL: " + url);
 					if(!ConfigChecker.isInstallServiceRunning(getApplicationContext())) {
-						startServiceForUrl(false, url);
+						startServiceForUrl(loadResult.doUpgrade, url);
 					}
 					else possibleSfURLs.add(url);
         		}
@@ -123,13 +137,8 @@ public class InstallStatus extends Activity implements OnClickListener, Config {
 		webView.setWebViewClient(wvc);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setBuiltInZoomControls(true);
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-		// If user wants to download larger file
-		downloadUnzipped = prefs.getBoolean("downloadUnzipped", false);
-		if(downloadUnzipped)
-	        webView.loadUrl(SF_DEB_IMG_URL_NOZIP);
-		else
-	        webView.loadUrl(SF_DEB_IMG_URL);
+        
+        webView.loadUrl(url);
 	}
 	
 	private boolean downloadUnzipped;
@@ -156,7 +165,10 @@ public class InstallStatus extends Activity implements OnClickListener, Config {
 						startServiceForUrl(false, downloadUrl);
 					} else activateSFWV();
 				} else {
-					startServiceForUrl(true, loadResult.upgradeUrl);
+					if(isSourceforgeUrl(loadResult.upgradeUrl))
+						activateSFWV(loadResult.upgradeUrl);
+					else
+						startServiceForUrl(true, loadResult.upgradeUrl);
 				}
 			} else {
 				stopService(new Intent(getApplicationContext(), InstallService.class));
@@ -168,6 +180,15 @@ public class InstallStatus extends Activity implements OnClickListener, Config {
 			webView.reload();
 			break;
 		}
+	}
+	
+	/**
+	 * Determines if a URL is a sourceforge one.
+	 * @param url
+	 * @return
+	 */
+	private boolean isSourceforgeUrl(String url) {
+		return url.toLowerCase().contains("sourceforge");
 	}
 	
 	private IntentFilter statusFilter;
