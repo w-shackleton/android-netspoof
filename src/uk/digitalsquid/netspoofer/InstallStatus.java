@@ -35,6 +35,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
@@ -323,7 +324,7 @@ public class InstallStatus extends Activity implements OnClickListener, Config {
 		switch(item.getItemId()) {
 		case R.id.useLocalFile:
 			Intent intent = new Intent(this, FileDialog.class);
-			intent.putExtra(FileDialog.START_PATH, "/sdcard");
+			intent.putExtra(FileDialog.START_PATH, Environment.getExternalStorageDirectory().getPath());
 			startActivityForResult(intent, REQUEST_GETFILE);
 			return true;
 		}

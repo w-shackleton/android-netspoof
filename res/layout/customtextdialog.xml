@@ -22,48 +22,46 @@
 
 <ScrollView android:layout_height="match_parent" android:layout_width="match_parent"
 	  xmlns:android="http://schemas.android.com/apk/res/android">
-	<LinearLayout android:layout_width="match_parent" android:layout_height="match_parent">
     <TableLayout android:id="@+id/tableLayout1" android:layout_width="match_parent" android:padding="5dip" android:layout_height="wrap_content">
-        <TableRow android:layout_width="wrap_content" android:id="@+id/tableRow1" android:layout_height="wrap_content">
+        <TableRow android:layout_width="wrap_content" android:id="@+id/tableRow01" android:layout_height="wrap_content">
             <EditText android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_weight="1" android:id="@+id/textFrom1"></EditText>
             <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="->"></TextView>
             <EditText android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_weight="1" android:id="@+id/textTo1"></EditText>
         </TableRow>
-        <TableRow android:layout_width="wrap_content" android:id="@+id/TableRow01" android:layout_height="wrap_content">
+        <TableRow android:layout_width="wrap_content" android:id="@+id/TableRow02" android:layout_height="wrap_content">
             <EditText android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_weight="1" android:id="@+id/textFrom2"></EditText>
             <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="->"></TextView>
             <EditText android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_weight="1" android:id="@+id/textTo2"></EditText>
         </TableRow>
-        <TableRow android:layout_width="wrap_content" android:id="@+id/TableRow02" android:layout_height="wrap_content">
+        <TableRow android:layout_width="wrap_content" android:id="@+id/TableRow03" android:layout_height="wrap_content">
             <EditText android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_weight="1" android:id="@+id/textFrom3"></EditText>
             <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="->"></TextView>
             <EditText android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_weight="1" android:id="@+id/textTo3"></EditText>
         </TableRow>
-        <TableRow android:layout_width="wrap_content" android:id="@+id/TableRow03" android:layout_height="wrap_content">
+        <TableRow android:layout_width="wrap_content" android:id="@+id/TableRow04" android:layout_height="wrap_content">
             <EditText android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_weight="1" android:id="@+id/textFrom4"></EditText>
             <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="->"></TextView>
             <EditText android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_weight="1" android:id="@+id/textTo4"></EditText>
         </TableRow>
-        <TableRow android:layout_width="wrap_content" android:id="@+id/tableRow1" android:layout_height="wrap_content">
+        <TableRow android:layout_width="wrap_content" android:id="@+id/tableRow05" android:layout_height="wrap_content">
             <EditText android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_weight="1" android:id="@+id/textFrom5"></EditText>
             <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="->"></TextView>
             <EditText android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_weight="1" android:id="@+id/textTo5"></EditText>
         </TableRow>
-        <TableRow android:layout_width="wrap_content" android:id="@+id/TableRow01" android:layout_height="wrap_content">
+        <TableRow android:layout_width="wrap_content" android:id="@+id/TableRow06" android:layout_height="wrap_content">
             <EditText android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_weight="1" android:id="@+id/textFrom6"></EditText>
             <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="->"></TextView>
             <EditText android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_weight="1" android:id="@+id/textTo6"></EditText>
         </TableRow>
-        <TableRow android:layout_width="wrap_content" android:id="@+id/TableRow02" android:layout_height="wrap_content">
+        <TableRow android:layout_width="wrap_content" android:id="@+id/TableRow07" android:layout_height="wrap_content">
             <EditText android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_weight="1" android:id="@+id/textFrom7"></EditText>
             <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="->"></TextView>
             <EditText android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_weight="1" android:id="@+id/textTo7"></EditText>
         </TableRow>
-        <TableRow android:layout_width="wrap_content" android:id="@+id/TableRow03" android:layout_height="wrap_content">
+        <TableRow android:layout_width="wrap_content" android:id="@+id/TableRow08" android:layout_height="wrap_content">
             <EditText android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_weight="1" android:id="@+id/textFrom8"></EditText>
             <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="->"></TextView>
             <EditText android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_weight="1" android:id="@+id/textTo8"></EditText>
         </TableRow>
     </TableLayout>
-</LinearLayout>
 </ScrollView>

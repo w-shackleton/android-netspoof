@@ -14,11 +14,11 @@
    height="72"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.2 r9819"
+   inkscape:version="0.48.3.1 r9886"
    sodipodi:docname="netspoof icon.svg"
-   inkscape:export-filename="/home/william/netspoof-48.png"
-   inkscape:export-xdpi="60"
-   inkscape:export-ydpi="60">
+   inkscape:export-filename="/home/william/netspoof-96.png"
+   inkscape:export-xdpi="120"
+   inkscape:export-ydpi="120">
   <defs
      id="defs4">
     <linearGradient
@@ -383,14 +383,6 @@
          id="stop4546" />
     </linearGradient>
     <filter
-       inkscape:collect="always"
-       id="filter4601">
-      <feGaussianBlur
-         inkscape:collect="always"
-         stdDeviation="0.56668535"
-         id="feGaussianBlur4603" />
-    </filter>
-    <filter
        color-interpolation-filters="sRGB"
        inkscape:collect="always"
        id="filter4601-2">
@@ -549,8 +541,8 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:zoom="5.6"
-     inkscape:cx="3.1921184"
-     inkscape:cy="50.214101"
+     inkscape:cx="45.045879"
+     inkscape:cy="32.60096"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -566,7 +558,7 @@
      inkscape:snap-global="false"
      inkscape:window-width="1680"
      inkscape:window-height="1026"
-     inkscape:window-x="0"
+     inkscape:window-x="1152"
      inkscape:window-y="24"
      inkscape:window-maximized="1" />
   <metadata
@@ -757,7 +749,7 @@
     </g>
     <g
        id="g3079-0"
-       transform="matrix(0.69595083,0.4018074,-0.4018074,0.69595083,202.2207,-0.269093)"
+       transform="matrix(0.69595083,0.4018074,-0.4018074,0.69595083,202.2207,-0.2390967)"
        clip-path="url(#clipPath4785)">
       <path
          inkscape:connector-curvature="0"

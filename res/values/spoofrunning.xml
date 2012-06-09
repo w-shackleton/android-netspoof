@@ -22,7 +22,7 @@
 
 <resources>
     <string name="spoofnotrunning">Spoof not running</string>
-    <string name="spoofstarting">Starting...</string>
+    <string name="spoofstarting">Starting&#8230;</string>
     <string name="spoofstarted">Spoof running. Hide your phone to not look suspicious!</string>
-    <string name="spoofstopping">Stopping... This may take a while.</string>
+    <string name="spoofstopping">Stopping&#8230; This may take a while.</string>
 </resources>

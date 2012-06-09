@@ -25,5 +25,13 @@
   android:layout_width="match_parent"
   android:layout_height="match_parent" android:orientation="vertical">
     <TextView android:id="@+id/textView1" android:layout_height="wrap_content" android:text="@string/enteriptext" android:layout_width="match_parent" android:padding="5dip"></TextView>
-    <EditText android:id="@+id/ipBox" android:layout_height="wrap_content" android:text="@string/blank" android:layout_width="match_parent" android:layout_margin="5dip"></EditText>
+
+    <EditText
+        android:id="@+id/ipBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dip"
+        android:hint="@string/ipExample"
+        android:text="" >
+</EditText>
 </LinearLayout>

@@ -35,8 +35,8 @@
             </LinearLayout>
         </HorizontalScrollView>
     </LinearLayout>
-    <ScrollView android:id="@+id/scrollView1" android:layout_height="wrap_content" android:layout_width="match_parent" android:layout_weight="1">
-        <LinearLayout android:layout_width="match_parent" android:id="@+id/linearLayout2" android:layout_height="match_parent" android:orientation="vertical" android:padding="5dip">
+    <ScrollView android:id="@+id/scrollView1" android:layout_height="0dip" android:layout_width="match_parent" android:layout_weight="1">
+        <LinearLayout android:layout_width="match_parent" android:id="@+id/linearLayout2" android:layout_height="wrap_content" android:orientation="vertical" android:padding="5dip">
             <TextView android:text="@string/aboutText1" android:textAppearance="?android:attr/textAppearanceMedium" android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/textView1"></TextView>
             <LinearLayout android:layout_height="wrap_content" android:id="@+id/linearLayout3" android:layout_width="match_parent" android:layout_margin="4dip">
                 <Button android:layout_height="wrap_content" android:id="@+id/contactDev" android:layout_width="wrap_content" android:text="@string/contactdev"></Button>

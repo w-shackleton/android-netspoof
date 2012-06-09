@@ -125,4 +125,5 @@
     <string name="warningText">Remember, only run Network Spoofer when you have permission to do so. Don\'t run at work, university, school etc. without the permission of your network administrators.</string>
     <string name="useLocalFile">Use Local File</string>
     <string name="chooseFile">Select downloaded file</string>
+    <string name="ipExample">eg. 192.168.1.42</string>
 </resources>

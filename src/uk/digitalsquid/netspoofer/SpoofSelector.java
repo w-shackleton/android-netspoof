@@ -33,6 +33,7 @@ import uk.digitalsquid.netspoofer.servicestatus.SpoofList;
 import uk.digitalsquid.netspoofer.spoofs.Spoof;
 import uk.digitalsquid.netspoofer.spoofs.Spoof.OnExtraDialogDoneListener;
 import uk.digitalsquid.netspoofer.spoofs.SquidScriptSpoof;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
@@ -232,6 +233,7 @@ public class SpoofSelector extends Activity implements OnClickListener, OnItemCl
 			inflater = LayoutInflater.from(SpoofSelector.this);
 		}
 		
+		@SuppressLint("WrongViewCast")
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
             if(spoofs == null) {
