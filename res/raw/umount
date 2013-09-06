@@ -18,8 +18,9 @@
 # along with Network Spoofer, in the file COPYING.
 # If not, see <http://www.gnu.org/licenses/>.
 
-
 # First arg is always path to config file.
 . $1
+
+set -x
 
 debumount

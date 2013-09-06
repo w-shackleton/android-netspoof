@@ -21,8 +21,12 @@
 # First arg is always path to config file.
 . $1
 
+set -x
+
 echo "Starting..."
 echo "Busybox: $BB"
+echo "Env:"
+env
 
 echo 1 > /proc/sys/net/ipv4/ip_forward
 

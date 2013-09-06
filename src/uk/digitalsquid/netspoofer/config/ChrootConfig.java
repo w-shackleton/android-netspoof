@@ -27,6 +27,7 @@ import java.util.Map;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -50,7 +51,7 @@ public final class ChrootConfig implements Config {
 	private final Map<String, String> values = new HashMap<String, String>();
 	
 	public ChrootConfig(Context context) {
-		if(DEFAULTS == null) DEFAULTS = new ChrootConfig("/dev/block/loop250", 250, "/data/local/mnt", context.getExternalFilesDir(null).getAbsolutePath() + "/" + Config.DEB_IMG, "eth0");
+		if(DEFAULTS == null) DEFAULTS = new ChrootConfig("/dev/block/loop250", 250, "/data/local/mnt", getDebImgPath(context), "eth0");
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		loopdev = prefs.getString("loopdev", DEFAULTS.loopdev);
 		if(loopdev.equals("")) loopdev = DEFAULTS.loopdev;
@@ -83,6 +84,17 @@ public final class ChrootConfig implements Config {
 		iface = prefs.getString("iface", DEFAULTS.iface);
 		if(iface.equals("")) iface = DEFAULTS.iface;
 		// values.put("WLAN", iface); - Set in other places
+	}
+	
+	private static String getDebImgPath(Context context) {
+		// Android 4.3 goes all ???? with root trying to access the path given
+		// by SDK
+		if(Build.VERSION.SDK_INT >= 18) { // 4.3
+			// TODO: Find out what exactly /storage/emulated/0 is and what this means
+			// for the root user
+			return "/sdcard/Android/data/uk.digitalsquid.netspoofer/files/" + Config.DEB_IMG;
+		}
+		return context.getExternalFilesDir(null).getAbsolutePath() + "/" + Config.DEB_IMG;
 	}
 	
 	private ChrootConfig(String loopdev, int loopnum, String debianMount, String debianImage, String iface) {

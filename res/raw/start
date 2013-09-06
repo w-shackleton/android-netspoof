@@ -21,6 +21,7 @@
 # First arg is always path to config file.
 . $1
 
+set -x
 echo 1 > /proc/sys/net/ipv4/ip_forward
 
 # Get all args but first

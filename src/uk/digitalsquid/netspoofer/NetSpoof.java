@@ -46,7 +46,9 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources.NotFoundException;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
@@ -348,6 +350,12 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 					}
 					
 				}
+			}
+
+			if(Build.VERSION.SDK_INT >= 18) { // 4.3
+				Log.w(TAG, "Running Android 4.3 or above, with known quirks");
+				Log.w(TAG, String.format("Env says ext storage is %s, using /sdcard because of root issues",
+						Environment.getExternalStorageDirectory()));
 			}
 			
 			LoadResult result = new LoadResult();
