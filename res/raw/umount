@@ -23,4 +23,17 @@
 
 set -x
 
-debumount
+echo "Closing environment"
+# Debug
+$BB ls -la $DEB
+
+$BB umount $DEB/dev/pts
+$BB umount $DEB/proc   
+$BB umount $DEB/sys 
+
+$BB umount $LOOPDEV
+$BB losetup -d $LOOPDEV
+$BB rm $LOOPDEV
+
+$BB ls -la $DEB
+echo "Done."

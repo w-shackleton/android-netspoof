@@ -66,7 +66,7 @@ public class ChrootManager implements Config {
 		Map<String, String> env = config.getValues();
 		// Setup & mount DEB.
 		FileFinder.initialise(context.getApplicationContext()); // In case of weird android instancing
-		ProcessRunner.runProcess(env, FileFinder.SU, "-c", FileInstaller.getScriptPath(context, "mount") + " " + FileInstaller.getScriptPath(context, "config")); // Pass config script as arg.
+		ProcessRunner.runProcess(context, env, FileFinder.SU, "-c", FileInstaller.getScriptPath(context, "mount") + " " + FileInstaller.getScriptPath(context, "config")); // Pass config script as arg.
 		
 		try { Thread.sleep(700); } catch (InterruptedException e) { e.printStackTrace(); }
 		return new File(config.getDebianMount() + "/rewriters").exists();
@@ -79,7 +79,7 @@ public class ChrootManager implements Config {
 	public synchronized int stop() throws IOException {
 		Map<String, String> env = config.getValues();
 		FileFinder.initialise(context.getApplicationContext()); // In case of weird android instancing
-		return ProcessRunner.runProcess(env, FileFinder.SU, "-c", FileInstaller.getScriptPath(context, "umount") + " " + FileInstaller.getScriptPath(context, "config"));
+		return ProcessRunner.runProcess(context, env, FileFinder.SU, "-c", FileInstaller.getScriptPath(context, "umount") + " " + FileInstaller.getScriptPath(context, "config"));
 	}
 	
 	public ArrayList<Spoof> getSpoofList() {
@@ -154,8 +154,9 @@ public class ChrootManager implements Config {
 				ProcessBuilder pb = new ProcessBuilder(FileFinder.SU, "-c",
 						FileInstaller.getScriptPath(context, "start") + " " + FileInstaller.getScriptPath(context, "config") + " " + 
 						spoof.getSpoof().getSpoofCmd(spoof.getVictimString(), spoof.getRouterIpString())); // Pass config script as arg.
-				Map<String, String> env = pb.environment();
-				if(env == null) env = new HashMap<String, String>(); // No idea what will happen
+				
+				// We now write the env to a config file, which is loaded in.
+				Map<String, String> env = new HashMap<String, String>();
 				
 				Map<String, String> configValues = config.getValues();
 				if(configValues != null) env.putAll(configValues);
@@ -170,6 +171,8 @@ public class ChrootManager implements Config {
 					env.put("MASK", spoof.getMySubnetString());
 					env.put("SHORTMASK", String.valueOf(spoof.getMySubnet()));
 				}
+				
+				ProcessRunner.writeEnvConfigFile(context, env);
 	
 				su = pb.start();
 			} else {

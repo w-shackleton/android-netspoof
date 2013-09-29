@@ -130,7 +130,7 @@ public final class FileFinder implements LogConf {
 	static final void checkBBInstalledFunctions() throws FileNotFoundException {
 		List<String> result = new LinkedList<String>();
 		try {
-			ProcessRunner.runProcess(null, result, BUSYBOX);
+			ProcessRunner.runProcess(context, null, result, BUSYBOX);
 		} catch (IOException e) {
 			Log.e(TAG, "Failed to check BB programs, probably as BB doesn't exist?");
 			e.printStackTrace();

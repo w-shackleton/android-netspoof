@@ -75,7 +75,7 @@ public final class UpgradeInstaller implements Config {
 		
 		Map<String, String> env = chroot.config.getValues();
 		try {
-			if(ProcessRunner.runProcess(env, FileFinder.SU, "-c",
+			if(ProcessRunner.runProcess(context, env, FileFinder.SU, "-c",
 					FileInstaller.getScriptPath(context, "applyupgrade") + " " +
 					FileInstaller.getScriptPath(context, "config") + " " +
 					src.getAbsolutePath() + " " +
