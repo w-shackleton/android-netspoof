@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ * This file is part of Network Spoofer for Android.
+ * Network Spoofer - change and mess with webpages and the internet on
+ * other people's computers
+ * Copyright (C) 2011 Will Shackleton
+ *
+ * Network Spoofer is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Network Spoofer is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Network Spoofer, in the file COPYING.
+ * If not, see <http://www.gnu.org/licenses/>.
+ * -->
+
+<PreferenceScreen
+  xmlns:android="http://schemas.android.com/apk/res/android" android:title="@string/preferences">
+    <PreferenceCategory android:title="@string/programPrefs">
+        <CheckBoxPreference android:key="downloadUnzipped" android:title="@string/downloadUnzipped" android:summary="@string/downloadUnzippedDesc"></CheckBoxPreference>
+        <EditTextPreference android:title="@string/pathToSu" android:key="pathToSu" android:summary="@string/pathToSuDesc"></EditTextPreference>
+        <CheckBoxPreference android:defaultValue="true" android:summary="@string/builtinbusyboxDesc" android:key="builtinbusybox" android:title="@string/builtinbusybox"></CheckBoxPreference>
+        <EditTextPreference android:key="pathToBB" android:title="@string/pathToBB" android:summary="@string/pathToBBDesc"></EditTextPreference>
+        <EditTextPreference android:key="debImgUrl" android:title="@string/debImgUrl" android:summary="@string/debImgUrlDesc"></EditTextPreference>
+        
+        
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/automaticOptions">
+        <CheckBoxPreference android:title="@string/autoChooseRouter" android:key="autoChooseRouter" android:summary="@string/autoChooseRouterDesc"></CheckBoxPreference>
+        <CheckBoxPreference android:title="@string/autoChooseVictim" android:key="autoChooseVictim" android:summary="@string/autoChooseVictimDesc"></CheckBoxPreference>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/performance">
+        <EditTextPreference android:key="ipScanThreads" android:summary="@string/ipScanThreadsDesc" android:title="@string/ipScanThreads" android:defaultValue="4"></EditTextPreference>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/advanced">
+        <EditTextPreference android:key="loopdev" android:title="@string/loopDev" android:summary="@string/loopDevDesc"></EditTextPreference>
+        <EditTextPreference android:key="loopnum" android:title="@string/loopNum" android:summary="@string/loopNumDesc"></EditTextPreference>
+        <EditTextPreference android:key="debianMount" android:title="@string/debianMount" android:summary="@string/debianMountDesc"></EditTextPreference>
+        <EditTextPreference android:key="debianImage" android:title="@string/debianImage" android:summary="@string/debianImageDesc"></EditTextPreference>
+        <!--<EditTextPreference android:key="iface" android:title="@string/iface" android:summary="@string/ifaceDesc"></EditTextPreference>-->
+    </PreferenceCategory>
+</PreferenceScreen>

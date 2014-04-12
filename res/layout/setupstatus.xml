@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ * This file is part of Network Spoofer for Android.
+ * Network Spoofer - change and mess with webpages and the internet on
+ * other people's computers
+ * Copyright (C) 2011 Will Shackleton
+ *
+ * Network Spoofer is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Network Spoofer is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Network Spoofer, in the file COPYING.
+ * If not, see <http://www.gnu.org/licenses/>.
+ * -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+    <TextView android:layout_height="wrap_content" android:text="@string/setupt1" android:layout_width="wrap_content" android:id="@+id/description"></TextView>
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/redownloadnotify" android:textStyle="bold" android:visibility="gone" android:id="@+id/redlconfirm"></TextView>
+    <LinearLayout android:id="@+id/linearLayout1" android:layout_height="wrap_content" android:layout_width="match_parent" android:gravity="center_horizontal">
+        <Button android:layout_gravity="center_horizontal" android:id="@+id/dlButton" android:layout_height="wrap_content" android:text="@string/startdl" android:layout_width="wrap_content"></Button>
+        <Button android:layout_gravity="center_horizontal" android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/refreshWeb" android:text="@string/refresh" android:visibility="gone"></Button>
+    </LinearLayout>
+    <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/dlStatus" android:text="@string/dlnotrunning" android:layout_gravity="center_horizontal"></TextView>
+    <ProgressBar style="?android:attr/progressBarStyleHorizontal" android:layout_height="wrap_content" android:layout_width="match_parent" android:id="@+id/dlprogress" android:visibility="gone"></ProgressBar>
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/dlprogresstext" android:text="@string/ellipsis" android:textStyle="bold|normal" android:layout_gravity="right" android:visibility="gone" android:gravity="right"></TextView>
+    <WebView android:layout_width="match_parent" android:layout_height="match_parent" android:id="@+id/sfWebView" android:visibility="gone" android:layout_margin="0dip" android:padding="0dip"></WebView>
+</LinearLayout>

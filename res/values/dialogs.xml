@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="agreementTitle">Network Spoofer</string>
+    <string name="agreementContents1">I agree to only use Network Spoofer on residential and personal networks with the permission of the network owner.</string>
+    <string name="agreementContents2">
+        There is no intention for Network Spoofer to include any malicious features.
+        This application is a fun demonstration of how vulnerable home networks are to simple attacks,
+        with permission of the network owner - DO NOT attempt to use Network Spoofer on any corporate
+        or other non-residential networks (eg. at school, university). It becomes very obvious when
+        Network Spoofer is being used on a Network, and use of Network Spoofer will be considered
+        malicious hacking by network administrators.
+    </string>
+    <string name="agreementPositive">Agree</string>
+    <string name="agreementNegative">Exit</string>
+    <string name="changelog">New in this release:\n
+        * Added installing of data from SD card\n
+        * Added much smaller upgrades (upgrading is now usually now a 0.1MB download)\n
+        * Added new spoof - Adblock
+    </string>
+    
+</resources>

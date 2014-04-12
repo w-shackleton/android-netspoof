@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ * This file is part of Network Spoofer for Android.
+ * Network Spoofer - change and mess with webpages and the internet on
+ * other people's computers
+ * Copyright (C) 2011 Will Shackleton
+ *
+ * Network Spoofer is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Network Spoofer is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Network Spoofer, in the file COPYING.
+ * If not, see <http://www.gnu.org/licenses/>.
+ * -->
+
+<resources>
+    <string name="app_name">Network Spoofer</string>
+    <string name="setup">Setup &amp; Install</string>
+    <string name="setup_upgrade">Update available</string>
+    <string name="setup_upgrade2">Update available\nReinstall required</string>
+    <string name="start">Start</string>
+    <string name="setupt1">Please press Start to begin downloading necessary files. This is quite a big download, so you may want to connect to Wifi first.</string>
+    <string name="setupUpgrade">Press start to download the upgrade. This is a very small download and should only take a few seconds.</string>
+    <string name="startdl">Start Download</string>
+    <string name="dlnotrunning">Download currently not running.</string>
+    <string name="dlStarted">Download Started</string>
+    <string name="dlStarting">Download Starting</string>
+    <string name="redownload">Redownload</string>
+    <string name="redownloadnotify">The latest version is already installed. Are you sure you wish to redownload?</string>
+    <string name="ellipsis">&#8230;</string>
+    <string name="dlCancel">Cancel download</string>
+    <string name="selecthack">Select Hack to use</string>
+    <string name="loading">Loading&#8230;</string>
+    <string name="selectgateway">Select gateway</string>
+    <string name="wifiSettings">Change Wifi Settings</string>
+    <string name="blank"></string>
+    <string name="deviceIp">My IP Address:</string>
+    <string name="routerIp">Router IP Address:</string>
+    <string name="deviceIf">Wifi interface name:\n(usually eth0)</string>
+    <string name="customIpSettings">Custom IP Settings</string>
+    <string name="selectvictim">Select Victim</string>
+    <string name="scanning">Scanning for devices&#8230;</string>
+    <string name="subnet">Subnet Mask:</string>
+    <string name="allDevices">All Devices</string>
+    <string name="allDevicesDesc">Run spoof on everything on the network. May slow down the phone a lot and cause the battery to melt.</string>
+    <string name="otherDevice">Other</string>
+    <string name="otherDeviceDesc">Enter an IP address of someone to spoof not seen in this list.</string>
+    <string name="refresh">Refresh</string>
+    <string name="enterip">Enter IP Address</string>
+    <string name="enteriptext">Please enter a custom IP address / hostname of victim to attack.</string>
+    <string name="stop">Stop</string>
+    <string name="output">Output:</string>
+    <string name="downloading">Downloading Installation files&#8230;</string>
+    <string name="downloadingfiles">Downloading files needed to run&#8230;</string>
+    <string name="loadfailedtitle">Oops!</string>
+    <string name="loadfailed">Something went wrong whilst trying to load. Perhaps the SD card isn\'t plugged in, or you didn\'t accept the superuser command?\n\nCheck the log for more details.</string>
+    <string name="preferences">Preferences</string>
+    <string name="programPrefs">Programs</string>
+    <string name="downloadUnzipped">Download uncompressed installation files</string>
+    <string name="downloadUnzippedDesc">Download the setup files uncompressed (larger download). Use if you are having problems with the extraction process.</string>
+    <string name="pathToSu">Custom path to \'su\' command</string>
+    <string name="pathToBB">Custom path to \'busybox\' command</string>
+    <string name="pathToSuDesc">Set a custom path to the superuser binary. Normally this is automatically detected.</string>
+    <string name="pathToBBDesc">Set a custom path to the busybox binary. Normally this is automatically detected.</string>
+    <string name="automaticOptions">Automatic choices</string>
+    <string name="autoChooseRouter">Choose router automatically</string>
+    <string name="autoChooseRouterDesc">Automatically choose the default detected router, allowing you to skip one of the steps.</string>
+    <string name="autoChooseVictim">Choose victim automatically</string>
+    <string name="autoChooseVictimDesc">Automatically chooses to run attack for everyone on the network.</string>
+    <string name="performance">Performance</string>
+    <string name="ipScanThreads">IP scanners</string>
+    <string name="ipScanThreadsDesc">The number of simultaneous threads for scanning the local network - can make the process faster</string>
+    <string name="about">About</string>
+    <string name="gotosite">Go to website</string>
+    <string name="aboutText1">Network Spoofer lets you change websites on other people’s computers from an Android phone.</string>
+    <string name="aboutText2">DISCLAIMER: This application is not to be used for any purposes other than to demonstrate its functions, and must only be used on networks for which you have permission to do so. Any other use is not the responsibility of the developer.\nIn other words, don\'t be stupid, and don\'t direct angry people towards me.</string>
+    <string name="devsite">Developer\'s site</string>
+    <string name="contactdev">Contact Developer</string>
+    <string name="reportBug">Report Bug</string>
+    <string name="gpl">This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+	\nThis program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+	\nYou should have received a copy of the GNU General Public License
+	along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</string>
+    <string name="debImgUrl">Custom  URL for environment</string>
+    <string name="debImgUrlDesc">Rather than download from SourceForge (recommended), use this URL to download the environment.</string>
+    <string name="advanced">Advanced</string>
+    <string name="loopDev">Linux loop device</string>
+    <string name="loopDevDesc">The loop device on which to mount the debian image. If the user has a lot of apps installed on the SD card, this may need changing.</string>
+    <string name="loopNum">Linux loop device number</string>
+    <string name="loopNumDesc">The loop device number with which to create the loop device. If the user has a lot of apps installed on the SD card, this may need changing (higher is better).</string>
+    <string name="debianMount">Image mount location</string>
+    <string name="debianMountDesc">A location on the phone\'s file system to mount the required image.</string>
+    <string name="debianImage">Debian image</string>
+    <string name="debianImageDesc">Path to the debian image. Note that setting this to a non-blank value will require you to download the images manually.</string>
+    <string name="iface">Wifi interface</string>
+    <string name="ifaceDesc">The Linux interface name of the adapter through which you will be running these spoofs.</string>
+    <string name="spoofRunning">Spoofer running</string>
+    <string name="spoofRunningDesc">Network Spoofer is running.</string>
+    <string name="udternet">Upside-down-ternet</string>
+    <string name="squidscripts">Squid - \'playing with traffic\'</string>
+    <string name="aboutTextRefs">Many thanks to the developer of the \'upside-down-ternet\' (see above link) and the writer of \'playing with traffic\' (also above) for the inspiration for this project.</string>
+    <string name="builtinbusybox">Use builtin Busybox</string>
+    <string name="builtinbusyboxDesc">Use the version of Busybox distributed with Network Spoofer. Uncheck to use the phone\'s version.</string>
+    <string name="selectvideo">Please Select a Youtube Video</string>
+    <string name="returntoyt">Return to Youtube</string>
+    <string name="customText">Change page text</string>
+    <string name="customTextDesc">Enter custom text values to change. Blank fields are ignored.</string>
+    <string name="configuring">Configuring&#8230;</string>
+    <string name="lookingupSite">Finding website&#8230;</string>
+    <string name="customwebsitedesc">Please enter a website to redirect to, not including http:// (eg. kittenwar.com).</string>
+    <string name="warningTitle">Don\'t be evil!</string>
+    <string name="warningText">Remember, only run Network Spoofer when you have permission to do so. Don\'t run at work, university, school etc. without the permission of your network administrators.</string>
+    <string name="useLocalFile">Use Local File</string>
+    <string name="chooseFile">Select downloaded file</string>
+    <string name="ipExample">eg. 192.168.1.42</string>
+</resources>
