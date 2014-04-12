@@ -10,3 +10,25 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+bin/android-netspoof.apk
+bin/classes.dex
+bin/resources.ap_
+bin/uk
+bglarge.png
+bgmedium.png
+bgsmall.png
+bin/android-netspoof.newproc.apk
+bg-large.png
+bg-med.png
+bg-small.png
+bin/android-netspoof.api8.apk
+bzr.sf
+obj
+obj/local
+bin/classes
+bin/res
+bin/android-netspoof.zip.apk
+bin/AndroidManifest.xml
+bin/dexedLibs
+bin/jarlist.cache
