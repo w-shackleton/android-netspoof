@@ -36,11 +36,8 @@ import uk.digitalsquid.netspoofer.misc.AsyncTaskHelper;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources.NotFoundException;
@@ -94,8 +91,6 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 	
 		startButton = (Button) findViewById(R.id.startButton);
 		startButton.setOnClickListener(this);
-		setupButton = (Button) findViewById(R.id.setupButton);
-		setupButton.setOnClickListener(this);
 		
 		if(!ConfigChecker.checkInstalledLatest(getApplicationContext())) {
 			setupButton.setTypeface(setupButton.getTypeface(), Typeface.BOLD);
@@ -107,11 +102,6 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 		}
 		
 		AsyncTaskHelper.execute(loadTask);
-		
-	    statusFilter = new IntentFilter();
-	    statusFilter.addAction(InstallService.INTENT_STATUSUPDATE);
-		
-		registerReceiver(statusReceiver, statusFilter);
 		
 		// Changelog dialog
 		int versionCode = -1;
@@ -134,12 +124,6 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 		} else postInit(); // This isn't called on first time, as new users don't need to see changelog
 	}
 	
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		unregisterReceiver(statusReceiver);
-	}
-	
 	/**
 	 * Non-important tasks after initialisation & agreement
 	 */
@@ -151,11 +135,6 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 	@Override
 	public void onClick(View v) {
 		switch(v.getId()) {
-			case R.id.setupButton:
-				Intent intent = new Intent(this, InstallStatus.class);
-				intent.putExtra(InstallStatus.EXTRA_DL_INFO, loadResult);
-				startActivity(intent);
-				break;
 			case R.id.startButton:
 				startActivity(new Intent(this, SpoofSelector.class));
 				break;
@@ -253,25 +232,6 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 	}
 	
 	private String missingBBComponent = "?";
-	
-	private IntentFilter statusFilter;
-	private final BroadcastReceiver statusReceiver = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			switch(intent.getIntExtra(InstallService.INTENT_EXTRA_STATUS, InstallService.STATUS_FINISHED)) {
-			case InstallService.STATUS_FINISHED:
-				switch(intent.getIntExtra(InstallService.INTENT_EXTRA_DLSTATE, InstallService.STATUS_DL_FAIL_DLERROR)) {
-				case InstallService.STATUS_DL_SUCCESS:
-					startButton.setEnabled(true);
-					break;
-				default:
-					startButton.setEnabled(false);
-					break;
-				}
-				break;
-			}
-		}
-	};
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -418,15 +378,11 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 			try {
 				FileInstaller fi = new FileInstaller(getBaseContext());
 				
-				fi.installScript("config", R.raw.config);
-				fi.installScript("start", R.raw.start);
-				fi.installScript("mount", R.raw.mount);
-				fi.installScript("umount", R.raw.umount);
-				
 				fi.installScript("busybox", R.raw.busybox);
-				fi.installScript("applyupgrade", R.raw.applyupgrade);
 				
 				fi.installScript("arpspoof", R.raw.arpspoof);
+				fi.installScript("iptables", R.raw.iptables);
+				fi.installScript("spoof", R.raw.spoof);
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (NotFoundException e) {

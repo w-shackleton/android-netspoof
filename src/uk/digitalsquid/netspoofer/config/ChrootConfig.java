@@ -40,108 +40,23 @@ import android.widget.Toast;
 public final class ChrootConfig implements Config {
 	static ChrootConfig DEFAULTS = null;
 	
-	private String loopdev;
-	private int loopnum;
-	
-	private String debianMount;
-	private String debianImage;
-	
 	private String iface;
 	
 	private final Map<String, String> values = new HashMap<String, String>();
 	
 	public ChrootConfig(Context context) {
-		if(DEFAULTS == null) DEFAULTS = new ChrootConfig("/dev/block/loop250", 250, "/data/local/mnt", getDebImgPath(context), "eth0");
+		if(DEFAULTS == null) DEFAULTS = new ChrootConfig("eth0");
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-		loopdev = prefs.getString("loopdev", DEFAULTS.loopdev);
-		if(loopdev.equals("")) loopdev = DEFAULTS.loopdev;
-		values.put("LOOPDEV", loopdev);
-		
-		File folder = context.getExternalFilesDir(null);
-		Log.i(TAG, "Data folder is " + folder + ", absolute path is " + folder.getAbsolutePath());
-		
-		try {
-			// loopnum = prefs.getInt("loopnum", DEFAULTS.loopnum);
-			loopnum = Integer.parseInt(prefs.getString("loopnum", "" + DEFAULTS.loopnum));
-		} catch (NumberFormatException e) {
-			loopnum = DEFAULTS.loopnum;
-			Toast.makeText(context, "Invalid loop device number, using default", Toast.LENGTH_SHORT).show();
-		} catch (ClassCastException e) {
-			loopnum = DEFAULTS.loopnum;
-			Toast.makeText(context, "Invalid loop device number, using default", Toast.LENGTH_SHORT).show();
-		}
-		if(prefs.getString("loopnum", "").equals("")) loopnum = DEFAULTS.loopnum;
-		values.put("LOOPNUM", "" + loopnum);
-		
-		debianMount = prefs.getString("debianMount", DEFAULTS.debianMount);
-		if(debianMount.equals("")) debianMount = DEFAULTS.debianMount;
-		values.put("DEB", debianMount);
-		
-		debianImage = prefs.getString("debianImage", DEFAULTS.debianImage);
-		if(debianImage.equals("")) debianImage = DEFAULTS.debianImage;
-		values.put("DEBIMG", debianImage);
-		
+
 		iface = prefs.getString("iface", DEFAULTS.iface);
 		if(iface.equals("")) iface = DEFAULTS.iface;
 		// values.put("WLAN", iface); - Set in other places
 	}
 	
-	private static String getDebImgPath(Context context) {
-		// Android 4.3 goes all ???? with root trying to access the path given
-		// by SDK
-		if(Build.VERSION.SDK_INT >= 18) { // 4.3
-			// TODO: Find out what exactly /storage/emulated/0 is and what this means
-			// for the root user
-			return "/sdcard/Android/data/uk.digitalsquid.netspoofer/files/" + Config.DEB_IMG;
-		}
-		return context.getExternalFilesDir(null).getAbsolutePath() + "/" + Config.DEB_IMG;
-	}
-	
-	private ChrootConfig(String loopdev, int loopnum, String debianMount, String debianImage, String iface) {
-		this.loopdev = loopdev;
-		this.loopnum = loopnum;
-		this.debianMount = debianMount;
-		this.debianImage = debianImage;
+	private ChrootConfig(String iface) {
 		this.iface = iface;
-		values.put("LOOPDEV", loopdev);
-		values.put("LOOPNUM", "" + loopnum);
-		values.put("DEB", debianMount);
-		values.put("DEBIMG", debianImage);
-		// values.put("WLAN", iface); - Set in other places
 	}
 
-	/**
-	 * Gets the location of the loop device
-	 * @return
-	 */
-	public String getLoopdev() {
-		return loopdev;
-	}
-
-	/**
-	 * Gets the loop device number
-	 * @return
-	 */
-	public int getLoopNum() {
-		return loopnum;
-	}
-
-	/**
-	 * Gets the location where debian is mounted
-	 * @return
-	 */
-	public String getDebianMount() {
-		return debianMount;
-	}
-
-	/**
-	 * Gets the location of the debian image on the SD card
-	 * @return
-	 */
-	public String getDebianImage() {
-		return debianImage;
-	}
-	
 	/**
 	 * Adds busybox to the values, as found in FileFinder.
 	 */

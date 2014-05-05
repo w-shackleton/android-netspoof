@@ -21,18 +21,11 @@
  * -->
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_height="match_parent" android:layout_width="match_parent">
-	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	<LinearLayout
 	    android:orientation="vertical"
 	    android:gravity="center_horizontal" android:layout_height="wrap_content" android:background="@drawable/bg" android:layout_width="wrap_content" android:layout_gravity="center">
 		<Button android:id="@+id/startButton" android:layout_width="wrap_content" android:text="@string/start" android:layout_height="wrap_content" android:state_enabled="false"></Button>
 
-		<Button
-		    android:id="@+id/setupButton"
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:state_enabled="false"
-		    android:text="@string/setup" >
-		</Button>
 		<TextView android:id="@+id/loading" android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="@string/loading"></TextView>
 	</LinearLayout>
 </ScrollView>

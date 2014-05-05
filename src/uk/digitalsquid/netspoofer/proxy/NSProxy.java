@@ -13,7 +13,7 @@ import com.wpg.proxy.Proxy;
 
 public class NSProxy extends Proxy {
 	
-	public static final int PROXY_PORT = 4123;
+	public static final int PROXY_PORT = 3128;
 	
 	protected final List<Spoof> spoofs;
 

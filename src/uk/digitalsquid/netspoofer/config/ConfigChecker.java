@@ -28,9 +28,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import uk.digitalsquid.netspoofer.InstallService;
-import android.app.ActivityManager;
-import android.app.ActivityManager.RunningServiceInfo;
 import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
@@ -123,17 +120,5 @@ public final class ConfigChecker implements Config {
 		} else {
 			return false;
 		}
-	}
-	
-	private static ActivityManager am;
-	public static final boolean isInstallServiceRunning(Context context) {
-		if(am == null) 
-		    am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-	    for (RunningServiceInfo service : am.getRunningServices(Integer.MAX_VALUE)) {
-	    	if (InstallService.class.getName().equals(service.service.getClassName())) {
-	            return true;
-	    	}
-	    }
-	    return false;
 	}
 }

@@ -32,3 +32,5 @@ bin/android-netspoof.zip.apk
 bin/AndroidManifest.xml
 bin/dexedLibs
 bin/jarlist.cache
+
+libs/wpg-proxy/

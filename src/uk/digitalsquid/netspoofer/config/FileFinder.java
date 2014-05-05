@@ -40,6 +40,7 @@ public final class FileFinder implements LogConf {
 	
 	public static String SU = "";
 	public static String BUSYBOX = "";
+	public static String IPTABLES = "";
 	
 	/**
 	 * The system's version of BB, if it exists.
@@ -47,6 +48,7 @@ public final class FileFinder implements LogConf {
 	public static String SYSTEM_BUSYBOX = "";
 	
 	private static final String[] BB_PATHS = { "/system/bin/busybox", "/system/xbin/busybox", "/system/sbin/busybox", "/vendor/bin/busybox", "busybox" };
+	private static final String[] IPTABLES_PATHS = { "/system/bin/iptables", "/system/xbin/iptables", "/system/sbin/iptables", "/vendor/bin/iptables", "iptables" };
 	private static final String[] SU_PATHS = { "/system/bin/su", "/system/xbin/su", "/system/sbin/su", "/vendor/bin/su", "su" };
 	
 	/**
@@ -70,6 +72,24 @@ public final class FileFinder implements LogConf {
 		}
 		return "";
 	}
+
+	/**
+	 * Searches for the iptables executable
+	 * @return
+	 */
+	private static final String findIptables(SharedPreferences prefs) {
+		if(prefs != null) {
+			String customPath = prefs.getString("pathToIptables", "");
+			if(!customPath.equals("") && new File(customPath).exists()) return customPath;
+		}
+		for(String su : IPTABLES_PATHS) {
+			if(new File(su).exists()) {
+				return su;
+			}
+		}
+		return "";
+	}
+	
 	
 	/**
 	 * Searches for the su executable
@@ -115,6 +135,12 @@ public final class FileFinder implements LogConf {
 		if(SU.equals("")) {
 			throw new FileNotFoundException("su");
 		}
+		
+		IPTABLES = findIptables(prefs);
+		if(IPTABLES.equals("")) {
+			throw new FileNotFoundException("iptables");
+		}
+
 		try {
 			checkBBInstalledFunctions();
 		} catch (FileNotFoundException e) { // If fails with this BB, try system BB.
