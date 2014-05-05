@@ -29,6 +29,9 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 
+import com.wpg.proxy.HttpMessageRequest;
+import com.wpg.proxy.HttpMessageResponse;
+
 public abstract class Spoof implements Serializable, Comparable<Spoof> {
 	private static final long serialVersionUID = -3207729013734241941L;
 	
@@ -39,7 +42,9 @@ public abstract class Spoof implements Serializable, Comparable<Spoof> {
 		this.title = title;
 	}
 
+	@Deprecated
 	public abstract String getSpoofCmd(String victim, String router);
+	@Deprecated
 	public abstract String getStopCmd();
 	
 	public abstract Dialog displayExtraDialog(Context context, OnExtraDialogDoneListener onDone);
@@ -92,4 +97,11 @@ public abstract class Spoof implements Serializable, Comparable<Spoof> {
 	public String toString() {
 		return title;
 	}
+	// TODO: Make abstract
+    public void modifyRequest( HttpMessageRequest request) {
+     	
+    }
+    public void modifyResponse( HttpMessageResponse response, HttpMessageRequest request) {
+
+    }
 }
