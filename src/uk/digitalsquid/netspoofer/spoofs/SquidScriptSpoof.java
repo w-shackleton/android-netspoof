@@ -36,17 +36,6 @@ public class SquidScriptSpoof extends Spoof {
 	}
 
 	@Override
-	public String getSpoofCmd(String victim, String router) {
-		if(victim == null) victim = "all";
-		return String.format("spoof %s %s 2 %s", victim, router, scriptName);
-	}
-
-	@Override
-	public String getStopCmd() {
-		return "\n";
-	}
-
-	@Override
 	public Dialog displayExtraDialog(Context context, OnExtraDialogDoneListener onDone) {
 		return null;
 	}

@@ -24,8 +24,10 @@ package uk.digitalsquid.netspoofer.spoofs;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 import uk.digitalsquid.netspoofer.VictimSelector.Victim;
+import uk.digitalsquid.netspoofer.config.Lists;
 import uk.digitalsquid.netspoofer.config.NetHelpers;
 
 public class SpoofData implements Serializable {
@@ -65,7 +67,7 @@ public class SpoofData implements Serializable {
 		"255.255.255.254",
 		"255.255.255.255",
 	};
-	private final Spoof spoof;
+	private final ArrayList<Spoof> spoofs;
 	
 	private String myIf;
 	/**
@@ -79,13 +81,20 @@ public class SpoofData implements Serializable {
 	private boolean runningPassively = false;
 
 	public SpoofData(Spoof spoof, boolean runningPassively) {
+		this(Lists.singleton(spoof), runningPassively);
+	}
+	public SpoofData(Spoof spoof, String myIp, String mySubnet, String myIf, String routerIp) throws UnknownHostException {
+		this(Lists.singleton(spoof), myIp, mySubnet, myIf, routerIp);
+	}
+
+	public SpoofData(ArrayList<Spoof> spoofs, boolean runningPassively) {
 		if(!runningPassively) throw new IllegalStateException("Please use the other constructor");
-		this.spoof = spoof;
+		this.spoofs = spoofs;
 		this.setRunningPassively(true);
 	}
 
-	public SpoofData(Spoof spoof, String myIp, String mySubnet, String myIf, String routerIp) throws UnknownHostException {
-		this.spoof = spoof;
+	public SpoofData(ArrayList<Spoof> spoofs, String myIp, String mySubnet, String myIf, String routerIp) throws UnknownHostException {
+		this.spoofs = spoofs;
 		this.myIp = InetAddress.getByName(myIp);
 		for(int i = 0; i < SUBNETS.length; i++) {
 			if(mySubnet.equals(SUBNETS[i])) this.mySubnet = i;
@@ -94,8 +103,8 @@ public class SpoofData implements Serializable {
 		this.routerIp = InetAddress.getByName(routerIp);
 	}
 
-	public Spoof getSpoof() {
-		return spoof;
+	public ArrayList<Spoof> getSpoofs() {
+		return spoofs;
 	}
 	public InetAddress getMyIp() {
 		return myIp;
@@ -158,6 +167,7 @@ public class SpoofData implements Serializable {
 	}
 	
 	public String getVictimString() {
+		if(victim == null) return "all";
 		if(isRunningPassively()) return "none";
 		if(isEveryoneVictim()) return "all";
 		return victim.getIpString();

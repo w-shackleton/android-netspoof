@@ -77,14 +77,18 @@ public final class FileFinder implements LogConf {
 	 * Searches for the iptables executable
 	 * @return
 	 */
-	private static final String findIptables(SharedPreferences prefs) {
-		if(prefs != null) {
+	private static final String findIptables(boolean useLocal, SharedPreferences prefs) {
+		if(useLocal && prefs != null) {
+			if(prefs.getBoolean("builtiniptables", true)) {
+				Log.i(TAG, "Using local copy of iptables");
+				return FileInstaller.getScriptPath(context, "iptables");
+			}
 			String customPath = prefs.getString("pathToIptables", "");
 			if(!customPath.equals("") && new File(customPath).exists()) return customPath;
 		}
-		for(String su : IPTABLES_PATHS) {
-			if(new File(su).exists()) {
-				return su;
+		for(String bb : IPTABLES_PATHS) {
+			if(new File(bb).exists()) {
+				return bb;
 			}
 		}
 		return "";
@@ -136,7 +140,7 @@ public final class FileFinder implements LogConf {
 			throw new FileNotFoundException("su");
 		}
 		
-		IPTABLES = findIptables(prefs);
+		IPTABLES = findIptables(true, prefs);
 		if(IPTABLES.equals("")) {
 			throw new FileNotFoundException("iptables");
 		}

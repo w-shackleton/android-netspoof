@@ -21,28 +21,19 @@
 
 package uk.digitalsquid.netspoofer.config;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.preference.PreferenceManager;
-import android.util.Log;
-import android.widget.Toast;
 
 /**
  * A class to hold the configuration; It is pulled from the shared preferences.
  * @author william
  *
  */
-public final class ChrootConfig implements Config {
+public final class ChrootConfig {
 	static ChrootConfig DEFAULTS = null;
 	
 	private String iface;
-	
-	private final Map<String, String> values = new HashMap<String, String>();
 	
 	public ChrootConfig(Context context) {
 		if(DEFAULTS == null) DEFAULTS = new ChrootConfig("eth0");
@@ -55,30 +46,5 @@ public final class ChrootConfig implements Config {
 	
 	private ChrootConfig(String iface) {
 		this.iface = iface;
-	}
-
-	/**
-	 * Adds busybox to the values, as found in FileFinder.
-	 */
-	private void addBBToValues() {
-		if(!FileFinder.BUSYBOX.equals("")) // Leave undefined. This will cause the shell scripts to use the system utils instead, with dragons ahead.
-			values.put("BB", FileFinder.BUSYBOX);
-	}
-
-	public Map<String, String> getValues() {
-		addBBToValues();
-		return values;
-	}
-
-	public String[] getExecValues() {
-		addBBToValues();
-		String[] vals = new String[values.size()];
-		
-		int i = 0;
-		for(String key : values.keySet()) {
-			vals[i++] = String.format("%s=%s", key, values.get(key));
-		}
-		
-		return vals;
 	}
 }

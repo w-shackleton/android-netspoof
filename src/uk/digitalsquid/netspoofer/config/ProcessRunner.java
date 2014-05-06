@@ -121,9 +121,6 @@ public final class ProcessRunner implements LogConf {
 		HashMap<String, String> fullEnv = env == null ?
 				new HashMap<String, String>() :
 				new HashMap<String, String>(env);
-		fullEnv.put("PATH", "/usr/local/bin:/usr/bin:/usr/sbin:/bin:$PATH");
-		fullEnv.put("TERM", "linux");
-		fullEnv.put("HOME", "/root");
 		String scriptPath = FileInstaller.getScriptPath(context, "config");
 		FileWriter writer = null;
 		try {

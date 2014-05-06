@@ -22,33 +22,22 @@
 package uk.digitalsquid.netspoofer.config;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import uk.digitalsquid.netspoofer.spoofs.CustomGSearchSpoof;
-import uk.digitalsquid.netspoofer.spoofs.CustomGalleryImageChange;
-import uk.digitalsquid.netspoofer.spoofs.CustomImageChange;
-import uk.digitalsquid.netspoofer.spoofs.CustomTextChange;
-import uk.digitalsquid.netspoofer.spoofs.IPRedirectSpoof;
+import uk.digitalsquid.netspoofer.proxy.NSProxy;
 import uk.digitalsquid.netspoofer.spoofs.MultiSpoof;
-import uk.digitalsquid.netspoofer.spoofs.SimpleScriptedSpoof;
+import uk.digitalsquid.netspoofer.spoofs.NullSpoof;
 import uk.digitalsquid.netspoofer.spoofs.Spoof;
 import uk.digitalsquid.netspoofer.spoofs.SpoofData;
-import uk.digitalsquid.netspoofer.spoofs.SquidScriptSpoof;
-import uk.digitalsquid.netspoofer.spoofs.VideoChange;
 import android.content.Context;
-import android.os.Build;
 import android.util.Log;
 
-public class ChrootManager implements Config {
+public class ChrootManager implements LogConf {
 	private final Context context;
 	public final ChrootConfig config;
 	
@@ -57,77 +46,10 @@ public class ChrootManager implements Config {
 		this.config = config;
 	}
 	
-	/**
-	 * Sets up the shell's environment variables, mounts the image, and chroots into debian.
-	 * @return true of mount completed successfully.
-	 * @throws IOException 
-	 */
-	public synchronized boolean start() throws IOException {
-		Map<String, String> env = config.getValues();
-		// Setup & mount DEB.
-		FileFinder.initialise(context.getApplicationContext()); // In case of weird android instancing
-		ProcessRunner.runProcess(context, env, FileFinder.SU, "-c", FileInstaller.getScriptPath(context, "mount") + " " + FileInstaller.getScriptPath(context, "config")); // Pass config script as arg.
-		
-		try { Thread.sleep(700); } catch (InterruptedException e) { e.printStackTrace(); }
-		return new File(config.getDebianMount() + "/rewriters").exists();
-	}
-	
-	/**
-	 * Stops the chroot.
-	 * @throws IOException 
-	 */
-	public synchronized int stop() throws IOException {
-		Map<String, String> env = config.getValues();
-		FileFinder.initialise(context.getApplicationContext()); // In case of weird android instancing
-		return ProcessRunner.runProcess(context, env, FileFinder.SU, "-c", FileInstaller.getScriptPath(context, "umount") + " " + FileInstaller.getScriptPath(context, "config"));
-	}
-	
 	public ArrayList<Spoof> getSpoofList() {
-		Log.i(TAG, "Searching for spoofs to use...");
-		final ArrayList<Spoof> spoofs = new ArrayList<Spoof>();
-		
-		// 1. Scan squid rewriters
-		File rewriteDir = new File(config.getDebianMount() + "/rewriters");
-		if(rewriteDir.exists()) {
-			for(String file : rewriteDir.list(new FilenameFilter() {
-				@Override
-				public boolean accept(File dir, String filename) {
-					return filename.endsWith(".txt");
-				}
-			})) {
-				Log.v(TAG, "Spoof: " + file);
-				try {
-					List<String> lines = IOHelpers.readFileToLines(rewriteDir.getAbsolutePath() + "/" + file);
-					if(lines.size() < 2) {
-						Log.e(TAG, "Malformed description file for " + file + ".");
-						continue;
-					}
-					spoofs.add(new SquidScriptSpoof(lines.get(1), lines.get(2), lines.get(0)));
-				} catch (IOException e) {
-					e.printStackTrace();
-					Log.e(TAG, "Couldn't read info for spoof " + file + ".");
-				}
-			}
-		}
-		
-		spoofs.add(new CustomGSearchSpoof());
-		spoofs.add(new CustomImageChange());
-		spoofs.add(new CustomGalleryImageChange());
-		// This breaks IOHelpers.runProcessOutputToLines on Android 4.0 for some reason, so temporarily disabling it.
-		if(Build.VERSION.SDK_INT < 14) spoofs.add(new VideoChange());
-		spoofs.add(new CustomTextChange());
-		
-		// General spoof - only arpspoof.
-		spoofs.add(new SimpleScriptedSpoof(
-				"Redirect traffic through phone",
-				"Don't do anything to the traffic, only redirect other people's traffic through the phone. Useful in combination with 'Shark' app.",
-				"spoof %s %s 0", "\n"));
-		
-		// IP Redirect spoofs.
-		spoofs.add(new IPRedirectSpoof("All sites -> other website", "Redirect all websites to another website"));
-		
-		Collections.sort(spoofs);
+		ArrayList<Spoof> spoofs = new ArrayList<Spoof>();
 		spoofs.add(0, new MultiSpoof());
+		spoofs.add(0, new NullSpoof());
 		
 		return spoofs;
 	}
@@ -144,67 +66,47 @@ public class ChrootManager implements Config {
 	BufferedReader cerr;
 	OutputStreamWriter cin;
 	
+	NSProxy proxy;
+	
 	public void startSpoof(SpoofData spoof) throws IOException {
 		if(spoofRunning) throw new IllegalStateException("Spoof already running");
 		FileFinder.initialise(context.getApplicationContext()); // In case of weird android instancing
 		synchronized(spoofLock) {
 			spoofRunning = true;
 			
-			if(Build.VERSION.SDK_INT >= 9) { // 2.2 doesn't like this method
-				ProcessBuilder pb = new ProcessBuilder(FileFinder.SU, "-c",
-						FileInstaller.getScriptPath(context, "start") + " " + FileInstaller.getScriptPath(context, "config") + " " + 
-						spoof.getSpoof().getSpoofCmd(spoof.getVictimString(), spoof.getRouterIpString())); // Pass config script as arg.
-				
-				// We now write the env to a config file, which is loaded in.
-				Map<String, String> env = new HashMap<String, String>();
-				
-				Map<String, String> configValues = config.getValues();
-				if(configValues != null) env.putAll(configValues);
-				
-				Map<String, String> customEnv = spoof.getSpoof().getCustomEnv();
-				if(customEnv != null) env.putAll(customEnv);
-				
-				if(!spoof.isRunningPassively()) {
-					env.put("WLAN", spoof.getMyIface());
-					env.put("IP", spoof.getMyIp().getHostAddress());
-					env.put("SUBNET", spoof.getMySubnetBaseAddressString());
-					env.put("MASK", spoof.getMySubnetString());
-					env.put("SHORTMASK", String.valueOf(spoof.getMySubnet()));
-				}
-				
-				ProcessRunner.writeEnvConfigFile(context, env);
-	
-				su = pb.start();
-			} else {
-				Map<String, String> systemEnv = System.getenv(); // We also must include this
-				Map<String, String> combinedEnv = new HashMap<String, String>();
-				
-				if(systemEnv != null) combinedEnv.putAll(systemEnv);
-				Map<String, String> configValues = config.getValues();
-				if(configValues != null) combinedEnv.putAll(configValues);
-				
-				Map<String, String> customEnv = spoof.getSpoof().getCustomEnv();
-				if(customEnv != null) combinedEnv.putAll(customEnv);
-				
-				if(!spoof.isRunningPassively()) {
-					combinedEnv.put("WLAN", spoof.getMyIface());
-					combinedEnv.put("IP", spoof.getMyIp().getHostAddress());
-					combinedEnv.put("SUBNET", spoof.getMySubnetBaseAddressString());
-					combinedEnv.put("MASK", spoof.getMySubnetString());
-					combinedEnv.put("SHORTMASK", String.valueOf(spoof.getMySubnet()));
-				}
-				
-				String[] envArray = new String[combinedEnv.size()];
-				int i = 0;
-				for(String key : combinedEnv.keySet()) {
-					envArray[i++] = String.format("%s=%s", key, combinedEnv.get(key));
-				}
-				su = Runtime.getRuntime().exec(new String [] {
-						FileFinder.SU, "-c",
-						FileInstaller.getScriptPath(context, "start") + " " + FileInstaller.getScriptPath(context, "config") + " " + 
-						spoof.getSpoof().getSpoofCmd(spoof.getVictimString(), spoof.getRouterIpString()), // Pass config script as arg.
-				}, envArray);
+			final String router = spoof.getRouterIpString();
+			final String victim = spoof.getVictimString();
+			final String spoofParams = String.format("%s %s", victim, router);
+			
+			ProcessBuilder pb = new ProcessBuilder(FileFinder.SU, "-c",
+					FileInstaller.getScriptPath(context, "busybox") + " sh -c \"" +
+					FileInstaller.getScriptPath(context, "spoof") + " " + FileInstaller.getScriptPath(context, "config") + " " + 
+					spoofParams + "\""); // Pass config script as arg.
+			
+			Log.d(TAG, "Command: " + pb.command());
+			
+			// We now write the env to a config file, which is loaded in.
+			Map<String, String> env = new HashMap<String, String>();
+			
+			if(!spoof.isRunningPassively()) {
+				env.put("WLAN", spoof.getMyIface());
+				env.put("IP", spoof.getMyIp().getHostAddress());
+				env.put("SUBNET", spoof.getMySubnetBaseAddressString());
+				env.put("MASK", spoof.getMySubnetString());
+				env.put("SHORTMASK", String.valueOf(spoof.getMySubnet()));
 			}
+			
+			env.put("ARPSPOOF", FileInstaller.getScriptPath(context, "arpspoof"));
+			env.put("IPTABLES", FileFinder.IPTABLES);
+			env.put("BB", FileFinder.BUSYBOX);
+			
+			ProcessRunner.writeEnvConfigFile(context, env);
+			
+			// Start proxy
+			proxy = new NSProxy(spoof.getSpoofs());
+			proxy.start();
+
+			su = pb.start();
 			cout = new BufferedReader(new InputStreamReader(su.getInputStream()));
 			cerr = new BufferedReader(new InputStreamReader(su.getErrorStream()));
 			cin  = new OutputStreamWriter(su.getOutputStream());
@@ -219,13 +121,19 @@ public class ChrootManager implements Config {
 	public void stopSpoof(SpoofData spoof) throws IOException {
 		if(!spoofRunning) return; // Don't do anything.
 		synchronized(spoofLock) {
-			cin.write(spoof.getSpoof().getStopCmd());
+			cin.write("\n");
 			cin.flush();
 			
 			try {
 				su.waitFor();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
+			}
+			
+			if(proxy != null) {
+				Log.v(TAG, "Closing proxy");
+				proxy.shutdown();
+				proxy = null;
 			}
 		}
 	}
@@ -280,10 +188,12 @@ public class ChrootManager implements Config {
 		
 		while(cerr.ready()) {
 			String line = cerr.readLine();
+			Log.v(TAG, "cerr: " + line);
 			items.add(line);
 		}
 		while(cout.ready()) {
 			String line = cout.readLine();
+			Log.v(TAG, "cout: " + line);
 			items.add(line);
 		}
 		return items;

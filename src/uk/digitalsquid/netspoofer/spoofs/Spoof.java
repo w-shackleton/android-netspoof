@@ -41,11 +41,6 @@ public abstract class Spoof implements Serializable, Comparable<Spoof> {
 		this.description = description;
 		this.title = title;
 	}
-
-	@Deprecated
-	public abstract String getSpoofCmd(String victim, String router);
-	@Deprecated
-	public abstract String getStopCmd();
 	
 	public abstract Dialog displayExtraDialog(Context context, OnExtraDialogDoneListener onDone);
 	
@@ -86,6 +81,7 @@ public abstract class Spoof implements Serializable, Comparable<Spoof> {
 		void onResult(Intent result);
 	}
 	
+	@Deprecated
 	public Map<String, String> getCustomEnv() {return new HashMap<String, String>();}
 	
 	@Override

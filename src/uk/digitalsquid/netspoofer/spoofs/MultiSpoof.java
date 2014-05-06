@@ -81,31 +81,6 @@ public class MultiSpoof extends Spoof {
 	}
 	
 	private static final String BASE_REWRITE_URL = "/rewriters/";
-
-	@Override
-	public String getSpoofCmd(String victim, String router) {
-		if(finalSpoofs == null) return null;
-		final StringBuilder cmdBuilder = new StringBuilder();
-		cmdBuilder.append("spoof %s %s 3 \"");
-		boolean first = true;
-		for(SquidScriptSpoof spoof : finalSpoofs) {
-			// Leaving no spaces in script def
-			if(!first) {
-				cmdBuilder.append('|');
-			} else {
-				first = false;
-			}
-			cmdBuilder.append(BASE_REWRITE_URL);
-			cmdBuilder.append(spoof.getScriptName());
-		}
-		cmdBuilder.append('"');
-		return String.format(cmdBuilder.toString(), victim, router);
-	}
-
-	@Override
-	public String getStopCmd() {
-		return "\n";
-	}
 	
 	@Override
 	public Map<String, String> getCustomEnv() {

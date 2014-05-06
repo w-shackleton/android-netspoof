@@ -23,16 +23,6 @@ public class ImageSpoof extends Spoof {
 	}
 
 	@Override
-	public String getSpoofCmd(String victim, String router) {
-		return "";
-	}
-
-	@Override
-	public String getStopCmd() {
-		return "";
-	}
-
-	@Override
 	public Dialog displayExtraDialog(Context context,
 			OnExtraDialogDoneListener onDone) {
 		return null;

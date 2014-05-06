@@ -6,5 +6,6 @@
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
 	<classpathentry kind="lib" path="libs/wpgproxy.jar" sourcepath="libs/wpg-proxy/src"/>
+	<classpathentry kind="lib" path="libs/android-logging-log4j-1.0.3.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

@@ -45,16 +45,6 @@ public class SimpleScriptedSpoof extends Spoof {
 	}
 
 	@Override
-	public String getSpoofCmd(String victim, String router) {
-		return String.format(start, victim, router);
-	}
-
-	@Override
-	public String getStopCmd() {
-		return stop;
-	}
-
-	@Override
 	public Dialog displayExtraDialog(Context context,
 			OnExtraDialogDoneListener onDone) {
 		return null;

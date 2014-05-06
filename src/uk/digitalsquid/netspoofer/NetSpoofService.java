@@ -21,19 +21,12 @@
 
 package uk.digitalsquid.netspoofer;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import uk.digitalsquid.netspoofer.config.ChrootConfig;
 import uk.digitalsquid.netspoofer.config.ChrootManager;
-import uk.digitalsquid.netspoofer.config.FileFinder;
-import uk.digitalsquid.netspoofer.config.IOHelpers;
 import uk.digitalsquid.netspoofer.config.LogConf;
 import uk.digitalsquid.netspoofer.misc.AsyncTaskHelper;
 import uk.digitalsquid.netspoofer.servicemsg.ImageLoader;
@@ -50,13 +43,10 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -102,20 +92,6 @@ public class NetSpoofService extends Service implements LogConf {
     public void onCreate() {
           super.onCreate();
           uiThreadHandler = new Handler();
-    }
-    
-    /**
-     * Shows a toast on the UI thread
-     * @param text
-     * @param duration
-     */
-    private void showToast(final String text, final int duration) {
-    	uiThreadHandler.post(new Runnable() {
-			@Override
-			public void run() {
-				Toast.makeText(getBaseContext(), text, duration).show();
-			}
-		});
     }
     
     private boolean started = false;
@@ -214,31 +190,9 @@ public class NetSpoofService extends Service implements LogConf {
 			Log.i(TAG, "Setting up chroot...");
 			final ChrootManager chroot = new ChrootManager(NetSpoofService.this, params[0]);
 	    	
-			Log.i(TAG, "Starting chroot...");
-			try {
-				if(!chroot.start()) {
-					Log.e(TAG, "Chroot start returned false, not mounted");
-					throw new IOException("Mounted chroot not found after start command executed.");
-				}
-			} catch (IOException e) {
-				Log.e(TAG, "Chroot failed to load!");
-				publishProgress(new InitialiseStatus(STATUS_FAILED));
-				e.printStackTrace();
-				try {
-					chroot.stop();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-				return null;
-			}
 			publishProgress(new InitialiseStatus(STATUS_LOADED));
 			if(isCancelled()) {
 				Log.i(TAG, "Stop initiated, stopping...");
-				try {
-					chroot.stop();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
 				Log.i(TAG, "Done.");
 				return null;
 			}
@@ -254,7 +208,7 @@ public class NetSpoofService extends Service implements LogConf {
 							SpoofStarter starter = (SpoofStarter) task;
 							spoofLoop(chroot, starter.getSpoof());
 						} else if(task instanceof ImageLoader) {
-							loadImageToDebian(chroot, ((ImageLoader)task).getUri());
+							// TODO: Something!
 						}
 						break;
 					case ServiceMsg.MESSAGE_STOP:
@@ -271,13 +225,6 @@ public class NetSpoofService extends Service implements LogConf {
 			}
 	
 			Log.i(TAG, "Stopping chroot...");
-			try {
-				chroot.stop();
-			} catch (IOException e) {
-				e.printStackTrace();
-				Log.e(TAG, "Chroot failed to stop.");
-				publishProgress(new InitialiseStatus(STATUS_FAILED));
-			}
 			Log.i(TAG, "Done.");
 			return null;
 		}
@@ -357,57 +304,8 @@ public class NetSpoofService extends Service implements LogConf {
 		 * @param imageUri
 		 */
 		private void loadImageToDebian(ChrootManager chroot, Uri imageUri) {
-			
-			File tmpImage = new File(getFilesDir(), "customimage.jpg");
-			Log.i(TAG, "Loading image from media store");
-			try {
-				Bitmap image = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
-				Log.i(TAG, "Writing image");
-				FileOutputStream out = openFileOutput("customimage.jpg", MODE_WORLD_READABLE);
-				image.compress(CompressFormat.JPEG, 80, out);
-				out.close();
-				image.recycle();
-				Log.i(TAG, "Written image");
-				
-				// Use BB to copy this as SU (need root to write to debian area)
-				final String su = FileFinder.SU;
-				final String bb = FileFinder.BUSYBOX;
-				final File debianImageFolder = new File(chroot.config.getDebianMount() + "/var/www/images");
-				final File debianImage = new File(debianImageFolder, "customimage.jpg");
-				
-				final List<String> mkdirArgs = new LinkedList<String>();
-				// su -c busybox mkdir 
-				mkdirArgs.add(su);
-				mkdirArgs.add("-c");
-				mkdirArgs.add(bb + " " + "mkdir" + " " + debianImageFolder.getCanonicalPath());
-				Log.v(TAG, "Running " + mkdirArgs);
-				try {
-					IOHelpers.runProcess(mkdirArgs); // Is this necessary?
-				} catch (IOException e) {
-					Log.e(TAG, "Failed to create image folder.");
-				}
-				
-				final List<String> cpArgs = new LinkedList<String>();
-				// su busybox cp tmp.jpg deb.jpg
-				cpArgs.add(su);
-				cpArgs.add("-c");
-				cpArgs.add(bb + " " + "cp" + " " + tmpImage.getCanonicalPath() + " " + debianImage.getCanonicalPath());
-				Log.v(TAG, "Running " + cpArgs);
-				if(IOHelpers.runProcess(cpArgs) != 0) {
-					throw new IOException("Couldn't copy image from tmp to debian.\n Used cmdline " + cpArgs.toString());
-				}
-				Log.i(TAG, "Copied image to debian folder.");
-			} catch (FileNotFoundException e) {
-				Log.e(TAG, "Couldn't open temporary file to write image", e);
-				showToast("Couldn't load selected image!", Toast.LENGTH_LONG);
-			} catch (IOException e) {
-				Log.e(TAG, "Couldn't write to temporary image", e);
-				showToast("Couldn't load selected image!", Toast.LENGTH_LONG);
-			} finally {
-				try {
-					tmpImage.delete();
-				} catch(Exception e) { } // Don't care if it fails.
-			}
+			// TODO: Implement
+			throw new IllegalAccessError("IMPLEMENTATION!!!!one!1!!!!");
 		}
     	
 		protected void onProgressUpdate(ServiceStatus... progress) {
