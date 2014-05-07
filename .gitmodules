@@ -1,3 +1,0 @@
-[submodule "libs/wpg-proxy"]
-	path = libs/wpg-proxy
-	url = git@github.com:w-shackleton/wpg-proxy.git
