@@ -33,6 +33,10 @@ public class HttpMessage {
 	public void addHeader(String key, String val) {
 		if(key == null) return;
 		key = key.toLowerCase();
+		if(key.contains("cache")) return; // TODO: debug!!!
+		if(key.equals("if-none-match")) return; // TODO: debug!!!
+		if(key.equals("if-modified-since")) return; // TODO: debug!!!
+		if(key.equals("accept-encoding")) return; // TODO: debug!!!
 		if(val == null) val = "";
 		if(headers.containsKey(key))
 			headers.get(key).add(val);
@@ -104,5 +108,11 @@ public class HttpMessage {
 	public byte[] getContent() {
 		if(content == null) return EMPTY_CONTENT;
 		return content;
+	}
+	public void clearContent() {
+		content = null;
+	}
+	public void setContent(byte[] content) {
+		this.content = content;
 	}
 }

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="spoof_image_flip">Flip images</string>
+    <string name="spoof_image_flip_description">Turn all images on websites upside down</string>
+    
+</resources>

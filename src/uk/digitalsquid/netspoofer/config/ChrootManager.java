@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import uk.digitalsquid.netspoofer.proxy.NSProxy;
+import uk.digitalsquid.netspoofer.spoofs.ImageSpoof;
 import uk.digitalsquid.netspoofer.spoofs.MultiSpoof;
 import uk.digitalsquid.netspoofer.spoofs.NullSpoof;
 import uk.digitalsquid.netspoofer.spoofs.Spoof;
@@ -48,6 +49,9 @@ public class ChrootManager implements LogConf {
 	
 	public ArrayList<Spoof> getSpoofList() {
 		ArrayList<Spoof> spoofs = new ArrayList<Spoof>();
+		
+		spoofs.add(new ImageSpoof(context, ImageSpoof.IMAGE_FLIP));
+
 		spoofs.add(0, new MultiSpoof());
 		spoofs.add(0, new NullSpoof());
 		

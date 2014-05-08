@@ -182,8 +182,13 @@ public class NSProxy implements LogConf {
 	}
 	
 	private void manipulateResponse(HttpResponse response, HttpRequest request) {
-		for(Spoof spoof : spoofs)
-			spoof.modifyResponse(response, request);
+		for(Spoof spoof : spoofs) {
+			try {
+				spoof.modifyResponse(response, request);
+			} catch(Exception e) {
+				Log.w(TAG, "Manipulate failed", e);
+			}
+		}
 	}
 	
 	/**
