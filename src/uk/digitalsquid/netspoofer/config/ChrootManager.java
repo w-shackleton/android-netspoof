@@ -132,7 +132,7 @@ public class ChrootManager implements LogConf {
 			
 			if(proxy != null) {
 				Log.v(TAG, "Closing proxy");
-				proxy.shutdown();
+				proxy.stop();
 				proxy = null;
 			}
 		}

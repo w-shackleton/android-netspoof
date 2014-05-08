@@ -25,12 +25,11 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import uk.digitalsquid.netspoofer.proxy.HttpRequest;
+import uk.digitalsquid.netspoofer.proxy.HttpResponse;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-
-import com.wpg.proxy.HttpMessageRequest;
-import com.wpg.proxy.HttpMessageResponse;
 
 public abstract class Spoof implements Serializable, Comparable<Spoof> {
 	private static final long serialVersionUID = -3207729013734241941L;
@@ -94,10 +93,10 @@ public abstract class Spoof implements Serializable, Comparable<Spoof> {
 		return title;
 	}
 	// TODO: Make abstract
-    public void modifyRequest( HttpMessageRequest request) {
+    public void modifyRequest( HttpRequest request) {
      	
     }
-    public void modifyResponse( HttpMessageResponse response, HttpMessageRequest request) {
+    public void modifyResponse( HttpResponse response, HttpRequest request) {
 
     }
 }

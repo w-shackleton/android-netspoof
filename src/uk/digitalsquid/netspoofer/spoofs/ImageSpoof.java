@@ -2,12 +2,11 @@ package uk.digitalsquid.netspoofer.spoofs;
 
 import java.util.List;
 
+import uk.digitalsquid.netspoofer.proxy.HttpRequest;
+import uk.digitalsquid.netspoofer.proxy.HttpResponse;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-
-import com.wpg.proxy.HttpMessageRequest;
-import com.wpg.proxy.HttpMessageResponse;
 
 /**
  * A type of spoof that manipulates an image.
@@ -39,15 +38,15 @@ public class ImageSpoof extends Spoof {
 	}
 
 	@Override
-	public void modifyRequest(HttpMessageRequest request) {
+	public void modifyRequest(HttpRequest request) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void modifyResponse(HttpMessageResponse response,
-			HttpMessageRequest request) {
-		List<String> contentType = response.getHeaders().get("Content-Type");
+	public void modifyResponse(HttpResponse response,
+			HttpRequest request) {
+		List<String> contentType = response.getHeader("Content-Type");
 		if(contentType == null) return;
 		boolean isImage = false;
 		for(String type : contentType) {
