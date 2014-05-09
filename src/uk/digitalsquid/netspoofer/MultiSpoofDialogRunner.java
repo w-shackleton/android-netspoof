@@ -24,19 +24,24 @@ package uk.digitalsquid.netspoofer;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import uk.digitalsquid.netspoofer.spoofs.Spoof;
 import uk.digitalsquid.netspoofer.spoofs.Spoof.OnExtraDialogDoneListener;
-import uk.digitalsquid.netspoofer.spoofs.SquidScriptSpoof;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 
+/**
+ * Displays the dialogs and configuration options for multiple spoofs.
+ * @author william
+ *
+ */
 public class MultiSpoofDialogRunner extends Activity implements OnExtraDialogDoneListener {
 	public static final String SPOOF_LIST = "uk.digitalsquid.netspoofer.MultiSpoofDialogRunner.list";
 	
-	ArrayList<SquidScriptSpoof> spoofs;
-	Iterator<SquidScriptSpoof> currentSpoof;
-	SquidScriptSpoof spoof;
+	ArrayList<Spoof> spoofs;
+	Iterator<Spoof> currentSpoof;
+	Spoof spoof;
 	
 	Dialog currentDialog;
 	
@@ -44,7 +49,7 @@ public class MultiSpoofDialogRunner extends Activity implements OnExtraDialogDon
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		spoofs = (ArrayList<SquidScriptSpoof>) getIntent().getSerializableExtra(SPOOF_LIST);
+		spoofs = (ArrayList<Spoof>) getIntent().getSerializableExtra(SPOOF_LIST);
 		currentSpoof = spoofs.iterator();
 		
 		processNextSpoof(false);

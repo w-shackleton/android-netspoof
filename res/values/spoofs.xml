@@ -2,5 +2,14 @@
 <resources>
     <string name="spoof_image_flip">Flip images</string>
     <string name="spoof_image_flip_description">Turn all images on websites upside down</string>
+
+    <string name="spoof_image_wobbly">Wobble images</string>
+    <string name="spoof_image_wobbly_description">Rotates all images by a small random amount</string>
+
+    <string name="spoof_video">Change YouTube videos</string>
+    <string name="spoof_video_description">Redirect all YouTube videos to a Rickroll</string>
+
+    <string name="spoof_video_custom">Change YouTube videos (custom)</string>
+    <string name="spoof_video_custom_description">Redirect all YouTube videos to a custom video</string>
     
 </resources>

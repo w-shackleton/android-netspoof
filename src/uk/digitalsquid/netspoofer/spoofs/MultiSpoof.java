@@ -22,7 +22,6 @@
 package uk.digitalsquid.netspoofer.spoofs;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 import uk.digitalsquid.netspoofer.MultiSpoofDialogRunner;
 import uk.digitalsquid.netspoofer.SpoofSelector;
@@ -31,18 +30,19 @@ import android.content.Context;
 import android.content.Intent;
 
 /**
- * A spoof which runs multiple other spoofs, and concatenates them by piping the scripts together.
+ * A spoof which runs multiple other spoofs.
  * @author william
  *
  */
 public class MultiSpoof extends Spoof {
 
 	public MultiSpoof() {
+		// TODO: Localise
 		super("Multiple spoofs", "Run multiple spoofs at once. May run slowly.");
 	}
 	
 	private ArrayList<Spoof> selectedSpoofs;
-	private ArrayList<SquidScriptSpoof> finalSpoofs;
+	private ArrayList<Spoof> finalSpoofs;
 
 	private static final long serialVersionUID = -848683524539301592L;
 
@@ -63,35 +63,20 @@ public class MultiSpoof extends Spoof {
 	@Override
 	public Intent activityForResult2(Context context) {
 		Intent ret = new Intent(context, MultiSpoofDialogRunner.class);
-		ArrayList<SquidScriptSpoof> filteredSpoofs = new ArrayList<SquidScriptSpoof>();
-		for(Spoof spoof : selectedSpoofs) {
-			if(spoof instanceof SquidScriptSpoof) {
-				filteredSpoofs.add((SquidScriptSpoof) spoof);
-			}
-		}
-		ret.putExtra(MultiSpoofDialogRunner.SPOOF_LIST, filteredSpoofs);
+		ret.putExtra(MultiSpoofDialogRunner.SPOOF_LIST, selectedSpoofs);
 		return ret;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean activityFinished2(Context context, Intent result) {
-		finalSpoofs = (ArrayList<SquidScriptSpoof>) result.getSerializableExtra(MultiSpoofDialogRunner.SPOOF_LIST);
+		finalSpoofs = (ArrayList<Spoof>) result.getSerializableExtra(MultiSpoofDialogRunner.SPOOF_LIST);
 		return true;
 	}
 	
-	private static final String BASE_REWRITE_URL = "/rewriters/";
-	
-	@Override
-	public Map<String, String> getCustomEnv() {
-		Map<String, String> ret = super.getCustomEnv();
-		if(finalSpoofs != null) {
-			for(SquidScriptSpoof spoof : finalSpoofs) {
-				ret.putAll(spoof.getCustomEnv());
-			}
-		}
-		return ret;
-	}
-
 	@Override public Dialog displayExtraDialog(Context context, OnExtraDialogDoneListener onDone) { return null; }
+	
+	public ArrayList<Spoof> getSpoofs() {
+		return finalSpoofs;
+	}
 }

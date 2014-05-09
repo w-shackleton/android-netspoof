@@ -32,7 +32,6 @@ import uk.digitalsquid.netspoofer.misc.CheckedLinearLayout;
 import uk.digitalsquid.netspoofer.servicestatus.SpoofList;
 import uk.digitalsquid.netspoofer.spoofs.Spoof;
 import uk.digitalsquid.netspoofer.spoofs.Spoof.OnExtraDialogDoneListener;
-import uk.digitalsquid.netspoofer.spoofs.SquidScriptSpoof;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog.Builder;
@@ -189,9 +188,7 @@ public class SpoofSelector extends Activity implements OnClickListener, OnItemCl
 				if(multiChoice) {
 					multiSpoofList = new ArrayList<Spoof>();
 					for(Spoof s : spoofs.getSpoofs()) {
-						if(s instanceof SquidScriptSpoof) {
-							multiSpoofList.add(s);
-						}
+						multiSpoofList.add(s);
 					}
 					Collections.sort(multiSpoofList);
 					spoofList.setAdapter(new ArrayAdapter<Spoof>(SpoofSelector.this, android.R.layout.simple_list_item_multiple_choice, multiSpoofList));
@@ -289,9 +286,7 @@ public class SpoofSelector extends Activity implements OnClickListener, OnItemCl
 				// Remove non squid spoofs
 				this.spoofs = new LinkedList<Spoof>();
 				for(Spoof spoof : spoofs) {
-					if(spoof instanceof SquidScriptSpoof) {
-						this.spoofs.add(spoof);
-					}
+					this.spoofs.add(spoof);
 				}
 			}
 			notifyDataSetChanged();

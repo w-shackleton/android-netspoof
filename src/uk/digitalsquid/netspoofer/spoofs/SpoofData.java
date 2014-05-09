@@ -27,7 +27,6 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import uk.digitalsquid.netspoofer.VictimSelector.Victim;
-import uk.digitalsquid.netspoofer.config.Lists;
 import uk.digitalsquid.netspoofer.config.NetHelpers;
 
 public class SpoofData implements Serializable {
@@ -81,10 +80,10 @@ public class SpoofData implements Serializable {
 	private boolean runningPassively = false;
 
 	public SpoofData(Spoof spoof, boolean runningPassively) {
-		this(Lists.singleton(spoof), runningPassively);
+		this(Spoof.expandSpoof(spoof), runningPassively);
 	}
 	public SpoofData(Spoof spoof, String myIp, String mySubnet, String myIf, String routerIp) throws UnknownHostException {
-		this(Lists.singleton(spoof), myIp, mySubnet, myIf, routerIp);
+		this(Spoof.expandSpoof(spoof), myIp, mySubnet, myIf, routerIp);
 	}
 
 	public SpoofData(ArrayList<Spoof> spoofs, boolean runningPassively) {

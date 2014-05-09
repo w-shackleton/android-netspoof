@@ -144,6 +144,7 @@ public class NSProxy implements LogConf {
 					output.write(String.format("HTTP/1.1 %d %s\r\n",
 							response.getResponseCode(),
 							response.getResponseMessage()).getBytes());
+					
 					for(Entry<String, List<String>> entry :
 						response.getHeaderPairs().entrySet()) {
 						for(String value : entry.getValue())
@@ -205,7 +206,7 @@ public class NSProxy implements LogConf {
 			throw new HttpExecuteException("HTTP Host not set");
 		String host = request.getHeader("Host").get(0);
 		
-		URL url = new URL("http", host, 80, request.getUrl());
+		URL url = new URL("http", host, 80, request.getPath());
 		
 		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 		connection.setRequestMethod(request.getMethod());

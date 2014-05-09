@@ -25,10 +25,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import uk.digitalsquid.netspoofer.R;
+import uk.digitalsquid.netspoofer.proxy.HttpRequest;
+import uk.digitalsquid.netspoofer.proxy.HttpResponse;
+import uk.digitalsquid.netspoofer.spoofs.Spoof.OnExtraDialogDoneListener;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
@@ -40,11 +44,12 @@ import android.widget.TextView;
  * @author william
  *
  */
-public class CustomTextChange extends SquidScriptSpoof {
+public class CustomTextChange extends Spoof {
 	private static final long serialVersionUID = 8490503138296852028L;
 
 	public CustomTextChange() {
-		super("Text change", "Change all text on all websites", "textchange.sh");
+		// TODO: Localise
+		super("Text change", "Change all text on all websites");
 	}
 	
 	private final Map<String, String> changeValues = new HashMap<String, String>(8);
@@ -132,5 +137,17 @@ public class CustomTextChange extends SquidScriptSpoof {
 	@Override
 	public Map<String, String> getCustomEnv() {
 		return changeValues;
+	}
+
+	@Override
+	public void modifyRequest(HttpRequest request) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void modifyResponse(HttpResponse response, HttpRequest request) {
+		// TODO Auto-generated method stub
+		
 	}
 }

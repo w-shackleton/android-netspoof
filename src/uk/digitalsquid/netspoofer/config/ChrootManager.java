@@ -51,6 +51,7 @@ public class ChrootManager implements LogConf {
 		ArrayList<Spoof> spoofs = new ArrayList<Spoof>();
 		
 		spoofs.add(new ImageSpoof(context, ImageSpoof.IMAGE_FLIP));
+		spoofs.add(new ImageSpoof(context, ImageSpoof.IMAGE_WOBBLY));
 
 		spoofs.add(0, new MultiSpoof());
 		spoofs.add(0, new NullSpoof());

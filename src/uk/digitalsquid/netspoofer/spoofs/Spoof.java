@@ -22,9 +22,11 @@
 package uk.digitalsquid.netspoofer.spoofs;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import uk.digitalsquid.netspoofer.config.Lists;
 import uk.digitalsquid.netspoofer.proxy.HttpRequest;
 import uk.digitalsquid.netspoofer.proxy.HttpResponse;
 import android.app.Dialog;
@@ -41,9 +43,13 @@ public abstract class Spoof implements Serializable, Comparable<Spoof> {
 		this.title = title;
 	}
 	
-	public abstract Dialog displayExtraDialog(Context context, OnExtraDialogDoneListener onDone);
+	public Dialog displayExtraDialog(Context context, OnExtraDialogDoneListener onDone) {
+		return null;
+	}
 	
-	public abstract Intent activityForResult(Context context);
+	public Intent activityForResult(Context context) {
+		return null;
+	}
 	/**
 	 * A second activity to be displayed afterwards.
 	 * @param context
@@ -56,7 +62,7 @@ public abstract class Spoof implements Serializable, Comparable<Spoof> {
 	 * @param result
 	 * @return <code>true</code> to continue the process.
 	 */
-	public abstract boolean activityFinished(Context context, Intent result);
+	public boolean activityFinished(Context context, Intent result) { return true; }
 	/**
 	 * 
 	 * @param result
@@ -93,10 +99,42 @@ public abstract class Spoof implements Serializable, Comparable<Spoof> {
 		return title;
 	}
 	// TODO: Make abstract
-    public void modifyRequest( HttpRequest request) {
-     	
-    }
-    public void modifyResponse( HttpResponse response, HttpRequest request) {
+    public abstract void modifyRequest( HttpRequest request);
+    public abstract void modifyResponse( HttpResponse response, HttpRequest request);
+    
+    /**
+     * This function expands and groups spoofs into their simplest form.
+     * Currently this involves:
+     * Expanding {@link MultiSpoof} objects
+     * Grouping {@link ImageSpoof} objects.
+     * @param spoof
+     * @return A list of expanded spoofs, or a singleton of spoof.
+     */
+    public static ArrayList<Spoof> expandSpoof(Spoof spoof) {
+    	if(spoof instanceof MultiSpoof) {
+    		ArrayList<Spoof> spoofs = ((MultiSpoof)spoof).getSpoofs();
 
+    		// Sort into a list of ImageSpoof and a list of others
+    		ArrayList<ImageSpoof> imageSpoofs = new ArrayList<ImageSpoof>();
+            ArrayList<Spoof> otherSpoofs = new ArrayList<Spoof>();
+    		for(Spoof s : spoofs) {
+    			if(s instanceof ImageSpoof)
+    				imageSpoofs.add((ImageSpoof)s);
+    			else otherSpoofs.add(s);
+    		}
+    		
+    		// Fold ImageSpoofs up
+    		if(imageSpoofs.size() > 0) {
+    			ImageSpoof first = imageSpoofs.remove(0);
+    			for(ImageSpoof next : imageSpoofs) {
+    				first.mergeImageSpoof(next);
+    			}
+    			otherSpoofs.add(first);
+    		}
+    		
+    		return otherSpoofs;
+    	} else {
+    		return Lists.singleton(spoof);
+    	}
     }
 }

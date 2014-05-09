@@ -32,11 +32,13 @@ public class HttpMessage {
 	}
 	public void addHeader(String key, String val) {
 		if(key == null) return;
-		key = key.toLowerCase();
+		key = key.toLowerCase(Locale.ENGLISH);
 		if(key.contains("cache")) return; // TODO: debug!!!
 		if(key.equals("if-none-match")) return; // TODO: debug!!!
 		if(key.equals("if-modified-since")) return; // TODO: debug!!!
 		if(key.equals("accept-encoding")) return; // TODO: debug!!!
+		// Remove any transfer-encoding left over from the server connection
+		if(key.equals("transfer-encoding")) return; // TODO: debug!!!
 		if(val == null) val = "";
 		if(headers.containsKey(key))
 			headers.get(key).add(val);
@@ -72,6 +74,10 @@ public class HttpMessage {
 		key = key.toLowerCase(Locale.ENGLISH);
 		return headers.containsKey(key);
 	}
+	public void changeHeader(String key, String val) {
+		headers.remove(key);
+		addHeader(key, val);
+	}
 	
 	/**
 	 * Reads from in until all content is read.
@@ -103,6 +109,7 @@ public class HttpMessage {
 			soFar += len;
 		}
 		content = data;
+		updateContentLength();
 	}
 	private static final byte[] EMPTY_CONTENT = new byte[] {};
 	public byte[] getContent() {
@@ -114,5 +121,21 @@ public class HttpMessage {
 	}
 	public void setContent(byte[] content) {
 		this.content = content;
+		updateContentLength();
+	}
+	private void updateContentLength() {
+		if(content == null) return;
+		headers.remove("content-length");
+		headers.put("content-length", Lists.singleton(
+				String.valueOf(content.length)));
+	}
+	
+	public String getHost() {
+		List<String> host = headers.get("host");
+		if(host == null) return "";
+		return host.get(0);
+	}
+	public void setHost(String host) {
+		changeHeader("host", host);
 	}
 }
