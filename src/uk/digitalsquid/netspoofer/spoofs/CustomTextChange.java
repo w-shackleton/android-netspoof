@@ -147,7 +147,5 @@ public class CustomTextChange extends Spoof {
 
 	@Override
 	public void modifyResponse(HttpResponse response, HttpRequest request) {
-		// TODO Auto-generated method stub
-		
 	}
 }

@@ -1,0 +1,3 @@
+[submodule "libs/jsoup"]
+	path = libs/jsoup
+	url = git@github.com:w-shackleton/jsoup.git
