@@ -62,6 +62,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
 /**
  * Shows a list of possible spoofs, either a single one or a multi choice.
  * @author Will Shackleton <will@digitalsquid.co.uk>
@@ -106,6 +109,13 @@ public class SpoofSelector extends Activity implements OnClickListener, OnItemCl
 	    statusFilter.addAction(NetSpoofService.INTENT_STATUSUPDATE);
 	    statusFilter.addAction(NetSpoofService.INTENT_SPOOFLIST);
 		registerReceiver(statusReceiver, statusFilter);
+		
+		// Google analytics
+		Tracker t = ((App)getApplication()).getTracker();
+		if(t != null) {
+			t.setScreenName(getClass().getCanonicalName());
+			t.send(new HitBuilders.AppViewBuilder().build());
+		}
 	}
 	@Override
 	public void onDestroy() {

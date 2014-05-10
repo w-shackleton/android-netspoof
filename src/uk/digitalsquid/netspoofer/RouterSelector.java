@@ -61,6 +61,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
 public class RouterSelector extends Activity implements OnClickListener, LogConf {
 	public static final String EXTRA_SPOOF = "uk.digitalsquid.netspoofer.RouterSelector.SPOOF";
 	
@@ -105,6 +108,13 @@ public class RouterSelector extends Activity implements OnClickListener, LogConf
         // wifiFilter.addAction(WifiManager.SUPPLICANT_STATE_CHANGED_ACTION);
         // wifiFilter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
         registerReceiver(wifiListener, wifiFilter);
+		
+		// Google analytics
+		Tracker t = ((App)getApplication()).getTracker();
+		if(t != null) {
+			t.setScreenName(getClass().getCanonicalName());
+			t.send(new HitBuilders.AppViewBuilder().build());
+		}
 	}
 	
 	@Override

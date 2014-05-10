@@ -43,6 +43,9 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
 public class SpoofRunning extends Activity implements OnClickListener, LogConf {
 	public static final String EXTRA_SPOOFDATA = "uk.digitalsquid.netspoofer.SpoofRunning.SPOOFDATA";
 	
@@ -67,7 +70,15 @@ public class SpoofRunning extends Activity implements OnClickListener, LogConf {
 		} else {
 	        bindService(new Intent(this, NetSpoofService.class), mConnection, Context.BIND_AUTO_CREATE);
 		}
-        
+		
+		Config.configureRunningPage(this);
+		
+		// Google analytics
+		Tracker t = ((App)getApplication()).getTracker();
+		if(t != null) {
+			t.setScreenName(getClass().getCanonicalName());
+			t.send(new HitBuilders.AppViewBuilder().build());
+		}
 	}
 	
 	@Override

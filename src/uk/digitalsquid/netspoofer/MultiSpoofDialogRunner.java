@@ -31,6 +31,9 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
 /**
  * Displays the dialogs and configuration options for multiple spoofs.
  * @author Will Shackleton <will@digitalsquid.co.uk>
@@ -53,6 +56,13 @@ public class MultiSpoofDialogRunner extends Activity implements OnExtraDialogDon
 		currentSpoof = spoofs.iterator();
 		
 		processNextSpoof(false);
+		
+		// Google analytics
+		Tracker t = ((App)getApplication()).getTracker();
+		if(t != null) {
+			t.setScreenName(getClass().getCanonicalName());
+			t.send(new HitBuilders.AppViewBuilder().build());
+		}
 	}
 	
 	private static final int ITERATED_ACTIVITY_ID = 1;

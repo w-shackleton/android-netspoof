@@ -9,106 +9,308 @@ package uk.digitalsquid.netspoofer;
 
 public final class R {
     public static final class attr {
+        /** 
+    The size of the ad. It must be one of BANNER, FULL_BANNER, LEADERBOARD,
+    MEDIUM_RECTANGLE, SMART_BANNER, WIDE_SKYSCRAPER, or
+    &lt;width&gt;x&lt;height&gt;.
+    
+         <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int adSize=0x7f010000;
+        /** 
+    A comma-separated list of the supported ad sizes. The sizes must be one of
+    BANNER, FULL_BANNER, LEADERBOARD, MEDIUM_RECTANGLE, SMART_BANNER,
+    WIDE_SKYSCRAPER, or &lt;width&gt;x&lt;height&gt;.
+    
+         <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int adSizes=0x7f010001;
+        /**  The ad unit ID. 
+         <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int adUnitId=0x7f010002;
+        /** <p>Must be a floating point value, such as "<code>1.2</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int cameraBearing=0x7f010004;
+        /** <p>Must be a floating point value, such as "<code>1.2</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int cameraTargetLat=0x7f010005;
+        /** <p>Must be a floating point value, such as "<code>1.2</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int cameraTargetLng=0x7f010006;
+        /** <p>Must be a floating point value, such as "<code>1.2</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int cameraTilt=0x7f010007;
+        /** <p>Must be a floating point value, such as "<code>1.2</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int cameraZoom=0x7f010008;
+        /** <p>Must be one of the following constant values.</p>
+<table>
+<colgroup align="left" />
+<colgroup align="left" />
+<colgroup align="left" />
+<tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td><code>none</code></td><td>0</td><td></td></tr>
+<tr><td><code>normal</code></td><td>1</td><td></td></tr>
+<tr><td><code>satellite</code></td><td>2</td><td></td></tr>
+<tr><td><code>terrain</code></td><td>3</td><td></td></tr>
+<tr><td><code>hybrid</code></td><td>4</td><td></td></tr>
+</table>
+         */
+        public static final int mapType=0x7f010003;
+        /** <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int uiCompass=0x7f010009;
+        /** <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int uiRotateGestures=0x7f01000a;
+        /** <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int uiScrollGestures=0x7f01000b;
+        /** <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int uiTiltGestures=0x7f01000c;
+        /** <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int uiZoomControls=0x7f01000d;
+        /** <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int uiZoomGestures=0x7f01000e;
+        /** <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int useViewLifecycle=0x7f01000f;
+        /** <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int zOrderOnTop=0x7f010010;
+    }
+    public static final class color {
+        public static final int common_action_bar_splitter=0x7f060009;
+        /**  Sign-in Button Colors 
+         */
+        public static final int common_signin_btn_dark_text_default=0x7f060000;
+        public static final int common_signin_btn_dark_text_disabled=0x7f060002;
+        public static final int common_signin_btn_dark_text_focused=0x7f060003;
+        public static final int common_signin_btn_dark_text_pressed=0x7f060001;
+        public static final int common_signin_btn_default_background=0x7f060008;
+        public static final int common_signin_btn_light_text_default=0x7f060004;
+        public static final int common_signin_btn_light_text_disabled=0x7f060006;
+        public static final int common_signin_btn_light_text_focused=0x7f060007;
+        public static final int common_signin_btn_light_text_pressed=0x7f060005;
+        public static final int common_signin_btn_text_dark=0x7f06000a;
+        public static final int common_signin_btn_text_light=0x7f06000b;
     }
     public static final class drawable {
         public static final int bg=0x7f020000;
-        public static final int file=0x7f020001;
-        public static final int folder=0x7f020002;
-        public static final int icon=0x7f020003;
-        public static final int status=0x7f020004;
+        public static final int common_signin_btn_icon_dark=0x7f020001;
+        public static final int common_signin_btn_icon_disabled_dark=0x7f020002;
+        public static final int common_signin_btn_icon_disabled_focus_dark=0x7f020003;
+        public static final int common_signin_btn_icon_disabled_focus_light=0x7f020004;
+        public static final int common_signin_btn_icon_disabled_light=0x7f020005;
+        public static final int common_signin_btn_icon_focus_dark=0x7f020006;
+        public static final int common_signin_btn_icon_focus_light=0x7f020007;
+        public static final int common_signin_btn_icon_light=0x7f020008;
+        public static final int common_signin_btn_icon_normal_dark=0x7f020009;
+        public static final int common_signin_btn_icon_normal_light=0x7f02000a;
+        public static final int common_signin_btn_icon_pressed_dark=0x7f02000b;
+        public static final int common_signin_btn_icon_pressed_light=0x7f02000c;
+        public static final int common_signin_btn_text_dark=0x7f02000d;
+        public static final int common_signin_btn_text_disabled_dark=0x7f02000e;
+        public static final int common_signin_btn_text_disabled_focus_dark=0x7f02000f;
+        public static final int common_signin_btn_text_disabled_focus_light=0x7f020010;
+        public static final int common_signin_btn_text_disabled_light=0x7f020011;
+        public static final int common_signin_btn_text_focus_dark=0x7f020012;
+        public static final int common_signin_btn_text_focus_light=0x7f020013;
+        public static final int common_signin_btn_text_light=0x7f020014;
+        public static final int common_signin_btn_text_normal_dark=0x7f020015;
+        public static final int common_signin_btn_text_normal_light=0x7f020016;
+        public static final int common_signin_btn_text_pressed_dark=0x7f020017;
+        public static final int common_signin_btn_text_pressed_light=0x7f020018;
+        public static final int file=0x7f020019;
+        public static final int folder=0x7f02001a;
+        public static final int ic_plusone_medium_off_client=0x7f02001b;
+        public static final int ic_plusone_small_off_client=0x7f02001c;
+        public static final int ic_plusone_standard_off_client=0x7f02001d;
+        public static final int ic_plusone_tall_off_client=0x7f02001e;
+        public static final int icon=0x7f02001f;
+        public static final int status=0x7f020020;
     }
     public static final class id {
-        public static final int TableRow01=0x7f080035;
-        public static final int TableRow02=0x7f080016;
-        public static final int TableRow03=0x7f080019;
-        public static final int TableRow04=0x7f08001c;
-        public static final int TableRow06=0x7f080022;
-        public static final int TableRow07=0x7f080025;
-        public static final int TableRow08=0x7f080028;
-        public static final int TextView01=0x7f08000f;
-        public static final int cancel=0x7f08002e;
-        public static final int checkbox=0x7f080048;
-        public static final int contactDev=0x7f08000c;
-        public static final int description=0x7f080040;
-        public static final int devsite=0x7f080005;
-        public static final int dlButton=0x7f080042;
-        public static final int dlProgress=0x7f08002b;
-        public static final int dlProgressBar=0x7f08002c;
-        public static final int dlStatus=0x7f080044;
-        public static final int dlprogress=0x7f080045;
-        public static final int dlprogresstext=0x7f080046;
-        public static final int goback=0x7f08005a;
-        public static final int horizontalScrollView1=0x7f080002;
-        public static final int imageView1=0x7f080001;
-        public static final int ipBox=0x7f080011;
-        public static final int linearLayout1=0x7f080000;
-        public static final int linearLayout2=0x7f080009;
-        public static final int linearLayout3=0x7f08000b;
-        public static final int linearLayout4=0x7f080003;
-        public static final int loading=0x7f080030;
-        public static final int logoutput=0x7f08004e;
-        public static final int logscroller=0x7f08004d;
-        public static final int myIf=0x7f080038;
-        public static final int myIfText=0x7f080039;
-        public static final int myIp=0x7f080033;
-        public static final int myIpText=0x7f080034;
-        public static final int netSpoofMenuItemAbout=0x7f080059;
-        public static final int netSpoofMenuItemPrefs=0x7f080058;
-        public static final int ok=0x7f08002f;
-        public static final int redlconfirm=0x7f080041;
-        public static final int refreshWeb=0x7f080043;
-        public static final int reportBug=0x7f08000d;
-        public static final int routerDescription=0x7f08003d;
-        public static final int routerIp=0x7f080036;
-        public static final int routerIpText=0x7f080037;
-        public static final int routerList=0x7f08003e;
-        public static final int routerName=0x7f08003c;
-        public static final int scanProgressBar=0x7f080053;
-        public static final int scanProgressRefresh=0x7f080055;
-        public static final int scanProgressText=0x7f080054;
-        public static final int scrollView1=0x7f080008;
-        public static final int sfWebView=0x7f080047;
-        public static final int spoofDescription=0x7f08004a;
-        public static final int spoofList=0x7f08004b;
-        public static final int spoofTitle=0x7f080049;
-        public static final int spoofWarning=0x7f08004f;
-        public static final int spoofstatus=0x7f08004c;
-        public static final int squidscripts=0x7f080007;
-        public static final int startButton=0x7f080031;
-        public static final int subnetMask=0x7f08003a;
-        public static final int subnetMaskText=0x7f08003b;
-        public static final int tableLayout1=0x7f080012;
-        public static final int tableRow01=0x7f080013;
-        public static final int tableRow05=0x7f08001f;
-        public static final int tableRow1=0x7f080032;
-        public static final int text=0x7f08002d;
-        public static final int textFrom1=0x7f080014;
-        public static final int textFrom2=0x7f080017;
-        public static final int textFrom3=0x7f08001a;
-        public static final int textFrom4=0x7f08001d;
-        public static final int textFrom5=0x7f080020;
-        public static final int textFrom6=0x7f080023;
-        public static final int textFrom7=0x7f080026;
-        public static final int textFrom8=0x7f080029;
-        public static final int textTo1=0x7f080015;
-        public static final int textTo2=0x7f080018;
-        public static final int textTo3=0x7f08001b;
-        public static final int textTo4=0x7f08001e;
-        public static final int textTo5=0x7f080021;
-        public static final int textTo6=0x7f080024;
-        public static final int textTo7=0x7f080027;
-        public static final int textTo8=0x7f08002a;
-        public static final int textView1=0x7f08000a;
-        public static final int textView2=0x7f08000e;
-        public static final int textView3=0x7f080010;
-        public static final int udternet=0x7f080006;
-        public static final int useLocalFile=0x7f080057;
-        public static final int victimExtraText=0x7f080051;
-        public static final int victimIp=0x7f080050;
-        public static final int victimList=0x7f080052;
-        public static final int web=0x7f080056;
-        public static final int website=0x7f080004;
-        public static final int wifiSettings=0x7f08003f;
+        public static final int TableRow01=0x7f070036;
+        public static final int TableRow02=0x7f070016;
+        public static final int TableRow03=0x7f070019;
+        public static final int TableRow04=0x7f07001c;
+        public static final int TableRow06=0x7f070022;
+        public static final int TableRow07=0x7f070025;
+        public static final int TableRow08=0x7f070028;
+        public static final int banner=0x7f070051;
+        public static final int cancel=0x7f07002f;
+        public static final int checkbox=0x7f070049;
+        public static final int description=0x7f070041;
+        public static final int devsite=0x7f070009;
+        public static final int dlButton=0x7f070043;
+        public static final int dlProgress=0x7f07002c;
+        public static final int dlProgressBar=0x7f07002d;
+        public static final int dlStatus=0x7f070045;
+        public static final int dlprogress=0x7f070046;
+        public static final int dlprogresstext=0x7f070047;
+        public static final int goback=0x7f07005c;
+        public static final int horizontalScrollView1=0x7f070006;
+        public static final int hybrid=0x7f070004;
+        public static final int imageView1=0x7f07002b;
+        public static final int ipBox=0x7f070011;
+        public static final int linearLayout1=0x7f070005;
+        public static final int linearLayout2=0x7f07000b;
+        public static final int linearLayout3=0x7f07000d;
+        public static final int linearLayout4=0x7f070007;
+        public static final int loading=0x7f070031;
+        public static final int logoutput=0x7f07004f;
+        public static final int logscroller=0x7f07004e;
+        public static final int myIf=0x7f070039;
+        public static final int myIfText=0x7f07003a;
+        public static final int myIp=0x7f070034;
+        public static final int myIpText=0x7f070035;
+        public static final int netSpoofMenuItemAbout=0x7f07005b;
+        public static final int netSpoofMenuItemPrefs=0x7f07005a;
+        public static final int none=0x7f070000;
+        public static final int normal=0x7f070001;
+        public static final int ok=0x7f070030;
+        public static final int redlconfirm=0x7f070042;
+        public static final int refreshWeb=0x7f070044;
+        public static final int reportBug=0x7f07000e;
+        public static final int routerDescription=0x7f07003e;
+        public static final int routerIp=0x7f070037;
+        public static final int routerIpText=0x7f070038;
+        public static final int routerList=0x7f07003f;
+        public static final int routerName=0x7f07003d;
+        public static final int satellite=0x7f070002;
+        public static final int scanProgressBar=0x7f070055;
+        public static final int scanProgressRefresh=0x7f070057;
+        public static final int scanProgressText=0x7f070056;
+        public static final int scrollView1=0x7f07000a;
+        public static final int sfWebView=0x7f070048;
+        public static final int spoofDescription=0x7f07004b;
+        public static final int spoofList=0x7f07004c;
+        public static final int spoofTitle=0x7f07004a;
+        public static final int spoofWarning=0x7f070050;
+        public static final int spoofstatus=0x7f07004d;
+        public static final int startButton=0x7f070032;
+        public static final int subnetMask=0x7f07003b;
+        public static final int subnetMaskText=0x7f07003c;
+        public static final int tableLayout1=0x7f070012;
+        public static final int tableRow01=0x7f070013;
+        public static final int tableRow05=0x7f07001f;
+        public static final int tableRow1=0x7f070033;
+        public static final int terrain=0x7f070003;
+        public static final int text=0x7f07002e;
+        public static final int textFrom1=0x7f070014;
+        public static final int textFrom2=0x7f070017;
+        public static final int textFrom3=0x7f07001a;
+        public static final int textFrom4=0x7f07001d;
+        public static final int textFrom5=0x7f070020;
+        public static final int textFrom6=0x7f070023;
+        public static final int textFrom7=0x7f070026;
+        public static final int textFrom8=0x7f070029;
+        public static final int textTo1=0x7f070015;
+        public static final int textTo2=0x7f070018;
+        public static final int textTo3=0x7f07001b;
+        public static final int textTo4=0x7f07001e;
+        public static final int textTo5=0x7f070021;
+        public static final int textTo6=0x7f070024;
+        public static final int textTo7=0x7f070027;
+        public static final int textTo8=0x7f07002a;
+        public static final int textView1=0x7f07000c;
+        public static final int textView2=0x7f07000f;
+        public static final int textView3=0x7f070010;
+        public static final int useLocalFile=0x7f070059;
+        public static final int victimExtraText=0x7f070053;
+        public static final int victimIp=0x7f070052;
+        public static final int victimList=0x7f070054;
+        public static final int web=0x7f070058;
+        public static final int website=0x7f070008;
+        public static final int wifiSettings=0x7f070040;
+    }
+    public static final class integer {
+        public static final int google_play_services_version=0x7f090000;
     }
     public static final class layout {
         public static final int about=0x7f030000;
@@ -133,9 +335,9 @@ public final class R {
         public static final int youtube=0x7f030013;
     }
     public static final class menu {
-        public static final int dlscreen=0x7f070000;
-        public static final int netspoofmenu=0x7f070001;
-        public static final int youtube=0x7f070002;
+        public static final int dlscreen=0x7f0a0000;
+        public static final int netspoofmenu=0x7f0a0001;
+        public static final int youtube=0x7f0a0002;
     }
     public static final class raw {
         public static final int arpspoof=0x7f050000;
@@ -145,130 +347,549 @@ public final class R {
         public static final int trollface=0x7f050004;
     }
     public static final class string {
-        public static final int about=0x7f060052;
-        public static final int aboutText1=0x7f060054;
-        public static final int aboutText2=0x7f060055;
-        public static final int aboutTextRefs=0x7f06006b;
-        public static final int advanced=0x7f06005c;
-        public static final int agreementContents1=0x7f060001;
-        public static final int agreementContents2=0x7f060002;
-        public static final int agreementNegative=0x7f060004;
-        public static final int agreementPositive=0x7f060003;
-        public static final int agreementTitle=0x7f060000;
-        public static final int allDevices=0x7f060035;
-        public static final int allDevicesDesc=0x7f060036;
-        public static final int app_name=0x7f06001a;
-        public static final int autoChooseRouter=0x7f06004b;
-        public static final int autoChooseRouterDesc=0x7f06004c;
-        public static final int autoChooseVictim=0x7f06004d;
-        public static final int autoChooseVictimDesc=0x7f06004e;
-        public static final int automaticOptions=0x7f06004a;
-        public static final int blank=0x7f06002d;
-        public static final int builtinbusybox=0x7f06006c;
-        public static final int builtinbusyboxDesc=0x7f06006d;
-        public static final int changelog=0x7f060005;
-        public static final int chooseFile=0x7f060078;
-        public static final int configuring=0x7f060072;
-        public static final int contactdev=0x7f060057;
-        public static final int customIpSettings=0x7f060031;
-        public static final int customText=0x7f060070;
-        public static final int customTextDesc=0x7f060071;
-        public static final int customwebsitedesc=0x7f060074;
-        public static final int debImgUrl=0x7f06005a;
-        public static final int debImgUrlDesc=0x7f06005b;
-        public static final int debianImage=0x7f060063;
-        public static final int debianImageDesc=0x7f060064;
-        public static final int debianMount=0x7f060061;
-        public static final int debianMountDesc=0x7f060062;
-        public static final int deviceIf=0x7f060030;
-        public static final int deviceIp=0x7f06002e;
-        public static final int devsite=0x7f060056;
-        public static final int dlCancel=0x7f060028;
-        public static final int dlStarted=0x7f060023;
-        public static final int dlStarting=0x7f060024;
-        public static final int dlnotrunning=0x7f060022;
-        public static final int downloadUnzipped=0x7f060044;
-        public static final int downloadUnzippedDesc=0x7f060045;
-        public static final int downloading=0x7f06003e;
-        public static final int downloadingfiles=0x7f06003f;
-        public static final int ellipsis=0x7f060027;
-        public static final int enterip=0x7f06003a;
-        public static final int enteriptext=0x7f06003b;
-        public static final int gotosite=0x7f060053;
-        public static final int gpl=0x7f060059;
-        public static final int iface=0x7f060065;
-        public static final int ifaceDesc=0x7f060066;
-        public static final int ipExample=0x7f060079;
-        public static final int ipScanThreads=0x7f060050;
-        public static final int ipScanThreadsDesc=0x7f060051;
-        public static final int loadfailed=0x7f060041;
-        public static final int loadfailedtitle=0x7f060040;
-        public static final int loading=0x7f06002a;
-        public static final int lookingupSite=0x7f060073;
-        public static final int loopDev=0x7f06005d;
-        public static final int loopDevDesc=0x7f06005e;
-        public static final int loopNum=0x7f06005f;
-        public static final int loopNumDesc=0x7f060060;
-        public static final int otherDevice=0x7f060037;
-        public static final int otherDeviceDesc=0x7f060038;
-        public static final int output=0x7f06003d;
-        public static final int pathToBB=0x7f060047;
-        public static final int pathToBBDesc=0x7f060049;
-        public static final int pathToSu=0x7f060046;
-        public static final int pathToSuDesc=0x7f060048;
-        public static final int performance=0x7f06004f;
-        public static final int preferences=0x7f060042;
-        public static final int programPrefs=0x7f060043;
-        public static final int redownload=0x7f060025;
-        public static final int redownloadnotify=0x7f060026;
-        public static final int refresh=0x7f060039;
-        public static final int reportBug=0x7f060058;
-        public static final int returntoyt=0x7f06006f;
-        public static final int routerIp=0x7f06002f;
-        public static final int scanning=0x7f060033;
-        public static final int selectgateway=0x7f06002b;
-        public static final int selecthack=0x7f060029;
-        public static final int selectvictim=0x7f060032;
-        public static final int selectvideo=0x7f06006e;
-        public static final int setup=0x7f06001b;
-        public static final int setupUpgrade=0x7f060020;
-        public static final int setup_upgrade=0x7f06001c;
-        public static final int setup_upgrade2=0x7f06001d;
-        public static final int setupt1=0x7f06001f;
-        public static final int spoofRunning=0x7f060067;
-        public static final int spoofRunningDesc=0x7f060068;
-        public static final int spoof_blueball=0x7f060016;
-        public static final int spoof_blueball_description=0x7f060017;
-        public static final int spoof_image_custom=0x7f060014;
-        public static final int spoof_image_custom_description=0x7f060015;
-        public static final int spoof_image_flip=0x7f06000a;
-        public static final int spoof_image_flip_description=0x7f06000b;
-        public static final int spoof_image_wobbly=0x7f06000c;
-        public static final int spoof_image_wobbly_description=0x7f06000d;
-        public static final int spoof_redirect_custom=0x7f060018;
-        public static final int spoof_redirect_custom_description=0x7f060019;
-        public static final int spoof_trollface=0x7f060012;
-        public static final int spoof_trollface_description=0x7f060013;
-        public static final int spoof_video=0x7f06000e;
-        public static final int spoof_video_custom=0x7f060010;
-        public static final int spoof_video_custom_description=0x7f060011;
-        public static final int spoof_video_description=0x7f06000f;
-        public static final int spoofnotrunning=0x7f060006;
-        public static final int spoofstarted=0x7f060008;
-        public static final int spoofstarting=0x7f060007;
-        public static final int spoofstopping=0x7f060009;
-        public static final int squidscripts=0x7f06006a;
-        public static final int start=0x7f06001e;
-        public static final int startdl=0x7f060021;
-        public static final int stop=0x7f06003c;
-        public static final int subnet=0x7f060034;
-        public static final int udternet=0x7f060069;
-        public static final int useLocalFile=0x7f060077;
-        public static final int warningText=0x7f060076;
-        public static final int warningTitle=0x7f060075;
-        public static final int wifiSettings=0x7f06002c;
+        public static final int about=0x7f08006d;
+        public static final int aboutText1=0x7f08006f;
+        public static final int aboutText2=0x7f080070;
+        public static final int aboutTextRefs=0x7f080086;
+        public static final int advanced=0x7f080077;
+        public static final int agreementContents1=0x7f08001c;
+        public static final int agreementContents2=0x7f08001d;
+        public static final int agreementNegative=0x7f08001f;
+        public static final int agreementPositive=0x7f08001e;
+        public static final int agreementTitle=0x7f08001b;
+        public static final int allDevices=0x7f080050;
+        public static final int allDevicesDesc=0x7f080051;
+        public static final int app_name=0x7f080035;
+        /**   Title for notification shown when GooglePlayServices needs to be
+        enabled for a application to work. [CHAR LIMIT=70] 
+         */
+        public static final int auth_client_needs_enabling_title=0x7f080015;
+        /**   Title for notification shown when GooglePlayServices needs to be
+        installed for a application to work. [CHAR LIMIT=70] 
+         */
+        public static final int auth_client_needs_installation_title=0x7f080016;
+        /**   Title for notification shown when GooglePlayServices needs to be
+        udpated for a application to work. [CHAR LIMIT=70] 
+         */
+        public static final int auth_client_needs_update_title=0x7f080017;
+        /**   Title for notification shown when GooglePlayServices is unavailable [CHAR LIMIT=42] 
+         */
+        public static final int auth_client_play_services_err_notification_msg=0x7f080018;
+        /**   Requested by string saying which app requested the notification. [CHAR LIMIT=42] 
+         */
+        public static final int auth_client_requested_by_msg=0x7f080019;
+        /**   Title for notification shown when a bad version of GooglePlayServices
+        has been installed and needs correction for an application to work.
+        [CHAR LIMIT=70] 
+         */
+        public static final int auth_client_using_bad_version_title=0x7f080014;
+        public static final int autoChooseRouter=0x7f080066;
+        public static final int autoChooseRouterDesc=0x7f080067;
+        public static final int autoChooseVictim=0x7f080068;
+        public static final int autoChooseVictimDesc=0x7f080069;
+        public static final int automaticOptions=0x7f080065;
+        public static final int blank=0x7f080048;
+        public static final int builtinbusybox=0x7f080087;
+        public static final int builtinbusyboxDesc=0x7f080088;
+        public static final int changelog=0x7f080020;
+        public static final int chooseFile=0x7f080093;
+        /**  Button in confirmation dialog to enable Google Play services.  Clicking it
+        will direct user to application settings of Google Play services where they
+        can enable it [CHAR LIMIT=40] 
+         */
+        public static final int common_google_play_services_enable_button=0x7f080006;
+        /**  Message in confirmation dialog informing user they need to enable
+        Google Play services in application settings [CHAR LIMIT=NONE] 
+         */
+        public static final int common_google_play_services_enable_text=0x7f080005;
+        /**  Title of confirmation dialog informing user they need to enable
+        Google Play services in application settings [CHAR LIMIT=40] 
+         */
+        public static final int common_google_play_services_enable_title=0x7f080004;
+        /**  Button in confirmation dialog for installing Google Play services [CHAR LIMIT=40] 
+         */
+        public static final int common_google_play_services_install_button=0x7f080003;
+        /**  (For phones) Message in confirmation dialog informing user that
+        they need to install Google Play services (from Play Store) [CHAR LIMIT=NONE] 
+         */
+        public static final int common_google_play_services_install_text_phone=0x7f080001;
+        /**  (For tablets) Message in confirmation dialog informing user that
+        they need to install Google Play services (from Play Store) [CHAR LIMIT=NONE] 
+         */
+        public static final int common_google_play_services_install_text_tablet=0x7f080002;
+        /**  Title of confirmation dialog informing user that they need to install
+        Google Play services (from Play Store) [CHAR LIMIT=40] 
+         */
+        public static final int common_google_play_services_install_title=0x7f080000;
+        /**  Message in confirmation dialog informing the user that they provided an invalid account. [CHAR LIMIT=NONE] 
+         */
+        public static final int common_google_play_services_invalid_account_text=0x7f08000c;
+        /**  Title of confirmation dialog informing the user that they provided an invalid account. [CHAR LIMIT=40] 
+         */
+        public static final int common_google_play_services_invalid_account_title=0x7f08000b;
+        /**  Message in confirmation dialog informing the user that a network error occurred. [CHAR LIMIT=NONE] 
+         */
+        public static final int common_google_play_services_network_error_text=0x7f08000a;
+        /**  Title of confirmation dialog informing the user that a network error occurred. [CHAR LIMIT=40] 
+         */
+        public static final int common_google_play_services_network_error_title=0x7f080009;
+        /**  Message in confirmation dialog informing user there is an unknown issue in Google Play
+        services [CHAR LIMIT=NONE] 
+         */
+        public static final int common_google_play_services_unknown_issue=0x7f08000d;
+        /**  Message in confirmation dialog informing user that date on the device is not correct,
+    causing certificate checks to fail. [CHAR LIMIT=NONE] 
+         */
+        public static final int common_google_play_services_unsupported_date_text=0x7f080010;
+        /**  Message in confirmation dialog informing user that Google Play services is not supported on their device [CHAR LIMIT=NONE] 
+         */
+        public static final int common_google_play_services_unsupported_text=0x7f08000f;
+        /**  Title of confirmation dialog informing user that Google Play services is not supported on their device [CHAR LIMIT=40] 
+         */
+        public static final int common_google_play_services_unsupported_title=0x7f08000e;
+        /**  Button in confirmation dialog for updating Google Play services [CHAR LIMIT=40] 
+         */
+        public static final int common_google_play_services_update_button=0x7f080011;
+        /**  Message in confirmation dialog informing user that they need to update
+        Google Play services (from Play Store) [CHAR LIMIT=NONE] 
+         */
+        public static final int common_google_play_services_update_text=0x7f080008;
+        /**  Title of confirmation dialog informing user that they need to update
+        Google Play services (from Play Store) [CHAR LIMIT=40] 
+         */
+        public static final int common_google_play_services_update_title=0x7f080007;
+        /**  Sign-in button text [CHAR LIMIT=15] 
+         */
+        public static final int common_signin_button_text=0x7f080012;
+        /**  Long form sign-in button text [CHAR LIMIT=30] 
+         */
+        public static final int common_signin_button_text_long=0x7f080013;
+        public static final int configuring=0x7f08008d;
+        public static final int contactdev=0x7f080072;
+        public static final int customIpSettings=0x7f08004c;
+        public static final int customText=0x7f08008b;
+        public static final int customTextDesc=0x7f08008c;
+        public static final int customwebsitedesc=0x7f08008f;
+        public static final int debImgUrl=0x7f080075;
+        public static final int debImgUrlDesc=0x7f080076;
+        public static final int debianImage=0x7f08007e;
+        public static final int debianImageDesc=0x7f08007f;
+        public static final int debianMount=0x7f08007c;
+        public static final int debianMountDesc=0x7f08007d;
+        public static final int deviceIf=0x7f08004b;
+        public static final int deviceIp=0x7f080049;
+        public static final int devsite=0x7f080071;
+        public static final int dlCancel=0x7f080043;
+        public static final int dlStarted=0x7f08003e;
+        public static final int dlStarting=0x7f08003f;
+        public static final int dlnotrunning=0x7f08003d;
+        public static final int downloadUnzipped=0x7f08005f;
+        public static final int downloadUnzippedDesc=0x7f080060;
+        public static final int downloading=0x7f080059;
+        public static final int downloadingfiles=0x7f08005a;
+        public static final int ellipsis=0x7f080042;
+        public static final int enterip=0x7f080055;
+        public static final int enteriptext=0x7f080056;
+        public static final int gotosite=0x7f08006e;
+        public static final int gpl=0x7f080074;
+        public static final int iface=0x7f080080;
+        public static final int ifaceDesc=0x7f080081;
+        public static final int ipExample=0x7f080094;
+        public static final int ipScanThreads=0x7f08006b;
+        public static final int ipScanThreadsDesc=0x7f08006c;
+        public static final int loadfailed=0x7f08005c;
+        public static final int loadfailedtitle=0x7f08005b;
+        public static final int loading=0x7f080045;
+        /**  Location client code resources (prefix with location_client) 
+         */
+        public static final int location_client_powered_by_google=0x7f08001a;
+        public static final int lookingupSite=0x7f08008e;
+        public static final int loopDev=0x7f080078;
+        public static final int loopDevDesc=0x7f080079;
+        public static final int loopNum=0x7f08007a;
+        public static final int loopNumDesc=0x7f08007b;
+        public static final int otherDevice=0x7f080052;
+        public static final int otherDeviceDesc=0x7f080053;
+        public static final int output=0x7f080058;
+        public static final int pathToBB=0x7f080062;
+        public static final int pathToBBDesc=0x7f080064;
+        public static final int pathToSu=0x7f080061;
+        public static final int pathToSuDesc=0x7f080063;
+        public static final int performance=0x7f08006a;
+        public static final int preferences=0x7f08005d;
+        public static final int programPrefs=0x7f08005e;
+        public static final int redownload=0x7f080040;
+        public static final int redownloadnotify=0x7f080041;
+        public static final int refresh=0x7f080054;
+        public static final int reportBug=0x7f080073;
+        public static final int returntoyt=0x7f08008a;
+        public static final int routerIp=0x7f08004a;
+        public static final int scanning=0x7f08004e;
+        public static final int selectgateway=0x7f080046;
+        public static final int selecthack=0x7f080044;
+        public static final int selectvictim=0x7f08004d;
+        public static final int selectvideo=0x7f080089;
+        public static final int setup=0x7f080036;
+        public static final int setupUpgrade=0x7f08003b;
+        public static final int setup_upgrade=0x7f080037;
+        public static final int setup_upgrade2=0x7f080038;
+        public static final int setupt1=0x7f08003a;
+        public static final int spoofRunning=0x7f080082;
+        public static final int spoofRunningDesc=0x7f080083;
+        public static final int spoof_blueball=0x7f080031;
+        public static final int spoof_blueball_description=0x7f080032;
+        public static final int spoof_image_custom=0x7f08002f;
+        public static final int spoof_image_custom_description=0x7f080030;
+        public static final int spoof_image_flip=0x7f080025;
+        public static final int spoof_image_flip_description=0x7f080026;
+        public static final int spoof_image_wobbly=0x7f080027;
+        public static final int spoof_image_wobbly_description=0x7f080028;
+        public static final int spoof_redirect_custom=0x7f080033;
+        public static final int spoof_redirect_custom_description=0x7f080034;
+        public static final int spoof_trollface=0x7f08002d;
+        public static final int spoof_trollface_description=0x7f08002e;
+        public static final int spoof_video=0x7f080029;
+        public static final int spoof_video_custom=0x7f08002b;
+        public static final int spoof_video_custom_description=0x7f08002c;
+        public static final int spoof_video_description=0x7f08002a;
+        public static final int spoofnotrunning=0x7f080021;
+        public static final int spoofstarted=0x7f080023;
+        public static final int spoofstarting=0x7f080022;
+        public static final int spoofstopping=0x7f080024;
+        public static final int squidscripts=0x7f080085;
+        public static final int start=0x7f080039;
+        public static final int startdl=0x7f08003c;
+        public static final int stop=0x7f080057;
+        public static final int subnet=0x7f08004f;
+        public static final int udternet=0x7f080084;
+        public static final int useLocalFile=0x7f080092;
+        public static final int warningText=0x7f080091;
+        public static final int warningTitle=0x7f080090;
+        public static final int wifiSettings=0x7f080047;
     }
     public static final class xml {
-        public static final int preferences=0x7f040000;
+        public static final int netspoof_stats=0x7f040000;
+        public static final int preferences=0x7f040001;
     }
+    public static final class styleable {
+        /** Attributes that can be used with a AdsAttrs.
+           <p>Includes the following attributes:</p>
+           <table>
+           <colgroup align="left" />
+           <colgroup align="left" />
+           <tr><th>Attribute</th><th>Description</th></tr>
+           <tr><td><code>{@link #AdsAttrs_adSize uk.digitalsquid.netspoofer:adSize}</code></td><td>
+    The size of the ad.</td></tr>
+           <tr><td><code>{@link #AdsAttrs_adSizes uk.digitalsquid.netspoofer:adSizes}</code></td><td>
+    A comma-separated list of the supported ad sizes.</td></tr>
+           <tr><td><code>{@link #AdsAttrs_adUnitId uk.digitalsquid.netspoofer:adUnitId}</code></td><td> The ad unit ID.</td></tr>
+           </table>
+           @see #AdsAttrs_adSize
+           @see #AdsAttrs_adSizes
+           @see #AdsAttrs_adUnitId
+         */
+        public static final int[] AdsAttrs = {
+            0x7f010000, 0x7f010001, 0x7f010002
+        };
+        /**
+          <p>
+          @attr description
+          
+    The size of the ad. It must be one of BANNER, FULL_BANNER, LEADERBOARD,
+    MEDIUM_RECTANGLE, SMART_BANNER, WIDE_SKYSCRAPER, or
+    &lt;width&gt;x&lt;height&gt;.
+    
+
+
+          <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          <p>This is a private symbol.
+          @attr name uk.digitalsquid.netspoofer:adSize
+        */
+        public static final int AdsAttrs_adSize = 0;
+        /**
+          <p>
+          @attr description
+          
+    A comma-separated list of the supported ad sizes. The sizes must be one of
+    BANNER, FULL_BANNER, LEADERBOARD, MEDIUM_RECTANGLE, SMART_BANNER,
+    WIDE_SKYSCRAPER, or &lt;width&gt;x&lt;height&gt;.
+    
+
+
+          <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          <p>This is a private symbol.
+          @attr name uk.digitalsquid.netspoofer:adSizes
+        */
+        public static final int AdsAttrs_adSizes = 1;
+        /**
+          <p>
+          @attr description
+           The ad unit ID. 
+
+
+          <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          <p>This is a private symbol.
+          @attr name uk.digitalsquid.netspoofer:adUnitId
+        */
+        public static final int AdsAttrs_adUnitId = 2;
+        /** Attributes that can be used with a MapAttrs.
+           <p>Includes the following attributes:</p>
+           <table>
+           <colgroup align="left" />
+           <colgroup align="left" />
+           <tr><th>Attribute</th><th>Description</th></tr>
+           <tr><td><code>{@link #MapAttrs_cameraBearing uk.digitalsquid.netspoofer:cameraBearing}</code></td><td></td></tr>
+           <tr><td><code>{@link #MapAttrs_cameraTargetLat uk.digitalsquid.netspoofer:cameraTargetLat}</code></td><td></td></tr>
+           <tr><td><code>{@link #MapAttrs_cameraTargetLng uk.digitalsquid.netspoofer:cameraTargetLng}</code></td><td></td></tr>
+           <tr><td><code>{@link #MapAttrs_cameraTilt uk.digitalsquid.netspoofer:cameraTilt}</code></td><td></td></tr>
+           <tr><td><code>{@link #MapAttrs_cameraZoom uk.digitalsquid.netspoofer:cameraZoom}</code></td><td></td></tr>
+           <tr><td><code>{@link #MapAttrs_mapType uk.digitalsquid.netspoofer:mapType}</code></td><td></td></tr>
+           <tr><td><code>{@link #MapAttrs_uiCompass uk.digitalsquid.netspoofer:uiCompass}</code></td><td></td></tr>
+           <tr><td><code>{@link #MapAttrs_uiRotateGestures uk.digitalsquid.netspoofer:uiRotateGestures}</code></td><td></td></tr>
+           <tr><td><code>{@link #MapAttrs_uiScrollGestures uk.digitalsquid.netspoofer:uiScrollGestures}</code></td><td></td></tr>
+           <tr><td><code>{@link #MapAttrs_uiTiltGestures uk.digitalsquid.netspoofer:uiTiltGestures}</code></td><td></td></tr>
+           <tr><td><code>{@link #MapAttrs_uiZoomControls uk.digitalsquid.netspoofer:uiZoomControls}</code></td><td></td></tr>
+           <tr><td><code>{@link #MapAttrs_uiZoomGestures uk.digitalsquid.netspoofer:uiZoomGestures}</code></td><td></td></tr>
+           <tr><td><code>{@link #MapAttrs_useViewLifecycle uk.digitalsquid.netspoofer:useViewLifecycle}</code></td><td></td></tr>
+           <tr><td><code>{@link #MapAttrs_zOrderOnTop uk.digitalsquid.netspoofer:zOrderOnTop}</code></td><td></td></tr>
+           </table>
+           @see #MapAttrs_cameraBearing
+           @see #MapAttrs_cameraTargetLat
+           @see #MapAttrs_cameraTargetLng
+           @see #MapAttrs_cameraTilt
+           @see #MapAttrs_cameraZoom
+           @see #MapAttrs_mapType
+           @see #MapAttrs_uiCompass
+           @see #MapAttrs_uiRotateGestures
+           @see #MapAttrs_uiScrollGestures
+           @see #MapAttrs_uiTiltGestures
+           @see #MapAttrs_uiZoomControls
+           @see #MapAttrs_uiZoomGestures
+           @see #MapAttrs_useViewLifecycle
+           @see #MapAttrs_zOrderOnTop
+         */
+        public static final int[] MapAttrs = {
+            0x7f010003, 0x7f010004, 0x7f010005, 0x7f010006,
+            0x7f010007, 0x7f010008, 0x7f010009, 0x7f01000a,
+            0x7f01000b, 0x7f01000c, 0x7f01000d, 0x7f01000e,
+            0x7f01000f, 0x7f010010
+        };
+        /**
+          <p>This symbol is the offset where the {@link uk.digitalsquid.netspoofer.R.attr#cameraBearing}
+          attribute's value can be found in the {@link #MapAttrs} array.
+
+
+          <p>Must be a floating point value, such as "<code>1.2</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name uk.digitalsquid.netspoofer:cameraBearing
+        */
+        public static final int MapAttrs_cameraBearing = 1;
+        /**
+          <p>This symbol is the offset where the {@link uk.digitalsquid.netspoofer.R.attr#cameraTargetLat}
+          attribute's value can be found in the {@link #MapAttrs} array.
+
+
+          <p>Must be a floating point value, such as "<code>1.2</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name uk.digitalsquid.netspoofer:cameraTargetLat
+        */
+        public static final int MapAttrs_cameraTargetLat = 2;
+        /**
+          <p>This symbol is the offset where the {@link uk.digitalsquid.netspoofer.R.attr#cameraTargetLng}
+          attribute's value can be found in the {@link #MapAttrs} array.
+
+
+          <p>Must be a floating point value, such as "<code>1.2</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name uk.digitalsquid.netspoofer:cameraTargetLng
+        */
+        public static final int MapAttrs_cameraTargetLng = 3;
+        /**
+          <p>This symbol is the offset where the {@link uk.digitalsquid.netspoofer.R.attr#cameraTilt}
+          attribute's value can be found in the {@link #MapAttrs} array.
+
+
+          <p>Must be a floating point value, such as "<code>1.2</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name uk.digitalsquid.netspoofer:cameraTilt
+        */
+        public static final int MapAttrs_cameraTilt = 4;
+        /**
+          <p>This symbol is the offset where the {@link uk.digitalsquid.netspoofer.R.attr#cameraZoom}
+          attribute's value can be found in the {@link #MapAttrs} array.
+
+
+          <p>Must be a floating point value, such as "<code>1.2</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name uk.digitalsquid.netspoofer:cameraZoom
+        */
+        public static final int MapAttrs_cameraZoom = 5;
+        /**
+          <p>This symbol is the offset where the {@link uk.digitalsquid.netspoofer.R.attr#mapType}
+          attribute's value can be found in the {@link #MapAttrs} array.
+
+
+          <p>Must be one of the following constant values.</p>
+<table>
+<colgroup align="left" />
+<colgroup align="left" />
+<colgroup align="left" />
+<tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td><code>none</code></td><td>0</td><td></td></tr>
+<tr><td><code>normal</code></td><td>1</td><td></td></tr>
+<tr><td><code>satellite</code></td><td>2</td><td></td></tr>
+<tr><td><code>terrain</code></td><td>3</td><td></td></tr>
+<tr><td><code>hybrid</code></td><td>4</td><td></td></tr>
+</table>
+          @attr name uk.digitalsquid.netspoofer:mapType
+        */
+        public static final int MapAttrs_mapType = 0;
+        /**
+          <p>This symbol is the offset where the {@link uk.digitalsquid.netspoofer.R.attr#uiCompass}
+          attribute's value can be found in the {@link #MapAttrs} array.
+
+
+          <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name uk.digitalsquid.netspoofer:uiCompass
+        */
+        public static final int MapAttrs_uiCompass = 6;
+        /**
+          <p>This symbol is the offset where the {@link uk.digitalsquid.netspoofer.R.attr#uiRotateGestures}
+          attribute's value can be found in the {@link #MapAttrs} array.
+
+
+          <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name uk.digitalsquid.netspoofer:uiRotateGestures
+        */
+        public static final int MapAttrs_uiRotateGestures = 7;
+        /**
+          <p>This symbol is the offset where the {@link uk.digitalsquid.netspoofer.R.attr#uiScrollGestures}
+          attribute's value can be found in the {@link #MapAttrs} array.
+
+
+          <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name uk.digitalsquid.netspoofer:uiScrollGestures
+        */
+        public static final int MapAttrs_uiScrollGestures = 8;
+        /**
+          <p>This symbol is the offset where the {@link uk.digitalsquid.netspoofer.R.attr#uiTiltGestures}
+          attribute's value can be found in the {@link #MapAttrs} array.
+
+
+          <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name uk.digitalsquid.netspoofer:uiTiltGestures
+        */
+        public static final int MapAttrs_uiTiltGestures = 9;
+        /**
+          <p>This symbol is the offset where the {@link uk.digitalsquid.netspoofer.R.attr#uiZoomControls}
+          attribute's value can be found in the {@link #MapAttrs} array.
+
+
+          <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name uk.digitalsquid.netspoofer:uiZoomControls
+        */
+        public static final int MapAttrs_uiZoomControls = 10;
+        /**
+          <p>This symbol is the offset where the {@link uk.digitalsquid.netspoofer.R.attr#uiZoomGestures}
+          attribute's value can be found in the {@link #MapAttrs} array.
+
+
+          <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name uk.digitalsquid.netspoofer:uiZoomGestures
+        */
+        public static final int MapAttrs_uiZoomGestures = 11;
+        /**
+          <p>This symbol is the offset where the {@link uk.digitalsquid.netspoofer.R.attr#useViewLifecycle}
+          attribute's value can be found in the {@link #MapAttrs} array.
+
+
+          <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name uk.digitalsquid.netspoofer:useViewLifecycle
+        */
+        public static final int MapAttrs_useViewLifecycle = 12;
+        /**
+          <p>This symbol is the offset where the {@link uk.digitalsquid.netspoofer.R.attr#zOrderOnTop}
+          attribute's value can be found in the {@link #MapAttrs} array.
+
+
+          <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name uk.digitalsquid.netspoofer:zOrderOnTop
+        */
+        public static final int MapAttrs_zOrderOnTop = 13;
+    };
 }

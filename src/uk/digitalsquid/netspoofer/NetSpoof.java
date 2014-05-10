@@ -21,9 +21,9 @@
 
 package uk.digitalsquid.netspoofer;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.Serializable;
 
 import uk.digitalsquid.netspoofer.config.FileFinder;
 import uk.digitalsquid.netspoofer.config.FileInstaller;
@@ -51,6 +51,9 @@ import android.view.View.OnClickListener;
 import android.view.WindowManager.BadTokenException;
 import android.widget.Button;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
 public class NetSpoof extends Activity implements OnClickListener, LogConf {
 	/**
 	 * A dialog to tell the user to mount their SD card.
@@ -71,8 +74,6 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 	static final int DIALOG_CHANGELOG = 8;
 	
 	private Button startButton;
-	
-	private LoadResult loadResult;
 	
 	private boolean showChangelog = false;
 
@@ -107,6 +108,13 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 		if(prefs.getBoolean("firstTime", true)) { // First time, show license thing
 			showDialog(DIALOG_AGREEMENT);
 		} else postInit(); // This isn't called on first time, as new users don't need to see changelog
+		
+		// Google analytics
+		Tracker t = ((App)getApplication()).getTracker();
+		if(t != null) {
+			t.setScreenName(getClass().getCanonicalName());
+			t.send(new HitBuilders.AppViewBuilder().build());
+		}
 	}
 	
 	/**
@@ -238,22 +246,11 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 	        return super.onOptionsItemSelected(item);
 	    }
 	}
-	
-	/**
-	 * Results acquired while loading
-	 * @author Will Shackleton <will@digitalsquid.co.uk>
-	 *
-	 */
-	public static class LoadResult implements Serializable {
-		private static final long serialVersionUID = 6559183327061065064L;
 		
-		public boolean firstTime = false;
-	}
-		
-	private AsyncTask<Void, Integer, LoadResult> loadTask = new AsyncTask<Void, Integer, LoadResult>() {
+	private AsyncTask<Void, Integer, Void> loadTask = new AsyncTask<Void, Integer, Void>() {
 		
 		@Override
-		protected LoadResult doInBackground(Void... params) {
+		protected Void doInBackground(Void... params) {
 			if(prefs == null) prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 			
 			// Install scripts & BB
@@ -280,9 +277,7 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 						Environment.getExternalStorageDirectory()));
 			}
 			
-			LoadResult result = new LoadResult();
-			
-			return result;
+			return null;
 		}
 		
 		/**
@@ -299,9 +294,8 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 		}
 		
 		@Override
-		protected void onPostExecute(LoadResult result) {
+		protected void onPostExecute(Void result) {
 			startButton.setEnabled(true);
-			loadResult = result;
 			findViewById(R.id.loading).setVisibility(View.INVISIBLE);
 		}
 		
@@ -317,6 +311,18 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 				fi.installScript("arpspoof", R.raw.arpspoof);
 				fi.installScript("iptables", R.raw.iptables);
 				fi.installScript("spoof", R.raw.spoof);
+				
+				// Remove old debimg file
+				if(getExternalFilesDir(null) != null) {
+					File imgFolder = new File(
+							getExternalFilesDir(null).getAbsolutePath() + "/img");
+					String[] files = imgFolder.list();
+					if(files != null) {
+						for(String file : files)
+							new File(imgFolder, file).delete();
+					}
+					imgFolder.delete();
+				}
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (NotFoundException e) {
