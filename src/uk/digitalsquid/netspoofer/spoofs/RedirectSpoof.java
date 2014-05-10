@@ -22,6 +22,7 @@
 package uk.digitalsquid.netspoofer.spoofs;
 
 import java.net.UnknownHostException;
+import java.util.Locale;
 
 import uk.digitalsquid.netspoofer.R;
 import uk.digitalsquid.netspoofer.config.LogConf;
@@ -30,6 +31,7 @@ import uk.digitalsquid.netspoofer.proxy.HttpResponse;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -47,7 +49,7 @@ public class RedirectSpoof extends Spoof implements LogConf {
 	public static final int MODE_BLUEBALL = 1;
 	public static final int MODE_CUSTOM = 2;
 	
-	private String host;
+	private String redirect, host;
 
 	private static String getTitle(Context context, int mode) {
 		switch(mode) {
@@ -71,11 +73,11 @@ public class RedirectSpoof extends Spoof implements LogConf {
 	}
 	
 	
-	public RedirectSpoof(Context context, int mode) throws UnknownHostException {
+	public RedirectSpoof(Context context, int mode) {
 		super(getTitle(context, mode), getDescription(context, mode));
 		switch(mode) {
 		case MODE_BLUEBALL:
-			host = "http://blueballfixed.ytmnd.com/";
+			setRedirect("http://blueballfixed.ytmnd.com/");
 			break;
 		}
 	}
@@ -92,7 +94,7 @@ public class RedirectSpoof extends Spoof implements LogConf {
 	
 	@Override
 	public Dialog displayExtraDialog(final Context context, final OnExtraDialogDoneListener onDone) {
-		if(host == null) {
+		if(getRedirect() == null) {
 			final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 			final Dialog dialog = new Dialog(context);
 	
@@ -102,9 +104,6 @@ public class RedirectSpoof extends Spoof implements LogConf {
 			
 			final TextView input = (TextView) dialog.findViewById(R.id.text);
 			input.setText(prefs.getString("redirectUrl", ""));
-			final View[] progressParts = new View[] {
-					dialog.findViewById(R.id.progress),
-					dialog.findViewById(R.id.status) };
 			final Button
 					ok = (Button) dialog.findViewById(R.id.ok),
 					cancel = (Button) dialog.findViewById(R.id.cancel);
@@ -113,7 +112,7 @@ public class RedirectSpoof extends Spoof implements LogConf {
 			if(userEntry.equals("")) userEntry = "http://blueballfixed.ytmnd.com/";
 			prefs.edit().putString("redirectUrl", userEntry).commit();
 			
-			host = userEntry;
+			setRedirect(userEntry);
 			
 			ok.setOnClickListener(new OnClickListener() {
 				@Override
@@ -138,11 +137,24 @@ public class RedirectSpoof extends Spoof implements LogConf {
 	}
 	@Override
 	public void modifyResponse(HttpResponse response, HttpRequest request) {
-		if(response.getContentType().equalsIgnoreCase("text/html")) {
+		if(response.getContentType().startsWith("text/html")) {
+			if(request.getHost().equals(host)) return;
 			response.reset();
 			response.setResponseCode(301);
 			response.setResponseMessage("Moved Permanently");
-			response.addHeader("Location", host);
+			response.addHeader("Location", getRedirect());
 		}
+	}
+	private String getRedirect() {
+		return redirect;
+	}
+	private void setRedirect(String redirect) {
+		if(!redirect.toLowerCase(Locale.ENGLISH).startsWith("http://"))
+			redirect = "http://" + redirect;
+		this.redirect = redirect;
+		try {
+			host = Uri.parse(redirect).getHost();
+		} catch(Exception e) { } // This exception will only happen on user
+								 // stupidity
 	}
 }

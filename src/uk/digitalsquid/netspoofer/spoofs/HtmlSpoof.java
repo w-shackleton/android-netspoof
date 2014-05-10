@@ -41,6 +41,8 @@ public class HtmlSpoof extends Spoof {
 		
 		Document doc = Jsoup.parse(new String(request.getContent()));
 		
-		// TODO: Edit stuff.
+		for(HtmlEditorSpoof editor : editors) {
+			editor.modifyDocument(doc);
+		}
 	}
 }

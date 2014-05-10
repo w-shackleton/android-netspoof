@@ -34,6 +34,7 @@ import uk.digitalsquid.netspoofer.spoofs.CustomGalleryImageChange;
 import uk.digitalsquid.netspoofer.spoofs.ImageSpoof;
 import uk.digitalsquid.netspoofer.spoofs.MultiSpoof;
 import uk.digitalsquid.netspoofer.spoofs.NullSpoof;
+import uk.digitalsquid.netspoofer.spoofs.RedirectSpoof;
 import uk.digitalsquid.netspoofer.spoofs.Spoof;
 import uk.digitalsquid.netspoofer.spoofs.SpoofData;
 import uk.digitalsquid.netspoofer.spoofs.VideoChange;
@@ -60,6 +61,9 @@ public class ChrootManager implements LogConf {
 				CustomGalleryImageChange.MODE_CUSTOM));
 		spoofs.add(new VideoChange(context, true));
 		spoofs.add(new VideoChange(context, false));
+		
+		spoofs.add(new RedirectSpoof(context, RedirectSpoof.MODE_BLUEBALL));
+		spoofs.add(new RedirectSpoof(context, RedirectSpoof.MODE_CUSTOM));
 
 		spoofs.add(0, new MultiSpoof());
 		spoofs.add(0, new NullSpoof());

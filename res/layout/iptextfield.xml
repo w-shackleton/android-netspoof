@@ -5,11 +5,6 @@
   android:layout_width="match_parent"
   android:layout_height="match_parent" android:padding="3dip">
     <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_gravity="center_horizontal" android:text="@string/customwebsitedesc"></TextView>
-    <LinearLayout android:layout_height="wrap_content" android:layout_width="match_parent" android:gravity="center_vertical" android:padding="3dip">
-        <ProgressBar android:id="@+id/progress" android:layout_height="wrap_content" android:layout_width="wrap_content" android:visibility="invisible"></ProgressBar>
-        <!-- <ProgressBar android:id="@+id/progressBar2" style="?android:attr/progressBarStyleSmall" android:layout_height="wrap_content" android:layout_width="wrap_content"></ProgressBar> -->
-        <TextView android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceMedium" android:layout_width="wrap_content" android:id="@+id/status" android:text="@string/lookingupSite" android:visibility="invisible"></TextView>
-    </LinearLayout>
     <EditText android:layout_height="wrap_content" android:id="@+id/text" android:layout_width="match_parent" android:inputType="textUri">
         <requestFocus></requestFocus>
     </EditText>

@@ -194,6 +194,10 @@ public class NSProxy implements LogConf {
 		}
 	}
 	
+	static {
+		HttpURLConnection.setFollowRedirects(false);
+	}
+	
 	/**
 	 * 
 	 * @param request
