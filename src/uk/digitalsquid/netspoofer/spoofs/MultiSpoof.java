@@ -2,7 +2,7 @@
  * This file is part of Network Spoofer for Android.
  * Network Spoofer lets you change websites on other people’s computers
  * from an Android phone.
- * Copyright (C) 2011 Will Shackleton
+ * Copyright (C) 2014 Will Shackleton <will@digitalsquid.co.uk>
  *
  * Network Spoofer is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ import android.util.Log;
 
 /**
  * A spoof which runs multiple other spoofs.
- * @author william
+ * @author Will Shackleton <will@digitalsquid.co.uk>
  *
  */
 public class MultiSpoof extends Spoof implements LogConf {

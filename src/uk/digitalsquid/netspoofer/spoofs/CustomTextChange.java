@@ -2,7 +2,7 @@
  * This file is part of Network Spoofer for Android.
  * Network Spoofer lets you change websites on other people’s computers
  * from an Android phone.
- * Copyright (C) 2011 Will Shackleton
+ * Copyright (C) 2014 Will Shackleton <will@digitalsquid.co.uk>
  *
  * Network Spoofer is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,12 +27,10 @@ import java.util.Map;
 import uk.digitalsquid.netspoofer.R;
 import uk.digitalsquid.netspoofer.proxy.HttpRequest;
 import uk.digitalsquid.netspoofer.proxy.HttpResponse;
-import uk.digitalsquid.netspoofer.spoofs.Spoof.OnExtraDialogDoneListener;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
@@ -41,7 +39,7 @@ import android.widget.TextView;
 
 /**
  * A custom version of the Google spoof which allows the user to enter their own google search query.
- * @author william
+ * @author Will Shackleton <will@digitalsquid.co.uk>
  *
  */
 public class CustomTextChange extends Spoof {
