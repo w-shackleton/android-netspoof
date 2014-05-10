@@ -130,6 +130,9 @@ public class NSProxy implements LogConf {
 				Log.d(TAG, "Connection header parsed:");
 				Log.v(TAG, request.toString());
 				
+				// Filter annoying requests
+				if(!filterRequest(request)) return 1;
+				
 				// Manipulate request
 				manipulateRequest(request);
 				
@@ -229,7 +232,21 @@ public class NSProxy implements LogConf {
 			response.readAllContent(connection.getErrorStream());
 		else
 			response.readAllContent(connection.getInputStream());
+		
+		// Add Network Spoofer fingerprint
+		response.addHeader("X-Network-Spoofer", "ON");
 
 		return response;
+	}
+	
+	/**
+	 * Filters out known annoying requests.
+	 * @param request
+	 * @return <code>true</code> if the request should continue
+	 */
+	private boolean filterRequest(HttpRequest request) {
+		String host = request.getHost();
+		if(host.contains(".dropbox.com")) return false;
+		return true;
 	}
 }

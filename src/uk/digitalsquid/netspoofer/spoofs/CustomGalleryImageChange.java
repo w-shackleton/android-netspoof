@@ -22,6 +22,7 @@
 package uk.digitalsquid.netspoofer.spoofs;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -80,6 +81,9 @@ public class CustomGalleryImageChange extends Spoof implements LogConf {
 	public CustomGalleryImageChange(Context context, int mode) {
 		super(getTitle(context, mode), getDescription(context, mode));
 		this.mode = mode;
+
+		InputStream is = context.getResources().openRawResource(R.raw.trollface);
+		loadImage(is);
 	}
 	
 	@Override
@@ -117,7 +121,7 @@ public class CustomGalleryImageChange extends Spoof implements LogConf {
 
 	@Override
 	public void modifyResponse(HttpResponse response, HttpRequest request) {
-		if(customImage == null) return;
+		if(imageData == null) return;
 		List<String> contentType = response.getHeader("Content-Type");
 		if(contentType == null) return;
 		boolean isImage = false;
@@ -130,23 +134,9 @@ public class CustomGalleryImageChange extends Spoof implements LogConf {
 		// Load image
 		synchronized(LOAD_SYNC) {
 			if(imageData == null) {
-				InputStream is;
 				try {
-					is = new FileInputStream(customImage);
-					BufferedInputStream buf = new BufferedInputStream(is);
-					imageData = new byte[(int) customImage.length()];
-					buf.read(imageData);
-					buf.close();
-					
-					// Decode image format
-					BitmapFactory.Options opts = new BitmapFactory.Options();
-					opts.inJustDecodeBounds = true;
-					BitmapFactory.decodeByteArray(imageData, 0,
-							imageData.length, opts);
-					mimeType = opts.outMimeType;
+					loadImage(new FileInputStream(customImage));
 				} catch (FileNotFoundException e) {
-					Log.e(TAG, "Failed to load custom image", e);
-				} catch (IOException e) {
 					Log.e(TAG, "Failed to load custom image", e);
 				}
 			}
@@ -155,5 +145,31 @@ public class CustomGalleryImageChange extends Spoof implements LogConf {
 		// Set new content
 		response.changeHeader("Content-Type", mimeType);
 		response.setContent(imageData);
+	}
+	
+	private void loadImage(InputStream is) {
+		try {
+			BufferedInputStream buf = new BufferedInputStream(is);
+			ByteArrayOutputStream os = new ByteArrayOutputStream();
+			byte[] intermediate = new byte[2048];
+			int len;
+			while((len = buf.read(intermediate)) != -1) {
+				os.write(intermediate, 0, len);
+			}
+			imageData = os.toByteArray();
+			buf.close();
+			os.close();
+
+			// Decode image format
+			BitmapFactory.Options opts = new BitmapFactory.Options();
+			opts.inJustDecodeBounds = true;
+			BitmapFactory.decodeByteArray(imageData, 0,
+					imageData.length, opts);
+			mimeType = opts.outMimeType;
+		} catch (FileNotFoundException e) {
+			Log.e(TAG, "Failed to load custom image", e);
+		} catch (IOException e) {
+			Log.e(TAG, "Failed to load custom image", e);
+		}
 	}
 }
