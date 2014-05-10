@@ -30,11 +30,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import uk.digitalsquid.netspoofer.proxy.NSProxy;
+import uk.digitalsquid.netspoofer.spoofs.CustomGalleryImageChange;
 import uk.digitalsquid.netspoofer.spoofs.ImageSpoof;
 import uk.digitalsquid.netspoofer.spoofs.MultiSpoof;
 import uk.digitalsquid.netspoofer.spoofs.NullSpoof;
 import uk.digitalsquid.netspoofer.spoofs.Spoof;
 import uk.digitalsquid.netspoofer.spoofs.SpoofData;
+import uk.digitalsquid.netspoofer.spoofs.VideoChange;
 import android.content.Context;
 import android.util.Log;
 
@@ -52,6 +54,12 @@ public class ChrootManager implements LogConf {
 		
 		spoofs.add(new ImageSpoof(context, ImageSpoof.IMAGE_FLIP));
 		spoofs.add(new ImageSpoof(context, ImageSpoof.IMAGE_WOBBLY));
+		spoofs.add(new CustomGalleryImageChange(context,
+				CustomGalleryImageChange.MODE_TROLLFACE));
+		spoofs.add(new CustomGalleryImageChange(context,
+				CustomGalleryImageChange.MODE_CUSTOM));
+		spoofs.add(new VideoChange(context, true));
+		spoofs.add(new VideoChange(context, false));
 
 		spoofs.add(0, new MultiSpoof());
 		spoofs.add(0, new NullSpoof());

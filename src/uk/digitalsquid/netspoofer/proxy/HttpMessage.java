@@ -12,7 +12,7 @@ import java.util.Map.Entry;
 import uk.digitalsquid.netspoofer.config.Lists;
 
 public class HttpMessage {
-	private HashMap<String, List<String>> headers =
+	protected HashMap<String, List<String>> headers =
 			new HashMap<String, List<String>>();
 	
 	private byte[] content;
@@ -137,5 +137,13 @@ public class HttpMessage {
 	}
 	public void setHost(String host) {
 		changeHeader("host", host);
+	}
+	
+	/**
+	 * Resets ALL fields of this {@link HttpMessage}
+	 */
+	public void reset() {
+		headers = new HashMap<String, List<String>>();
+		content = null;
 	}
 }

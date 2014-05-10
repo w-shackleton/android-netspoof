@@ -2,7 +2,6 @@ package uk.digitalsquid.netspoofer.proxy;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -202,6 +201,8 @@ public class NSProxy implements LogConf {
 	 */
 	private HttpResponse executeRequest(HttpRequest request)
 			throws IOException {
+		if(request.shouldIgnoreResponse())
+			return new HttpResponse();
 		if(!request.hasHeader("Host"))
 			throw new HttpExecuteException("HTTP Host not set");
 		String host = request.getHeader("Host").get(0);

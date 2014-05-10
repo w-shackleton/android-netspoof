@@ -21,44 +21,63 @@
 
 package uk.digitalsquid.netspoofer.spoofs;
 
-import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Map;
 
 import uk.digitalsquid.netspoofer.R;
 import uk.digitalsquid.netspoofer.config.LogConf;
-import uk.digitalsquid.netspoofer.misc.AsyncTaskHelper;
+import uk.digitalsquid.netspoofer.proxy.HttpRequest;
+import uk.digitalsquid.netspoofer.proxy.HttpResponse;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
-import android.os.AsyncTask.Status;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 /**
  * A spoof which redirects a website to another.
  * @author william
  *
  */
-public class IPRedirectSpoof extends SquidScriptSpoof implements LogConf {
+public class RedirectSpoof extends Spoof implements LogConf {
 	private static final long serialVersionUID = -7780822391880161592L;
-	public static final String KITTENWAR = "kittenwar.com";
 	
-	private InetAddress host;
+	public static final int MODE_BLUEBALL = 1;
+	public static final int MODE_CUSTOM = 2;
 	
-	public IPRedirectSpoof(String title, String description, String hostTo) throws UnknownHostException {
-		super(title, description, "redirect.sh");
-		if(hostTo == null) {
-			host = null;
-			return;
+	private String host;
+
+	private static String getTitle(Context context, int mode) {
+		switch(mode) {
+		case MODE_BLUEBALL:
+			return context.getResources().getString(R.string.spoof_blueball);
+		case MODE_CUSTOM:
+			return context.getResources().getString(R.string.spoof_redirect_custom);
+		default:
+			return "Unknown image spoof";
 		}
-		host = InetAddress.getByName(hostTo);
+	}
+	private static String getDescription(Context context, int mode) {
+		switch(mode) {
+		case MODE_BLUEBALL:
+			return context.getResources().getString(R.string.spoof_blueball_description);
+		case MODE_CUSTOM:
+			return context.getResources().getString(R.string.spoof_redirect_custom_description);
+		default:
+			return "";
+		}
+	}
+	
+	
+	public RedirectSpoof(Context context, int mode) throws UnknownHostException {
+		super(getTitle(context, mode), getDescription(context, mode));
+		switch(mode) {
+		case MODE_BLUEBALL:
+			host = "http://blueballfixed.ytmnd.com/";
+			break;
+		}
 	}
 	
 	/**
@@ -67,8 +86,8 @@ public class IPRedirectSpoof extends SquidScriptSpoof implements LogConf {
 	 * @param description
 	 * @throws UnknownHostException 
 	 */
-	public IPRedirectSpoof(String title, String description) {
-		super(title, description, "redirect.sh");
+	public RedirectSpoof(String title, String description) {
+		super(title, description);
 	}
 	
 	@Override
@@ -89,59 +108,23 @@ public class IPRedirectSpoof extends SquidScriptSpoof implements LogConf {
 			final Button
 					ok = (Button) dialog.findViewById(R.id.ok),
 					cancel = (Button) dialog.findViewById(R.id.cancel);
+
+			String userEntry = input.getText().toString();
+			if(userEntry.equals("")) userEntry = "http://blueballfixed.ytmnd.com/";
+			prefs.edit().putString("redirectUrl", userEntry).commit();
 			
-			// Run this in BG to make UX better
-			final AsyncTask<Void, Void, InetAddress> bg = new AsyncTask<Void, Void, InetAddress>() {
-				@Override
-				protected void onPreExecute() {
-					userEntry = input.getText().toString();
-				}
-				
-				String userEntry;
-				
-				@Override
-				protected InetAddress doInBackground(Void... params) {
-					InetAddress host = null;
-					try {
-						if(userEntry.equals("")) throw new UnknownHostException("Blank host");
-						host = InetAddress.getByName(userEntry);
-						prefs.edit().putString("redirectUrl", userEntry).commit();
-					} catch (UnknownHostException e) {
-						try {
-							host = InetAddress.getByName(KITTENWAR);
-						} catch (UnknownHostException e1) {
-							e1.printStackTrace();
-						}
-					}
-					return host;
-				}
-				@Override
-				protected void onPostExecute(InetAddress addr) {
-					if(!isCancelled()) {
-						if(addr == null) {
-							Toast.makeText(context, "Couldn't find specified website, using kittenwar.", Toast.LENGTH_LONG).show();
-						}
-						host = addr;
-						dialog.dismiss();
-						onDone.onDone();
-					}
-				}
-			};
+			host = userEntry;
 			
 			ok.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View view) {
-					for(View v : progressParts) {
-						v.setVisibility(View.VISIBLE);
-					}
-					if(bg.getStatus() != Status.RUNNING)
-						AsyncTaskHelper.execute(bg);
+					dialog.dismiss();
+					onDone.onDone();
 				}
 			});
 			cancel.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					bg.cancel(false);
 					dialog.cancel();
 				}
 			});
@@ -150,15 +133,16 @@ public class IPRedirectSpoof extends SquidScriptSpoof implements LogConf {
 		}
 		else return null;
 	}
-	
-	/**
-	 * Adds redirect env variable
-	 */
 	@Override
-	public Map<String, String> getCustomEnv() {
-		Map<String, String> ret = super.getCustomEnv();
-		if(host != null) ret.put("REDIRECTURL", host.getHostName());
-		else Log.e(TAG, "Entered URL not here, probably a non-existent website.");
-		return ret;
+	public void modifyRequest(HttpRequest request) {
+	}
+	@Override
+	public void modifyResponse(HttpResponse response, HttpRequest request) {
+		if(response.getContentType().equalsIgnoreCase("text/html")) {
+			response.reset();
+			response.setResponseCode(301);
+			response.setResponseMessage("Moved Permanently");
+			response.addHeader("Location", host);
+		}
 	}
 }

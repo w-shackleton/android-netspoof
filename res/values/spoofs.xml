@@ -11,5 +11,15 @@
 
     <string name="spoof_video_custom">Change YouTube videos (custom)</string>
     <string name="spoof_video_custom_description">Redirect all YouTube videos to a custom video</string>
+
+    <string name="spoof_trollface">Trollface</string>
+    <string name="spoof_trollface_description">Change all images to trollface (Problem?)</string>
+    <string name="spoof_image_custom">Custom image change</string>
+    <string name="spoof_image_custom_description">Change all images to a custom image</string>
+
+    <string name="spoof_blueball">Blue ball machine!</string>
+    <string name="spoof_blueball_description">Redirect all websites to the blue ball machine</string>
+    <string name="spoof_redirect_custom">Custom redirect</string>
+    <string name="spoof_redirect_custom_description">Redirect all websites to one of your choosing</string>
     
 </resources>

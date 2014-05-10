@@ -24,6 +24,7 @@ package uk.digitalsquid.netspoofer.spoofs;
 import uk.digitalsquid.netspoofer.R;
 import uk.digitalsquid.netspoofer.YoutubeSelector;
 import uk.digitalsquid.netspoofer.proxy.HttpRequest;
+import uk.digitalsquid.netspoofer.proxy.HttpResponse;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -36,6 +37,8 @@ import android.net.Uri;
  */
 public class VideoChange extends Spoof {
 	private static final long serialVersionUID = 8490503138296852028L;
+	
+	private final boolean custom;
 
 	public VideoChange(Context context, boolean custom) {
 		super(context.getResources().getString(
@@ -43,19 +46,21 @@ public class VideoChange extends Spoof {
 				context.getResources().getString(
 						custom ? R.string.spoof_video_custom_description :
 							R.string.spoof_video_description));
+		this.custom = custom;
 	}
 	
-	private String videoURL;
+	private String videoId = "dQw4w9WgXcQ";
 	
 	@Override
 	public Intent activityForResult(Context context) {
+		if(!custom) return null;
 		return new Intent(context, YoutubeSelector.class);
 	}
 	
 	@Override
 	public boolean activityFinished(Context context, Intent result) {
-		videoURL = result.getStringExtra(YoutubeSelector.CODE);
-		if(videoURL == null) return false; // No video selected
+		videoId = result.getStringExtra(YoutubeSelector.CODE);
+		if(videoId == null) return false; // No video selected
 		else return true;
 	}
 
@@ -71,7 +76,11 @@ public class VideoChange extends Spoof {
      	
      	Uri uri = request.getUri();
      	Uri.Builder builder = uri.buildUpon();
-     	builder.appendQueryParameter("v", videoURL);
+     	builder.appendQueryParameter("v", videoId);
      	request.setUri(builder.build());
     }
+
+	@Override
+	public void modifyResponse(HttpResponse response, HttpRequest request) {
+	}
 }

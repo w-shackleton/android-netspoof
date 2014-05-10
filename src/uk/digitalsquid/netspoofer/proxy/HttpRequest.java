@@ -45,4 +45,31 @@ public class HttpRequest extends HttpMessage {
 		// TODO: Check this is correct
 		setPath(uri.getEncodedPath());
 	}
+	
+	private boolean ignoreResponse = false;
+	
+	/**
+	 * If this method is called at any point then an empty response will be
+	 * returned; no request is actually made. This allows a spoof to completely
+	 * rewrite a response with less overhead.
+	 */
+	public void returnNullResponse() {
+		ignoreResponse = true;
+	}
+	/**
+	 * If <code>true</code> indicates that no request should be made; a blank 
+	 * response should be returned.
+	 */
+	public boolean shouldIgnoreResponse() {
+		return ignoreResponse;
+	}
+	
+	@Override
+	public void reset() {
+		super.reset();
+		method = "";
+		path = "";
+		version = "";
+		ignoreResponse = false;
+	}
 }

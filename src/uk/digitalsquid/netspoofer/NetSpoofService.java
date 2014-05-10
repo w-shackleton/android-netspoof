@@ -29,7 +29,6 @@ import uk.digitalsquid.netspoofer.config.ChrootConfig;
 import uk.digitalsquid.netspoofer.config.ChrootManager;
 import uk.digitalsquid.netspoofer.config.LogConf;
 import uk.digitalsquid.netspoofer.misc.AsyncTaskHelper;
-import uk.digitalsquid.netspoofer.servicemsg.ImageLoader;
 import uk.digitalsquid.netspoofer.servicemsg.ServiceMsg;
 import uk.digitalsquid.netspoofer.servicemsg.SpoofStarter;
 import uk.digitalsquid.netspoofer.servicestatus.InitialiseStatus;
@@ -43,12 +42,10 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Handler;
 import android.util.Log;
-import android.widget.Toast;
 
 public class NetSpoofService extends Service implements LogConf {
 	public static final int STATUS_LOADING = 0;
@@ -119,8 +116,6 @@ public class NetSpoofService extends Service implements LogConf {
     }
     
     private void start() {
-    	Toast.makeText(getApplicationContext(), "Loaded setup", Toast.LENGTH_LONG).show();
-    	
     	AsyncTaskHelper.execute(mainLoopManager, new ChrootConfig(getBaseContext()));
     	setStatus(STATUS_LOADING);
     	
@@ -131,7 +126,6 @@ public class NetSpoofService extends Service implements LogConf {
     
     @Override
     public void onDestroy() {
-    	Toast.makeText(getApplicationContext(), "Unloaded setup", Toast.LENGTH_LONG).show();
     	mainLoopManager.cancel(false);
     	tasks.add(new ServiceMsg(ServiceMsg.MESSAGE_STOP));
     	super.onDestroy();
@@ -173,14 +167,6 @@ public class NetSpoofService extends Service implements LogConf {
 		sendBroadcast(intent);
     }
     
-    public void saveImageToWebserver(Uri image) {
-    	try {
-	    	tasks.add(new ImageLoader(image));
-    	} catch(IllegalStateException e) {
-    		e.printStackTrace();
-    	}
-    }
-    
 	private final BlockingQueue<ServiceMsg> tasks = new LinkedBlockingQueue<ServiceMsg>();
     
     private final AsyncTask<ChrootConfig, ServiceStatus, Void> mainLoopManager = new AsyncTask<ChrootConfig, ServiceStatus, Void>() {
@@ -207,8 +193,6 @@ public class NetSpoofService extends Service implements LogConf {
 						if(task instanceof SpoofStarter) {
 							SpoofStarter starter = (SpoofStarter) task;
 							spoofLoop(chroot, starter.getSpoof());
-						} else if(task instanceof ImageLoader) {
-							// TODO: Something!
 						}
 						break;
 					case ServiceMsg.MESSAGE_STOP:
@@ -297,15 +281,6 @@ public class NetSpoofService extends Service implements LogConf {
 				return;
 			}
 			publishProgress(new InitialiseStatus(STATUS_LOADED));
-		}
-		
-		/**
-		 * Loads the image then saves it as a jpg to the debian.
-		 * @param imageUri
-		 */
-		private void loadImageToDebian(ChrootManager chroot, Uri imageUri) {
-			// TODO: Implement
-			throw new IllegalAccessError("IMPLEMENTATION!!!!one!1!!!!");
 		}
     	
 		protected void onProgressUpdate(ServiceStatus... progress) {
