@@ -30,13 +30,13 @@ import android.preference.PreferenceManager;
  * @author Will Shackleton <will@digitalsquid.co.uk>
  *
  */
-public final class ChrootConfig {
-	static ChrootConfig DEFAULTS = null;
+public final class HardwareConfig {
+	static HardwareConfig DEFAULTS = null;
 	
 	private String iface;
 	
-	public ChrootConfig(Context context) {
-		if(DEFAULTS == null) DEFAULTS = new ChrootConfig("eth0");
+	public HardwareConfig(Context context) {
+		if(DEFAULTS == null) DEFAULTS = new HardwareConfig("eth0");
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
 		iface = prefs.getString("iface", DEFAULTS.iface);
@@ -44,7 +44,7 @@ public final class ChrootConfig {
 		// values.put("WLAN", iface); - Set in other places
 	}
 	
-	private ChrootConfig(String iface) {
+	private HardwareConfig(String iface) {
 		this.iface = iface;
 	}
 }

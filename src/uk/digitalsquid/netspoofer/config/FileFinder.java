@@ -166,11 +166,6 @@ public final class FileFinder implements LogConf {
 			e.printStackTrace();
 		}
 		String requiredApplets[] = {
-				"chroot",
-				"losetup",
-				"mount",
-				"mkdir",
-				"mknod",
 				"cp",
 		};
 		boolean foundApplets[] = new boolean[requiredApplets.length];

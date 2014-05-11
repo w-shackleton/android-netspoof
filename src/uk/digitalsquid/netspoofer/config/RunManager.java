@@ -43,11 +43,16 @@ import uk.digitalsquid.netspoofer.spoofs.VideoChange;
 import android.content.Context;
 import android.util.Log;
 
-public class ChrootManager implements LogConf {
+/**
+ * Manages the lifecycle of a spoof, including running the iptables and arpspoof.
+ * @author Will Shackleton <will@digitalsquid.co.uk>
+ *
+ */
+public class RunManager implements LogConf {
 	private final Context context;
-	public final ChrootConfig config;
+	public final HardwareConfig config;
 	
-	public ChrootManager(Context context, ChrootConfig config) {
+	public RunManager(Context context, HardwareConfig config) {
 		this.context = context;
 		this.config = config;
 	}
