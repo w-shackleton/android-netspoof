@@ -39,4 +39,9 @@
         * The old download file (no longer required) has been deleted to save space
     </string>
     
+    <string name="updateAvailableTitle">Update Available</string>
+    <string name="updateAvailableDescription">There is a new version of Network Spoofer available (%s). Would you like to download it?</string>
+    <string name="updateAvailableYes">Download</string>
+    <string name="updateAvailableNo">Later</string>
+    
 </resources>

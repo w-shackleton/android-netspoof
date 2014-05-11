@@ -25,10 +25,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import uk.digitalsquid.netspoofer.UpdateChecker.OnUpdateListener;
+import uk.digitalsquid.netspoofer.UpdateChecker.UpdateInfo;
 import uk.digitalsquid.netspoofer.config.FileFinder;
 import uk.digitalsquid.netspoofer.config.FileInstaller;
 import uk.digitalsquid.netspoofer.config.LogConf;
 import uk.digitalsquid.netspoofer.misc.AsyncTaskHelper;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -37,6 +40,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources.NotFoundException;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -54,7 +58,7 @@ import android.widget.Button;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
-public class NetSpoof extends Activity implements OnClickListener, LogConf {
+public class NetSpoof extends Activity implements OnClickListener, LogConf, OnUpdateListener {
 	/**
 	 * A dialog to tell the user to mount their SD card.
 	 */
@@ -72,13 +76,18 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 	static final int DIALOG_ABOUT = 5;
 	static final int DIALOG_AGREEMENT = 7;
 	static final int DIALOG_CHANGELOG = 8;
+
+	static final int DIALOG_UPDATE_AVAILABLE = 9;
 	
 	private Button startButton;
 	
 	private boolean showChangelog = false;
+	
+	private UpdateChecker updateChecker;
 
 	private SharedPreferences prefs;
 	/** Called when the activity is first created. */
+	@SuppressLint("NewApi")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -87,6 +96,15 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 		startButton = (Button) findViewById(R.id.startButton);
 		startButton.setOnClickListener(this);
 		
+		try {
+			updateChecker = new UpdateChecker((App) getApplication(), this);
+			if(Build.VERSION.SDK_INT <= 10)
+				updateChecker.execute();
+			else
+				updateChecker.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+		} catch (NameNotFoundException e1) {
+			Log.e(TAG, "Failed to initialise UpdateChecker", e1);
+		}
 		AsyncTaskHelper.execute(loadTask);
 		
 		// Changelog dialog
@@ -134,7 +152,10 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 		}
 	}
 
-	protected Dialog onCreateDialog(int id) {
+	@SuppressWarnings("deprecation")
+	@Override
+	protected Dialog onCreateDialog(int id, final Bundle args) {
+		super.onCreateDialog(id, args);
 		Dialog dialog = null;
 		AlertDialog.Builder builder;
 		View view;
@@ -214,6 +235,28 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 				builder.setView(view);
 				builder.setTitle(R.string.agreementTitle);
 				builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+					}
+				});
+				dialog = builder.create();
+				break;
+			case DIALOG_UPDATE_AVAILABLE:
+				final UpdateInfo info = (UpdateInfo) args.get("info");
+				builder = new AlertDialog.Builder(this);
+				builder.setTitle(R.string.updateAvailableTitle);
+				builder.setMessage(
+						getResources().getString(
+								R.string.updateAvailableDescription,
+								info.versionName));
+				builder.setPositiveButton(R.string.updateAvailableYes, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						Intent update = new Intent(Intent.ACTION_VIEW, Uri.parse(info.url));
+						startActivity(update);
+					}
+				});
+				builder.setNegativeButton(R.string.updateAvailableNo, new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 					}
@@ -333,4 +376,10 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 			}
 		}
 	};
+	@Override
+	public void updateAvailable(UpdateInfo info) {
+		Bundle args = new Bundle();
+		args.putParcelable("info", info);
+		showDialog(DIALOG_UPDATE_AVAILABLE, args);
+	}
 }
