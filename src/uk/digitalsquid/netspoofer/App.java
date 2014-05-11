@@ -1,13 +1,15 @@
 package uk.digitalsquid.netspoofer;
 
+import uk.digitalsquid.netspoofer.config.LogConf;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 
-public class App extends Application {
+public class App extends Application implements LogConf{
 	
 	/*
 	 * A quick note on Network Spoofer's use of Google Analytics:
@@ -23,7 +25,10 @@ public class App extends Application {
 			SharedPreferences prefs =
 					PreferenceManager.getDefaultSharedPreferences(this);
 			// Disable analytics if requested by user.
-			if(prefs.getBoolean("notrack", false)) return null;
+			if(prefs.getBoolean("notrack", false)) {
+				Log.i(TAG, "Stats disabled, returning null for Tracker");
+				return null;
+			}
 
 			GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
 			tracker = analytics.newTracker(R.xml.netspoof_stats);

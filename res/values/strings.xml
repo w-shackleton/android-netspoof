@@ -126,4 +126,14 @@
     <string name="useLocalFile">Use Local File</string>
     <string name="chooseFile">Select downloaded file</string>
     <string name="ipExample">eg. 192.168.1.42</string>
+
+    <string name="prefs_optout">Opt out</string>
+    <string name="prefs_stats">Opt out of stats collection</string>
+    <string name="prefs_stats_desc">Opt out of collection of usage statistics</string>
+
+    <string name="prefs_advert">Disable advert</string>
+    <string name="prefs_advert_desc">Remove adverts from Network Spoofer</string>
+    <string name="advert_text">Network Spoofer is maintained in the my spare time, for free. I understand that people hate adverts (as do I) so please consider donating if you like this app!</string>
+    <string name="donate">Donate</string>
+    <string name="disable_adverts">Disable Adverts</string>
 </resources>

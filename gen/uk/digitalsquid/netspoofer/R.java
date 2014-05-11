@@ -164,20 +164,28 @@ containing a value of this type.
         public static final int zOrderOnTop=0x7f010010;
     }
     public static final class color {
-        public static final int common_action_bar_splitter=0x7f060009;
+        public static final int common_action_bar_splitter=0x7f090009;
         /**  Sign-in Button Colors 
          */
-        public static final int common_signin_btn_dark_text_default=0x7f060000;
-        public static final int common_signin_btn_dark_text_disabled=0x7f060002;
-        public static final int common_signin_btn_dark_text_focused=0x7f060003;
-        public static final int common_signin_btn_dark_text_pressed=0x7f060001;
-        public static final int common_signin_btn_default_background=0x7f060008;
-        public static final int common_signin_btn_light_text_default=0x7f060004;
-        public static final int common_signin_btn_light_text_disabled=0x7f060006;
-        public static final int common_signin_btn_light_text_focused=0x7f060007;
-        public static final int common_signin_btn_light_text_pressed=0x7f060005;
-        public static final int common_signin_btn_text_dark=0x7f06000a;
-        public static final int common_signin_btn_text_light=0x7f06000b;
+        public static final int common_signin_btn_dark_text_default=0x7f090000;
+        public static final int common_signin_btn_dark_text_disabled=0x7f090002;
+        public static final int common_signin_btn_dark_text_focused=0x7f090003;
+        public static final int common_signin_btn_dark_text_pressed=0x7f090001;
+        public static final int common_signin_btn_default_background=0x7f090008;
+        public static final int common_signin_btn_light_text_default=0x7f090004;
+        public static final int common_signin_btn_light_text_disabled=0x7f090006;
+        public static final int common_signin_btn_light_text_focused=0x7f090007;
+        public static final int common_signin_btn_light_text_pressed=0x7f090005;
+        public static final int common_signin_btn_text_dark=0x7f09000a;
+        public static final int common_signin_btn_text_light=0x7f09000b;
+    }
+    public static final class dimen {
+        /**  Preference fragment padding, bottom 
+         */
+        public static final int preference_fragment_padding_bottom=0x7f060000;
+        /**  Preference fragment padding, sides 
+         */
+        public static final int preference_fragment_padding_side=0x7f060001;
     }
     public static final class drawable {
         public static final int bg=0x7f020000;
@@ -215,129 +223,138 @@ containing a value of this type.
         public static final int status=0x7f020020;
     }
     public static final class id {
-        public static final int TableRow01=0x7f070036;
-        public static final int TableRow02=0x7f070016;
-        public static final int TableRow03=0x7f070019;
-        public static final int TableRow04=0x7f07001c;
-        public static final int TableRow06=0x7f070022;
-        public static final int TableRow07=0x7f070025;
-        public static final int TableRow08=0x7f070028;
-        public static final int banner=0x7f070051;
-        public static final int cancel=0x7f07002f;
-        public static final int checkbox=0x7f070049;
-        public static final int description=0x7f070041;
-        public static final int devsite=0x7f070009;
-        public static final int dlButton=0x7f070043;
-        public static final int dlProgress=0x7f07002c;
-        public static final int dlProgressBar=0x7f07002d;
-        public static final int dlStatus=0x7f070045;
-        public static final int dlprogress=0x7f070046;
-        public static final int dlprogresstext=0x7f070047;
-        public static final int goback=0x7f07005c;
-        public static final int horizontalScrollView1=0x7f070006;
-        public static final int hybrid=0x7f070004;
-        public static final int imageView1=0x7f07002b;
-        public static final int ipBox=0x7f070011;
-        public static final int linearLayout1=0x7f070005;
-        public static final int linearLayout2=0x7f07000b;
-        public static final int linearLayout3=0x7f07000d;
-        public static final int linearLayout4=0x7f070007;
-        public static final int loading=0x7f070031;
-        public static final int logoutput=0x7f07004f;
-        public static final int logscroller=0x7f07004e;
-        public static final int myIf=0x7f070039;
-        public static final int myIfText=0x7f07003a;
-        public static final int myIp=0x7f070034;
-        public static final int myIpText=0x7f070035;
-        public static final int netSpoofMenuItemAbout=0x7f07005b;
-        public static final int netSpoofMenuItemPrefs=0x7f07005a;
-        public static final int none=0x7f070000;
-        public static final int normal=0x7f070001;
-        public static final int ok=0x7f070030;
-        public static final int redlconfirm=0x7f070042;
-        public static final int refreshWeb=0x7f070044;
-        public static final int reportBug=0x7f07000e;
-        public static final int routerDescription=0x7f07003e;
-        public static final int routerIp=0x7f070037;
-        public static final int routerIpText=0x7f070038;
-        public static final int routerList=0x7f07003f;
-        public static final int routerName=0x7f07003d;
-        public static final int satellite=0x7f070002;
-        public static final int scanProgressBar=0x7f070055;
-        public static final int scanProgressRefresh=0x7f070057;
-        public static final int scanProgressText=0x7f070056;
-        public static final int scrollView1=0x7f07000a;
-        public static final int sfWebView=0x7f070048;
-        public static final int spoofDescription=0x7f07004b;
-        public static final int spoofList=0x7f07004c;
-        public static final int spoofTitle=0x7f07004a;
-        public static final int spoofWarning=0x7f070050;
-        public static final int spoofstatus=0x7f07004d;
-        public static final int startButton=0x7f070032;
-        public static final int subnetMask=0x7f07003b;
-        public static final int subnetMaskText=0x7f07003c;
-        public static final int tableLayout1=0x7f070012;
-        public static final int tableRow01=0x7f070013;
-        public static final int tableRow05=0x7f07001f;
-        public static final int tableRow1=0x7f070033;
-        public static final int terrain=0x7f070003;
-        public static final int text=0x7f07002e;
-        public static final int textFrom1=0x7f070014;
-        public static final int textFrom2=0x7f070017;
-        public static final int textFrom3=0x7f07001a;
-        public static final int textFrom4=0x7f07001d;
-        public static final int textFrom5=0x7f070020;
-        public static final int textFrom6=0x7f070023;
-        public static final int textFrom7=0x7f070026;
-        public static final int textFrom8=0x7f070029;
-        public static final int textTo1=0x7f070015;
-        public static final int textTo2=0x7f070018;
-        public static final int textTo3=0x7f07001b;
-        public static final int textTo4=0x7f07001e;
-        public static final int textTo5=0x7f070021;
-        public static final int textTo6=0x7f070024;
-        public static final int textTo7=0x7f070027;
-        public static final int textTo8=0x7f07002a;
-        public static final int textView1=0x7f07000c;
-        public static final int textView2=0x7f07000f;
-        public static final int textView3=0x7f070010;
-        public static final int useLocalFile=0x7f070059;
-        public static final int victimExtraText=0x7f070053;
-        public static final int victimIp=0x7f070052;
-        public static final int victimList=0x7f070054;
-        public static final int web=0x7f070058;
-        public static final int website=0x7f070008;
-        public static final int wifiSettings=0x7f070040;
+        public static final int TableRow01=0x7f0a0038;
+        public static final int TableRow02=0x7f0a0019;
+        public static final int TableRow03=0x7f0a001c;
+        public static final int TableRow04=0x7f0a001f;
+        public static final int TableRow06=0x7f0a0025;
+        public static final int TableRow07=0x7f0a0028;
+        public static final int TableRow08=0x7f0a002b;
+        public static final int back_button=0x7f0a0040;
+        public static final int banner=0x7f0a0057;
+        public static final int button_bar=0x7f0a003f;
+        public static final int cancel=0x7f0a0013;
+        public static final int checkbox=0x7f0a004f;
+        public static final int description=0x7f0a0047;
+        public static final int devsite=0x7f0a0009;
+        public static final int disable=0x7f0a0012;
+        public static final int dlButton=0x7f0a0049;
+        public static final int dlProgress=0x7f0a002f;
+        public static final int dlProgressBar=0x7f0a0030;
+        public static final int dlStatus=0x7f0a004b;
+        public static final int dlprogress=0x7f0a004c;
+        public static final int dlprogresstext=0x7f0a004d;
+        public static final int donate=0x7f0a0011;
+        public static final int goback=0x7f0a0062;
+        public static final int horizontalScrollView1=0x7f0a0006;
+        public static final int hybrid=0x7f0a0004;
+        public static final int imageView1=0x7f0a002e;
+        public static final int ipBox=0x7f0a0014;
+        public static final int linearLayout1=0x7f0a0005;
+        public static final int linearLayout2=0x7f0a000b;
+        public static final int linearLayout3=0x7f0a000d;
+        public static final int linearLayout4=0x7f0a0007;
+        public static final int loading=0x7f0a0033;
+        public static final int logoutput=0x7f0a0055;
+        public static final int logscroller=0x7f0a0054;
+        public static final int myIf=0x7f0a003b;
+        public static final int myIfText=0x7f0a003c;
+        public static final int myIp=0x7f0a0036;
+        public static final int myIpText=0x7f0a0037;
+        public static final int netSpoofMenuItemAbout=0x7f0a0061;
+        public static final int netSpoofMenuItemPrefs=0x7f0a0060;
+        public static final int next_button=0x7f0a0042;
+        public static final int none=0x7f0a0000;
+        public static final int normal=0x7f0a0001;
+        public static final int ok=0x7f0a0032;
+        public static final int redlconfirm=0x7f0a0048;
+        public static final int refreshWeb=0x7f0a004a;
+        public static final int reportBug=0x7f0a000e;
+        public static final int routerDescription=0x7f0a0044;
+        public static final int routerIp=0x7f0a0039;
+        public static final int routerIpText=0x7f0a003a;
+        public static final int routerList=0x7f0a0045;
+        public static final int routerName=0x7f0a0043;
+        public static final int satellite=0x7f0a0002;
+        public static final int scanProgressBar=0x7f0a005b;
+        public static final int scanProgressRefresh=0x7f0a005d;
+        public static final int scanProgressText=0x7f0a005c;
+        public static final int scrollView1=0x7f0a000a;
+        public static final int sfWebView=0x7f0a004e;
+        public static final int skip_button=0x7f0a0041;
+        public static final int spoofDescription=0x7f0a0051;
+        public static final int spoofList=0x7f0a0052;
+        public static final int spoofTitle=0x7f0a0050;
+        public static final int spoofWarning=0x7f0a0056;
+        public static final int spoofstatus=0x7f0a0053;
+        public static final int startButton=0x7f0a0034;
+        public static final int subnetMask=0x7f0a003d;
+        public static final int subnetMaskText=0x7f0a003e;
+        public static final int tableLayout1=0x7f0a0015;
+        public static final int tableRow01=0x7f0a0016;
+        public static final int tableRow05=0x7f0a0022;
+        public static final int tableRow1=0x7f0a0035;
+        public static final int terrain=0x7f0a0003;
+        public static final int text=0x7f0a0031;
+        public static final int textFrom1=0x7f0a0017;
+        public static final int textFrom2=0x7f0a001a;
+        public static final int textFrom3=0x7f0a001d;
+        public static final int textFrom4=0x7f0a0020;
+        public static final int textFrom5=0x7f0a0023;
+        public static final int textFrom6=0x7f0a0026;
+        public static final int textFrom7=0x7f0a0029;
+        public static final int textFrom8=0x7f0a002c;
+        public static final int textTo1=0x7f0a0018;
+        public static final int textTo2=0x7f0a001b;
+        public static final int textTo3=0x7f0a001e;
+        public static final int textTo4=0x7f0a0021;
+        public static final int textTo5=0x7f0a0024;
+        public static final int textTo6=0x7f0a0027;
+        public static final int textTo7=0x7f0a002a;
+        public static final int textTo8=0x7f0a002d;
+        public static final int textView1=0x7f0a000c;
+        public static final int textView2=0x7f0a000f;
+        public static final int textView3=0x7f0a0010;
+        public static final int useLocalFile=0x7f0a005f;
+        public static final int victimExtraText=0x7f0a0059;
+        public static final int victimIp=0x7f0a0058;
+        public static final int victimList=0x7f0a005a;
+        public static final int web=0x7f0a005e;
+        public static final int website=0x7f0a0008;
+        public static final int wifiSettings=0x7f0a0046;
     }
     public static final class integer {
-        public static final int google_play_services_version=0x7f090000;
+        public static final int google_play_services_version=0x7f070001;
+        public static final int preference_fragment_scrollbarStyle=0x7f070000;
     }
     public static final class layout {
         public static final int about=0x7f030000;
-        public static final int agreement=0x7f030001;
-        public static final int changelog=0x7f030002;
-        public static final int customip=0x7f030003;
-        public static final int customtextdialog=0x7f030004;
-        public static final int dl_notification=0x7f030005;
-        public static final int iptextfield=0x7f030006;
-        public static final int listloadingitem=0x7f030007;
-        public static final int main=0x7f030008;
-        public static final int otheripdialog=0x7f030009;
-        public static final int routerlistitem=0x7f03000a;
-        public static final int routerselector=0x7f03000b;
-        public static final int setupstatus=0x7f03000c;
-        public static final int spoofitem=0x7f03000d;
-        public static final int spoofmultiselector=0x7f03000e;
-        public static final int spoofrunning=0x7f03000f;
-        public static final int spoofselector=0x7f030010;
-        public static final int victimlistitem=0x7f030011;
-        public static final int victimselector=0x7f030012;
-        public static final int youtube=0x7f030013;
+        public static final int advert_dialog=0x7f030001;
+        public static final int agreement=0x7f030002;
+        public static final int changelog=0x7f030003;
+        public static final int customip=0x7f030004;
+        public static final int customtextdialog=0x7f030005;
+        public static final int dl_notification=0x7f030006;
+        public static final int iptextfield=0x7f030007;
+        public static final int listloadingitem=0x7f030008;
+        public static final int main=0x7f030009;
+        public static final int otheripdialog=0x7f03000a;
+        public static final int preference_list_fragment=0x7f03000b;
+        public static final int routerlistitem=0x7f03000c;
+        public static final int routerselector=0x7f03000d;
+        public static final int setupstatus=0x7f03000e;
+        public static final int spoofitem=0x7f03000f;
+        public static final int spoofmultiselector=0x7f030010;
+        public static final int spoofrunning=0x7f030011;
+        public static final int spoofselector=0x7f030012;
+        public static final int victimlistitem=0x7f030013;
+        public static final int victimselector=0x7f030014;
+        public static final int youtube=0x7f030015;
     }
     public static final class menu {
-        public static final int dlscreen=0x7f0a0000;
-        public static final int netspoofmenu=0x7f0a0001;
-        public static final int youtube=0x7f0a0002;
+        public static final int dlscreen=0x7f0b0000;
+        public static final int netspoofmenu=0x7f0b0001;
+        public static final int youtube=0x7f0b0002;
     }
     public static final class raw {
         public static final int arpspoof=0x7f050000;
@@ -347,225 +364,240 @@ containing a value of this type.
         public static final int trollface=0x7f050004;
     }
     public static final class string {
-        public static final int about=0x7f08006d;
-        public static final int aboutText1=0x7f08006f;
-        public static final int aboutText2=0x7f080070;
-        public static final int aboutTextRefs=0x7f080086;
-        public static final int advanced=0x7f080077;
-        public static final int agreementContents1=0x7f08001c;
-        public static final int agreementContents2=0x7f08001d;
-        public static final int agreementNegative=0x7f08001f;
-        public static final int agreementPositive=0x7f08001e;
-        public static final int agreementTitle=0x7f08001b;
-        public static final int allDevices=0x7f080050;
-        public static final int allDevicesDesc=0x7f080051;
-        public static final int app_name=0x7f080035;
+        public static final int about=0x7f080070;
+        public static final int aboutText1=0x7f080072;
+        public static final int aboutText2=0x7f080073;
+        public static final int aboutTextRefs=0x7f080089;
+        public static final int advanced=0x7f08007a;
+        public static final int advert_text=0x7f08009d;
+        public static final int agreementContents1=0x7f08001f;
+        public static final int agreementContents2=0x7f080020;
+        public static final int agreementNegative=0x7f080022;
+        public static final int agreementPositive=0x7f080021;
+        public static final int agreementTitle=0x7f08001e;
+        public static final int allDevices=0x7f080053;
+        public static final int allDevicesDesc=0x7f080054;
+        public static final int app_name=0x7f080038;
         /**   Title for notification shown when GooglePlayServices needs to be
         enabled for a application to work. [CHAR LIMIT=70] 
          */
-        public static final int auth_client_needs_enabling_title=0x7f080015;
+        public static final int auth_client_needs_enabling_title=0x7f080018;
         /**   Title for notification shown when GooglePlayServices needs to be
         installed for a application to work. [CHAR LIMIT=70] 
          */
-        public static final int auth_client_needs_installation_title=0x7f080016;
+        public static final int auth_client_needs_installation_title=0x7f080019;
         /**   Title for notification shown when GooglePlayServices needs to be
         udpated for a application to work. [CHAR LIMIT=70] 
          */
-        public static final int auth_client_needs_update_title=0x7f080017;
+        public static final int auth_client_needs_update_title=0x7f08001a;
         /**   Title for notification shown when GooglePlayServices is unavailable [CHAR LIMIT=42] 
          */
-        public static final int auth_client_play_services_err_notification_msg=0x7f080018;
+        public static final int auth_client_play_services_err_notification_msg=0x7f08001b;
         /**   Requested by string saying which app requested the notification. [CHAR LIMIT=42] 
          */
-        public static final int auth_client_requested_by_msg=0x7f080019;
+        public static final int auth_client_requested_by_msg=0x7f08001c;
         /**   Title for notification shown when a bad version of GooglePlayServices
         has been installed and needs correction for an application to work.
         [CHAR LIMIT=70] 
          */
-        public static final int auth_client_using_bad_version_title=0x7f080014;
-        public static final int autoChooseRouter=0x7f080066;
-        public static final int autoChooseRouterDesc=0x7f080067;
-        public static final int autoChooseVictim=0x7f080068;
-        public static final int autoChooseVictimDesc=0x7f080069;
-        public static final int automaticOptions=0x7f080065;
-        public static final int blank=0x7f080048;
-        public static final int builtinbusybox=0x7f080087;
-        public static final int builtinbusyboxDesc=0x7f080088;
-        public static final int changelog=0x7f080020;
-        public static final int chooseFile=0x7f080093;
+        public static final int auth_client_using_bad_version_title=0x7f080017;
+        public static final int autoChooseRouter=0x7f080069;
+        public static final int autoChooseRouterDesc=0x7f08006a;
+        public static final int autoChooseVictim=0x7f08006b;
+        public static final int autoChooseVictimDesc=0x7f08006c;
+        public static final int automaticOptions=0x7f080068;
+        /**   Strings for possible PreferenceActivity Back/Next buttons 
+         */
+        public static final int back_button_label=0x7f080000;
+        public static final int blank=0x7f08004b;
+        public static final int builtinbusybox=0x7f08008a;
+        public static final int builtinbusyboxDesc=0x7f08008b;
+        public static final int changelog=0x7f080023;
+        public static final int chooseFile=0x7f080096;
         /**  Button in confirmation dialog to enable Google Play services.  Clicking it
         will direct user to application settings of Google Play services where they
         can enable it [CHAR LIMIT=40] 
          */
-        public static final int common_google_play_services_enable_button=0x7f080006;
+        public static final int common_google_play_services_enable_button=0x7f080009;
         /**  Message in confirmation dialog informing user they need to enable
         Google Play services in application settings [CHAR LIMIT=NONE] 
          */
-        public static final int common_google_play_services_enable_text=0x7f080005;
+        public static final int common_google_play_services_enable_text=0x7f080008;
         /**  Title of confirmation dialog informing user they need to enable
         Google Play services in application settings [CHAR LIMIT=40] 
          */
-        public static final int common_google_play_services_enable_title=0x7f080004;
+        public static final int common_google_play_services_enable_title=0x7f080007;
         /**  Button in confirmation dialog for installing Google Play services [CHAR LIMIT=40] 
          */
-        public static final int common_google_play_services_install_button=0x7f080003;
+        public static final int common_google_play_services_install_button=0x7f080006;
         /**  (For phones) Message in confirmation dialog informing user that
         they need to install Google Play services (from Play Store) [CHAR LIMIT=NONE] 
          */
-        public static final int common_google_play_services_install_text_phone=0x7f080001;
+        public static final int common_google_play_services_install_text_phone=0x7f080004;
         /**  (For tablets) Message in confirmation dialog informing user that
         they need to install Google Play services (from Play Store) [CHAR LIMIT=NONE] 
          */
-        public static final int common_google_play_services_install_text_tablet=0x7f080002;
+        public static final int common_google_play_services_install_text_tablet=0x7f080005;
         /**  Title of confirmation dialog informing user that they need to install
         Google Play services (from Play Store) [CHAR LIMIT=40] 
          */
-        public static final int common_google_play_services_install_title=0x7f080000;
+        public static final int common_google_play_services_install_title=0x7f080003;
         /**  Message in confirmation dialog informing the user that they provided an invalid account. [CHAR LIMIT=NONE] 
          */
-        public static final int common_google_play_services_invalid_account_text=0x7f08000c;
+        public static final int common_google_play_services_invalid_account_text=0x7f08000f;
         /**  Title of confirmation dialog informing the user that they provided an invalid account. [CHAR LIMIT=40] 
          */
-        public static final int common_google_play_services_invalid_account_title=0x7f08000b;
+        public static final int common_google_play_services_invalid_account_title=0x7f08000e;
         /**  Message in confirmation dialog informing the user that a network error occurred. [CHAR LIMIT=NONE] 
          */
-        public static final int common_google_play_services_network_error_text=0x7f08000a;
+        public static final int common_google_play_services_network_error_text=0x7f08000d;
         /**  Title of confirmation dialog informing the user that a network error occurred. [CHAR LIMIT=40] 
          */
-        public static final int common_google_play_services_network_error_title=0x7f080009;
+        public static final int common_google_play_services_network_error_title=0x7f08000c;
         /**  Message in confirmation dialog informing user there is an unknown issue in Google Play
         services [CHAR LIMIT=NONE] 
          */
-        public static final int common_google_play_services_unknown_issue=0x7f08000d;
+        public static final int common_google_play_services_unknown_issue=0x7f080010;
         /**  Message in confirmation dialog informing user that date on the device is not correct,
     causing certificate checks to fail. [CHAR LIMIT=NONE] 
          */
-        public static final int common_google_play_services_unsupported_date_text=0x7f080010;
+        public static final int common_google_play_services_unsupported_date_text=0x7f080013;
         /**  Message in confirmation dialog informing user that Google Play services is not supported on their device [CHAR LIMIT=NONE] 
          */
-        public static final int common_google_play_services_unsupported_text=0x7f08000f;
+        public static final int common_google_play_services_unsupported_text=0x7f080012;
         /**  Title of confirmation dialog informing user that Google Play services is not supported on their device [CHAR LIMIT=40] 
          */
-        public static final int common_google_play_services_unsupported_title=0x7f08000e;
+        public static final int common_google_play_services_unsupported_title=0x7f080011;
         /**  Button in confirmation dialog for updating Google Play services [CHAR LIMIT=40] 
          */
-        public static final int common_google_play_services_update_button=0x7f080011;
+        public static final int common_google_play_services_update_button=0x7f080014;
         /**  Message in confirmation dialog informing user that they need to update
         Google Play services (from Play Store) [CHAR LIMIT=NONE] 
          */
-        public static final int common_google_play_services_update_text=0x7f080008;
+        public static final int common_google_play_services_update_text=0x7f08000b;
         /**  Title of confirmation dialog informing user that they need to update
         Google Play services (from Play Store) [CHAR LIMIT=40] 
          */
-        public static final int common_google_play_services_update_title=0x7f080007;
+        public static final int common_google_play_services_update_title=0x7f08000a;
         /**  Sign-in button text [CHAR LIMIT=15] 
          */
-        public static final int common_signin_button_text=0x7f080012;
+        public static final int common_signin_button_text=0x7f080015;
         /**  Long form sign-in button text [CHAR LIMIT=30] 
          */
-        public static final int common_signin_button_text_long=0x7f080013;
-        public static final int configuring=0x7f08008d;
-        public static final int contactdev=0x7f080072;
-        public static final int customIpSettings=0x7f08004c;
-        public static final int customText=0x7f08008b;
-        public static final int customTextDesc=0x7f08008c;
-        public static final int customwebsitedesc=0x7f08008f;
-        public static final int debImgUrl=0x7f080075;
-        public static final int debImgUrlDesc=0x7f080076;
-        public static final int debianImage=0x7f08007e;
-        public static final int debianImageDesc=0x7f08007f;
-        public static final int debianMount=0x7f08007c;
-        public static final int debianMountDesc=0x7f08007d;
-        public static final int deviceIf=0x7f08004b;
-        public static final int deviceIp=0x7f080049;
-        public static final int devsite=0x7f080071;
-        public static final int dlCancel=0x7f080043;
-        public static final int dlStarted=0x7f08003e;
-        public static final int dlStarting=0x7f08003f;
-        public static final int dlnotrunning=0x7f08003d;
-        public static final int downloadUnzipped=0x7f08005f;
-        public static final int downloadUnzippedDesc=0x7f080060;
-        public static final int downloading=0x7f080059;
-        public static final int downloadingfiles=0x7f08005a;
-        public static final int ellipsis=0x7f080042;
-        public static final int enterip=0x7f080055;
-        public static final int enteriptext=0x7f080056;
-        public static final int gotosite=0x7f08006e;
-        public static final int gpl=0x7f080074;
-        public static final int iface=0x7f080080;
-        public static final int ifaceDesc=0x7f080081;
-        public static final int ipExample=0x7f080094;
-        public static final int ipScanThreads=0x7f08006b;
-        public static final int ipScanThreadsDesc=0x7f08006c;
-        public static final int loadfailed=0x7f08005c;
-        public static final int loadfailedtitle=0x7f08005b;
-        public static final int loading=0x7f080045;
+        public static final int common_signin_button_text_long=0x7f080016;
+        public static final int configuring=0x7f080090;
+        public static final int contactdev=0x7f080075;
+        public static final int customIpSettings=0x7f08004f;
+        public static final int customText=0x7f08008e;
+        public static final int customTextDesc=0x7f08008f;
+        public static final int customwebsitedesc=0x7f080092;
+        public static final int debImgUrl=0x7f080078;
+        public static final int debImgUrlDesc=0x7f080079;
+        public static final int debianImage=0x7f080081;
+        public static final int debianImageDesc=0x7f080082;
+        public static final int debianMount=0x7f08007f;
+        public static final int debianMountDesc=0x7f080080;
+        public static final int deviceIf=0x7f08004e;
+        public static final int deviceIp=0x7f08004c;
+        public static final int devsite=0x7f080074;
+        public static final int disable_adverts=0x7f08009f;
+        public static final int dlCancel=0x7f080046;
+        public static final int dlStarted=0x7f080041;
+        public static final int dlStarting=0x7f080042;
+        public static final int dlnotrunning=0x7f080040;
+        public static final int donate=0x7f08009e;
+        public static final int downloadUnzipped=0x7f080062;
+        public static final int downloadUnzippedDesc=0x7f080063;
+        public static final int downloading=0x7f08005c;
+        public static final int downloadingfiles=0x7f08005d;
+        public static final int ellipsis=0x7f080045;
+        public static final int enterip=0x7f080058;
+        public static final int enteriptext=0x7f080059;
+        public static final int gotosite=0x7f080071;
+        public static final int gpl=0x7f080077;
+        public static final int iface=0x7f080083;
+        public static final int ifaceDesc=0x7f080084;
+        public static final int ipExample=0x7f080097;
+        public static final int ipScanThreads=0x7f08006e;
+        public static final int ipScanThreadsDesc=0x7f08006f;
+        public static final int loadfailed=0x7f08005f;
+        public static final int loadfailedtitle=0x7f08005e;
+        public static final int loading=0x7f080048;
         /**  Location client code resources (prefix with location_client) 
          */
-        public static final int location_client_powered_by_google=0x7f08001a;
-        public static final int lookingupSite=0x7f08008e;
-        public static final int loopDev=0x7f080078;
-        public static final int loopDevDesc=0x7f080079;
-        public static final int loopNum=0x7f08007a;
-        public static final int loopNumDesc=0x7f08007b;
-        public static final int otherDevice=0x7f080052;
-        public static final int otherDeviceDesc=0x7f080053;
-        public static final int output=0x7f080058;
-        public static final int pathToBB=0x7f080062;
-        public static final int pathToBBDesc=0x7f080064;
-        public static final int pathToSu=0x7f080061;
-        public static final int pathToSuDesc=0x7f080063;
-        public static final int performance=0x7f08006a;
-        public static final int preferences=0x7f08005d;
-        public static final int programPrefs=0x7f08005e;
-        public static final int redownload=0x7f080040;
-        public static final int redownloadnotify=0x7f080041;
-        public static final int refresh=0x7f080054;
-        public static final int reportBug=0x7f080073;
-        public static final int returntoyt=0x7f08008a;
-        public static final int routerIp=0x7f08004a;
-        public static final int scanning=0x7f08004e;
-        public static final int selectgateway=0x7f080046;
-        public static final int selecthack=0x7f080044;
-        public static final int selectvictim=0x7f08004d;
-        public static final int selectvideo=0x7f080089;
-        public static final int setup=0x7f080036;
-        public static final int setupUpgrade=0x7f08003b;
-        public static final int setup_upgrade=0x7f080037;
-        public static final int setup_upgrade2=0x7f080038;
-        public static final int setupt1=0x7f08003a;
-        public static final int spoofRunning=0x7f080082;
-        public static final int spoofRunningDesc=0x7f080083;
-        public static final int spoof_blueball=0x7f080031;
-        public static final int spoof_blueball_description=0x7f080032;
-        public static final int spoof_image_custom=0x7f08002f;
-        public static final int spoof_image_custom_description=0x7f080030;
-        public static final int spoof_image_flip=0x7f080025;
-        public static final int spoof_image_flip_description=0x7f080026;
-        public static final int spoof_image_wobbly=0x7f080027;
-        public static final int spoof_image_wobbly_description=0x7f080028;
-        public static final int spoof_redirect_custom=0x7f080033;
-        public static final int spoof_redirect_custom_description=0x7f080034;
-        public static final int spoof_trollface=0x7f08002d;
-        public static final int spoof_trollface_description=0x7f08002e;
-        public static final int spoof_video=0x7f080029;
-        public static final int spoof_video_custom=0x7f08002b;
-        public static final int spoof_video_custom_description=0x7f08002c;
-        public static final int spoof_video_description=0x7f08002a;
-        public static final int spoofnotrunning=0x7f080021;
-        public static final int spoofstarted=0x7f080023;
-        public static final int spoofstarting=0x7f080022;
-        public static final int spoofstopping=0x7f080024;
-        public static final int squidscripts=0x7f080085;
-        public static final int start=0x7f080039;
-        public static final int startdl=0x7f08003c;
-        public static final int stop=0x7f080057;
-        public static final int subnet=0x7f08004f;
-        public static final int udternet=0x7f080084;
-        public static final int useLocalFile=0x7f080092;
-        public static final int warningText=0x7f080091;
-        public static final int warningTitle=0x7f080090;
-        public static final int wifiSettings=0x7f080047;
+        public static final int location_client_powered_by_google=0x7f08001d;
+        public static final int lookingupSite=0x7f080091;
+        public static final int loopDev=0x7f08007b;
+        public static final int loopDevDesc=0x7f08007c;
+        public static final int loopNum=0x7f08007d;
+        public static final int loopNumDesc=0x7f08007e;
+        public static final int next_button_label=0x7f080001;
+        public static final int otherDevice=0x7f080055;
+        public static final int otherDeviceDesc=0x7f080056;
+        public static final int output=0x7f08005b;
+        public static final int pathToBB=0x7f080065;
+        public static final int pathToBBDesc=0x7f080067;
+        public static final int pathToSu=0x7f080064;
+        public static final int pathToSuDesc=0x7f080066;
+        public static final int performance=0x7f08006d;
+        public static final int preferences=0x7f080060;
+        public static final int prefs_advert=0x7f08009b;
+        public static final int prefs_advert_desc=0x7f08009c;
+        public static final int prefs_optout=0x7f080098;
+        public static final int prefs_stats=0x7f080099;
+        public static final int prefs_stats_desc=0x7f08009a;
+        public static final int programPrefs=0x7f080061;
+        public static final int redownload=0x7f080043;
+        public static final int redownloadnotify=0x7f080044;
+        public static final int refresh=0x7f080057;
+        public static final int reportBug=0x7f080076;
+        public static final int returntoyt=0x7f08008d;
+        public static final int routerIp=0x7f08004d;
+        public static final int scanning=0x7f080051;
+        public static final int selectgateway=0x7f080049;
+        public static final int selecthack=0x7f080047;
+        public static final int selectvictim=0x7f080050;
+        public static final int selectvideo=0x7f08008c;
+        public static final int setup=0x7f080039;
+        public static final int setupUpgrade=0x7f08003e;
+        public static final int setup_upgrade=0x7f08003a;
+        public static final int setup_upgrade2=0x7f08003b;
+        public static final int setupt1=0x7f08003d;
+        /**  Optional button to Skip a PreferenceActivity [CHAR LIMIT=20] 
+         */
+        public static final int skip_button_label=0x7f080002;
+        public static final int spoofRunning=0x7f080085;
+        public static final int spoofRunningDesc=0x7f080086;
+        public static final int spoof_blueball=0x7f080034;
+        public static final int spoof_blueball_description=0x7f080035;
+        public static final int spoof_image_custom=0x7f080032;
+        public static final int spoof_image_custom_description=0x7f080033;
+        public static final int spoof_image_flip=0x7f080028;
+        public static final int spoof_image_flip_description=0x7f080029;
+        public static final int spoof_image_wobbly=0x7f08002a;
+        public static final int spoof_image_wobbly_description=0x7f08002b;
+        public static final int spoof_redirect_custom=0x7f080036;
+        public static final int spoof_redirect_custom_description=0x7f080037;
+        public static final int spoof_trollface=0x7f080030;
+        public static final int spoof_trollface_description=0x7f080031;
+        public static final int spoof_video=0x7f08002c;
+        public static final int spoof_video_custom=0x7f08002e;
+        public static final int spoof_video_custom_description=0x7f08002f;
+        public static final int spoof_video_description=0x7f08002d;
+        public static final int spoofnotrunning=0x7f080024;
+        public static final int spoofstarted=0x7f080026;
+        public static final int spoofstarting=0x7f080025;
+        public static final int spoofstopping=0x7f080027;
+        public static final int squidscripts=0x7f080088;
+        public static final int start=0x7f08003c;
+        public static final int startdl=0x7f08003f;
+        public static final int stop=0x7f08005a;
+        public static final int subnet=0x7f080052;
+        public static final int udternet=0x7f080087;
+        public static final int useLocalFile=0x7f080095;
+        public static final int warningText=0x7f080094;
+        public static final int warningTitle=0x7f080093;
+        public static final int wifiSettings=0x7f08004a;
     }
     public static final class xml {
         public static final int netspoof_stats=0x7f040000;
