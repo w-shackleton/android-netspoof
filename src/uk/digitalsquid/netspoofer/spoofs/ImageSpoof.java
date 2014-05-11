@@ -164,7 +164,7 @@ public class ImageSpoof extends Spoof implements LogConf {
 				matrix.postRotate(180, in.getWidth()/2, in.getHeight()/2);
 				break;
 			case IMAGE_WOBBLY:
-				float rot = (RAND.nextFloat()-0.5f) * 3f;
+				float rot = (RAND.nextFloat()-0.5f) * 7f;
 				matrix.postRotate(rot, in.getWidth()/2, in.getHeight()/2);
 				break;
 			}

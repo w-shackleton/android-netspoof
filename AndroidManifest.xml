@@ -23,14 +23,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="uk.digitalsquid.netspoofer"
       android:versionCode="15" android:versionName="0.9.1">
-    <uses-sdk android:minSdkVersion="10" android:targetSdkVersion="18"/>
+    <uses-sdk android:minSdkVersion="10" android:targetSdkVersion="19"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
     <uses-permission android:name="android.permission.WAKE_LOCK"></uses-permission>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"></uses-permission>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
-    <application android:icon="@drawable/icon" android:label="@string/app_name" android:name="App">
+    <application android:icon="@drawable/icon" android:label="@string/app_name" android:name="App" android:allowBackup="true">
         <activity android:name=".NetSpoof"
                   android:label="@string/app_name" android:screenOrientation="portrait">
             <intent-filter>
@@ -38,8 +38,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:label="Setup Status" android:name=".InstallStatus"></activity>
-        <service android:name="InstallService" android:label="Installer Service"></service>
         <activity android:name=".SpoofSelector" android:label="@string/selecthack">
             <intent-filter>
                 <action android:name="android.intent.action.PICK"></action>
@@ -54,7 +52,6 @@
         <activity android:name="YoutubeSelector" android:label="@string/selectvideo">
         </activity>
         <activity android:name="MultiSpoofDialogRunner" android:label="@string/configuring"></activity>
-        <activity android:name="com.lamerman.FileDialog" android:label="@string/chooseFile"></activity>
         <meta-data android:name="com.google.android.gms.version"
                    android:value="@integer/google_play_services_version"/>
         <activity android:name="com.google.android.gms.ads.AdActivity"

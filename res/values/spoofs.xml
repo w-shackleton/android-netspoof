@@ -42,5 +42,11 @@
     <string name="spoof_blueball_description">Redirect all websites to the blue ball machine</string>
     <string name="spoof_redirect_custom">Custom redirect</string>
     <string name="spoof_redirect_custom_description">Redirect all websites to one of your choosing</string>
+
+    <string name="spoof_title_flip">Flip title</string>
+    <string name="spoof_title_flip_description">Turn the title of all websites upside down</string>
+
+    <string name="spoof_title_reverse">Reverse title</string>
+    <string name="spoof_title_reverse_description">Reverse all website titles</string>
     
 </resources>

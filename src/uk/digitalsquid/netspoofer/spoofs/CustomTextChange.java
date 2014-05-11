@@ -24,9 +24,10 @@ package uk.digitalsquid.netspoofer.spoofs;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+
 import uk.digitalsquid.netspoofer.R;
-import uk.digitalsquid.netspoofer.proxy.HttpRequest;
-import uk.digitalsquid.netspoofer.proxy.HttpResponse;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -42,7 +43,7 @@ import android.widget.TextView;
  * @author Will Shackleton <will@digitalsquid.co.uk>
  *
  */
-public class CustomTextChange extends Spoof {
+public class CustomTextChange extends HtmlEditorSpoof {
 	private static final long serialVersionUID = 8490503138296852028L;
 
 	public CustomTextChange() {
@@ -138,12 +139,9 @@ public class CustomTextChange extends Spoof {
 	}
 
 	@Override
-	public void modifyRequest(HttpRequest request) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void modifyResponse(HttpResponse response, HttpRequest request) {
+	protected void modifyDocument(Document document, Element body) {
+		if(body != null) {
+			
+		}
 	}
 }

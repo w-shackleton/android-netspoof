@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,6 +38,7 @@ import uk.digitalsquid.netspoofer.spoofs.NullSpoof;
 import uk.digitalsquid.netspoofer.spoofs.RedirectSpoof;
 import uk.digitalsquid.netspoofer.spoofs.Spoof;
 import uk.digitalsquid.netspoofer.spoofs.SpoofData;
+import uk.digitalsquid.netspoofer.spoofs.TitleChange;
 import uk.digitalsquid.netspoofer.spoofs.VideoChange;
 import android.content.Context;
 import android.util.Log;
@@ -65,8 +67,13 @@ public class ChrootManager implements LogConf {
 		spoofs.add(new RedirectSpoof(context, RedirectSpoof.MODE_BLUEBALL));
 		spoofs.add(new RedirectSpoof(context, RedirectSpoof.MODE_CUSTOM));
 
+		spoofs.add(new TitleChange(context, TitleChange.MODE_FLIP));
+		spoofs.add(new TitleChange(context, TitleChange.MODE_REVERSE));
+		
+		Collections.sort(spoofs);
+		
 		spoofs.add(0, new MultiSpoof());
-		spoofs.add(0, new NullSpoof());
+		spoofs.add(new NullSpoof());
 		
 		return spoofs;
 	}

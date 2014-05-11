@@ -107,6 +107,7 @@ public abstract class Spoof implements Serializable, Comparable<Spoof> {
      * Currently this involves:
      * Expanding {@link MultiSpoof} objects
      * Grouping {@link ImageSpoof} objects.
+     * Grouping {@link HtmlEditorSpoof} objects into a {@link HtmlSpoof}.
      * @param spoof
      * @return A list of expanded spoofs, or a singleton of spoof.
      */
@@ -116,10 +117,13 @@ public abstract class Spoof implements Serializable, Comparable<Spoof> {
 
     		// Sort into a list of ImageSpoof and a list of others
     		ArrayList<ImageSpoof> imageSpoofs = new ArrayList<ImageSpoof>();
+    		ArrayList<HtmlEditorSpoof> htmlSpoofs = new ArrayList<HtmlEditorSpoof>();
             ArrayList<Spoof> otherSpoofs = new ArrayList<Spoof>();
     		for(Spoof s : spoofs) {
     			if(s instanceof ImageSpoof)
     				imageSpoofs.add((ImageSpoof)s);
+    			else if(s instanceof HtmlEditorSpoof)
+    				htmlSpoofs.add((HtmlEditorSpoof)s);
     			else otherSpoofs.add(s);
     		}
     		
@@ -132,7 +136,17 @@ public abstract class Spoof implements Serializable, Comparable<Spoof> {
     			otherSpoofs.add(first);
     		}
     		
+    		// Group HtmlEditorSpoofs up
+    		if(htmlSpoofs.size() > 0) {
+    			HtmlSpoof group = new HtmlSpoof();
+    			for(HtmlEditorSpoof s : htmlSpoofs)
+    				group.addEditor(s);
+    			otherSpoofs.add(group);
+    		}
+    		
     		return otherSpoofs;
+    	} else if(spoof instanceof HtmlEditorSpoof) {
+    		return Lists.singleton((Spoof)new HtmlSpoof((HtmlEditorSpoof) spoof));
     	} else {
     		return Lists.singleton(spoof);
     	}

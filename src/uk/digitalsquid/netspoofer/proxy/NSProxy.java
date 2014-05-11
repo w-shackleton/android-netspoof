@@ -63,7 +63,12 @@ public class NSProxy implements LogConf {
 	
 	public void stop() {
 		launchTask.cancel(true);
+		try {
+			ss.close();
+		} catch (IOException e) { }
 	}
+	
+	private ServerSocket ss;
 	
 	private AsyncTask<Void, Void, Integer> launchTask =
 			new AsyncTask<Void, Void, Integer> () {
@@ -71,7 +76,6 @@ public class NSProxy implements LogConf {
 		@SuppressLint("NewApi")
 		@Override
 		protected Integer doInBackground(Void... arg0) {
-			ServerSocket ss = null;
 			try {
 				ss = new ServerSocket(3128);
 				while(!isCancelled()) {
@@ -83,7 +87,7 @@ public class NSProxy implements LogConf {
 					task.start();
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				Log.e(TAG, "Socket accepting failed", e);
 				return LAUNCH_FAIL;
 			} finally {
 				if(ss != null)

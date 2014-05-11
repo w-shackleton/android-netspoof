@@ -22,6 +22,7 @@
 package uk.digitalsquid.netspoofer.spoofs;
 
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 import uk.digitalsquid.netspoofer.proxy.HttpRequest;
 import uk.digitalsquid.netspoofer.proxy.HttpResponse;
@@ -46,5 +47,5 @@ public abstract class HtmlEditorSpoof extends Spoof {
 				+ "never be called");
 	}
 	
-	protected abstract void modifyDocument(Document document);
+	protected abstract void modifyDocument(Document document, Element body);
 }

@@ -21,11 +21,15 @@
 
 package uk.digitalsquid.netspoofer.spoofs;
 
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import uk.digitalsquid.netspoofer.proxy.HttpRequest;
 import uk.digitalsquid.netspoofer.proxy.HttpResponse;
@@ -39,10 +43,14 @@ public class HtmlSpoof extends Spoof {
 
 	private static final long serialVersionUID = -1966412296143206193L;
 	
-	private List<HtmlEditorSpoof> editors;
+	private List<HtmlEditorSpoof> editors = new ArrayList<HtmlEditorSpoof>();
 
-	public HtmlSpoof(String title, String description) {
-		super(title, description);
+	public HtmlSpoof() {
+		super("(Internal HTML transformer)", "all HTML transformations grouped together");
+	}
+	public HtmlSpoof(HtmlEditorSpoof s) {
+		this();
+		addEditor(s);
 	}
 
 	@Override
@@ -60,10 +68,25 @@ public class HtmlSpoof extends Spoof {
 		}
 		if(!isHtml) return;
 		
-		Document doc = Jsoup.parse(new String(request.getContent()));
+		Document doc = Jsoup.parse(new String(response.getContent()));
+		Elements bodys = doc.select("body");
+		Element body = bodys.size() > 0 ? bodys.get(0) : null;
 		
 		for(HtmlEditorSpoof editor : editors) {
-			editor.modifyDocument(doc);
+			editor.modifyDocument(doc, body);
 		}
+		
+		// Convert back to raw data
+		byte[] bytes;
+		try {
+			bytes = doc.toString().getBytes("UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			bytes = doc.toString().getBytes();
+		}
+		response.setContent(bytes);
+	}
+	
+	public void addEditor(HtmlEditorSpoof editor) {
+		editors.add(editor);
 	}
 }
