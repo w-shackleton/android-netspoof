@@ -2,7 +2,7 @@
  * This file is part of Network Spoofer for Android.
  * Network Spoofer lets you change websites on other people’s computers
  * from an Android phone.
- * Copyright (C) 2011 Will Shackleton
+ * Copyright (C) 2014 Will Shackleton <will@digitalsquid.co.uk>
  *
  * Network Spoofer is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,9 +22,13 @@
 package uk.digitalsquid.netspoofer.spoofs;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import uk.digitalsquid.netspoofer.config.Lists;
+import uk.digitalsquid.netspoofer.proxy.HttpRequest;
+import uk.digitalsquid.netspoofer.proxy.HttpResponse;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -38,13 +42,14 @@ public abstract class Spoof implements Serializable, Comparable<Spoof> {
 		this.description = description;
 		this.title = title;
 	}
-
-	public abstract String getSpoofCmd(String victim, String router);
-	public abstract String getStopCmd();
 	
-	public abstract Dialog displayExtraDialog(Context context, OnExtraDialogDoneListener onDone);
+	public Dialog displayExtraDialog(Context context, OnExtraDialogDoneListener onDone) {
+		return null;
+	}
 	
-	public abstract Intent activityForResult(Context context);
+	public Intent activityForResult(Context context) {
+		return null;
+	}
 	/**
 	 * A second activity to be displayed afterwards.
 	 * @param context
@@ -57,7 +62,7 @@ public abstract class Spoof implements Serializable, Comparable<Spoof> {
 	 * @param result
 	 * @return <code>true</code> to continue the process.
 	 */
-	public abstract boolean activityFinished(Context context, Intent result);
+	public boolean activityFinished(Context context, Intent result) { return true; }
 	/**
 	 * 
 	 * @param result
@@ -81,6 +86,7 @@ public abstract class Spoof implements Serializable, Comparable<Spoof> {
 		void onResult(Intent result);
 	}
 	
+	@Deprecated
 	public Map<String, String> getCustomEnv() {return new HashMap<String, String>();}
 	
 	@Override
@@ -92,4 +98,57 @@ public abstract class Spoof implements Serializable, Comparable<Spoof> {
 	public String toString() {
 		return title;
 	}
+	// TODO: Make abstract
+    public abstract void modifyRequest( HttpRequest request);
+    public abstract void modifyResponse( HttpResponse response, HttpRequest request);
+    
+    /**
+     * This function expands and groups spoofs into their simplest form.
+     * Currently this involves:
+     * Expanding {@link MultiSpoof} objects
+     * Grouping {@link ImageSpoof} objects.
+     * Grouping {@link HtmlEditorSpoof} objects into a {@link HtmlSpoof}.
+     * @param spoof
+     * @return A list of expanded spoofs, or a singleton of spoof.
+     */
+    public static ArrayList<Spoof> expandSpoof(Spoof spoof) {
+    	if(spoof instanceof MultiSpoof) {
+    		ArrayList<Spoof> spoofs = ((MultiSpoof)spoof).getSpoofs();
+
+    		// Sort into a list of ImageSpoof and a list of others
+    		ArrayList<ImageSpoof> imageSpoofs = new ArrayList<ImageSpoof>();
+    		ArrayList<HtmlEditorSpoof> htmlSpoofs = new ArrayList<HtmlEditorSpoof>();
+            ArrayList<Spoof> otherSpoofs = new ArrayList<Spoof>();
+    		for(Spoof s : spoofs) {
+    			if(s instanceof ImageSpoof)
+    				imageSpoofs.add((ImageSpoof)s);
+    			else if(s instanceof HtmlEditorSpoof)
+    				htmlSpoofs.add((HtmlEditorSpoof)s);
+    			else otherSpoofs.add(s);
+    		}
+    		
+    		// Fold ImageSpoofs up
+    		if(imageSpoofs.size() > 0) {
+    			ImageSpoof first = imageSpoofs.remove(0);
+    			for(ImageSpoof next : imageSpoofs) {
+    				first.mergeImageSpoof(next);
+    			}
+    			otherSpoofs.add(first);
+    		}
+    		
+    		// Group HtmlEditorSpoofs up
+    		if(htmlSpoofs.size() > 0) {
+    			HtmlSpoof group = new HtmlSpoof();
+    			for(HtmlEditorSpoof s : htmlSpoofs)
+    				group.addEditor(s);
+    			otherSpoofs.add(group);
+    		}
+    		
+    		return otherSpoofs;
+    	} else if(spoof instanceof HtmlEditorSpoof) {
+    		return Lists.singleton((Spoof)new HtmlSpoof((HtmlEditorSpoof) spoof));
+    	} else {
+    		return Lists.singleton(spoof);
+    	}
+    }
 }

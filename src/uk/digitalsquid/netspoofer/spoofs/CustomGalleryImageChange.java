@@ -2,7 +2,7 @@
  * This file is part of Network Spoofer for Android.
  * Network Spoofer lets you change websites on other people’s computers
  * from an Android phone.
- * Copyright (C) 2011 Will Shackleton
+ * Copyright (C) 2014 Will Shackleton <will@digitalsquid.co.uk>
  *
  * Network Spoofer is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,70 +21,155 @@
 
 package uk.digitalsquid.netspoofer.spoofs;
 
-import java.util.Map;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Locale;
 
-import uk.digitalsquid.netspoofer.NetSpoofService;
-import uk.digitalsquid.netspoofer.NetSpoofService.NetSpoofServiceBinder;
+import uk.digitalsquid.netspoofer.R;
 import uk.digitalsquid.netspoofer.config.LogConf;
-import android.content.ComponentName;
+import uk.digitalsquid.netspoofer.proxy.HttpRequest;
+import uk.digitalsquid.netspoofer.proxy.HttpResponse;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.IBinder;
 import android.provider.MediaStore;
+import android.util.Log;
 
 /**
  * A custom version of the Google spoof which allows the user to enter their own google search query.
- * @author william
+ * @author Will Shackleton <will@digitalsquid.co.uk>
  *
  */
-public class CustomGalleryImageChange extends SquidScriptSpoof implements LogConf {
+public class CustomGalleryImageChange extends Spoof implements LogConf {
 	private static final long serialVersionUID = 8490503138296852028L;
 	
-	public CustomGalleryImageChange() {
-		super("Custom image change (image on phone)", "Change all images on all websites", "trollface.sh");
+	public static final int MODE_TROLLFACE = 1;
+	public static final int MODE_CUSTOM = 2;
+	
+	private static String getTitle(Context context, int mode) {
+		switch(mode) {
+		case MODE_TROLLFACE:
+			return context.getResources().getString(R.string.spoof_trollface);
+		case MODE_CUSTOM:
+			return context.getResources().getString(R.string.spoof_image_custom);
+		default:
+			return "Unknown image spoof";
+		}
+	}
+	private static String getDescription(Context context, int mode) {
+		switch(mode) {
+		case MODE_TROLLFACE:
+			return context.getResources().getString(R.string.spoof_trollface_description);
+		case MODE_CUSTOM:
+			return context.getResources().getString(R.string.spoof_image_custom_description);
+		default:
+			return "";
+		}
 	}
 	
-	/**
-	 * The image name, as it appears in $DEB/var/www/images/
-	 */
-	public static final String IMAGE_NAME = "customimage.jpg";
+	private final int mode;
+	
+	public CustomGalleryImageChange(Context context, int mode) {
+		super(getTitle(context, mode), getDescription(context, mode));
+		this.mode = mode;
+
+		InputStream is = context.getResources().openRawResource(R.raw.trollface);
+		loadImage(is);
+	}
 	
 	@Override
 	public Intent activityForResult(Context context) {
-		return new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+		switch(mode) {
+		case MODE_CUSTOM:
+			return new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+		default:
+			return null;
+		}
 	}
+	
+	private File customImage;
+	private byte[] imageData;
+	private String mimeType;
 	
 	@Override
 	public boolean activityFinished(final Context context, Intent result) {
 		super.activityFinished(context, result);
 		final Uri customImageURI = result.getData();
+		try {
+			customImage = new File(new URI(customImageURI.toString()));
+		} catch (URISyntaxException e) {
+			Log.e(TAG, "Failed to load custom image", e);
+		}
 		
-		// Communication with service to tell it to load image into debian area
-		// Using service, as this makes sure this is finished before spoof is started.
-		final ServiceConnection serviceConnection = new ServiceConnection() {
-			@Override
-			public void onServiceConnected(ComponentName className, IBinder service) {
-				NetSpoofServiceBinder binder = (NetSpoofServiceBinder) service;
-	            binder.getService().saveImageToWebserver(customImageURI);
-	            
-	            // Close again
-	            context.unbindService(this);
-			}
-			
-			@Override
-			public void onServiceDisconnected(ComponentName arg0) { }
-		};
-	
-        context.bindService(new Intent(context, NetSpoofService.class), serviceConnection, Context.BIND_AUTO_CREATE);
 		return true;
 	}
-	
+
 	@Override
-	public Map<String, String> getCustomEnv() {
-		Map<String, String> ret = super.getCustomEnv();
-		ret.put("SPOOFIMAGEURL", "http://127.0.0.1/images/" + IMAGE_NAME);
-		return ret;
+	public void modifyRequest(HttpRequest request) {
+	}
+	
+	private static final Object LOAD_SYNC = new Object();
+
+	@Override
+	public void modifyResponse(HttpResponse response, HttpRequest request) {
+		if(imageData == null) return;
+		List<String> contentType = response.getHeader("Content-Type");
+		if(contentType == null) return;
+		boolean isImage = false;
+		for(String type : contentType) {
+			if(type.toLowerCase(Locale.ENGLISH).startsWith("image"))
+				isImage = true;
+		}
+		if(!isImage) return;
+		
+		// Load image
+		synchronized(LOAD_SYNC) {
+			if(imageData == null) {
+				try {
+					loadImage(new FileInputStream(customImage));
+				} catch (FileNotFoundException e) {
+					Log.e(TAG, "Failed to load custom image", e);
+				}
+			}
+		}
+		
+		// Set new content
+		response.changeHeader("Content-Type", mimeType);
+		response.setContent(imageData);
+	}
+	
+	private void loadImage(InputStream is) {
+		try {
+			BufferedInputStream buf = new BufferedInputStream(is);
+			ByteArrayOutputStream os = new ByteArrayOutputStream();
+			byte[] intermediate = new byte[2048];
+			int len;
+			while((len = buf.read(intermediate)) != -1) {
+				os.write(intermediate, 0, len);
+			}
+			imageData = os.toByteArray();
+			buf.close();
+			os.close();
+
+			// Decode image format
+			BitmapFactory.Options opts = new BitmapFactory.Options();
+			opts.inJustDecodeBounds = true;
+			BitmapFactory.decodeByteArray(imageData, 0,
+					imageData.length, opts);
+			mimeType = opts.outMimeType;
+		} catch (FileNotFoundException e) {
+			Log.e(TAG, "Failed to load custom image", e);
+		} catch (IOException e) {
+			Log.e(TAG, "Failed to load custom image", e);
+		}
 	}
 }

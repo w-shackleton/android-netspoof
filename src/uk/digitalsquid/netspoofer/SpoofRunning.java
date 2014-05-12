@@ -2,7 +2,7 @@
  * This file is part of Network Spoofer for Android.
  * Network Spoofer lets you change websites on other people’s computers
  * from an Android phone.
- * Copyright (C) 2011 Will Shackleton
+ * Copyright (C) 2014 Will Shackleton <will@digitalsquid.co.uk>
  *
  * Network Spoofer is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +43,9 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
 public class SpoofRunning extends Activity implements OnClickListener, LogConf {
 	public static final String EXTRA_SPOOFDATA = "uk.digitalsquid.netspoofer.SpoofRunning.SPOOFDATA";
 	
@@ -67,7 +70,15 @@ public class SpoofRunning extends Activity implements OnClickListener, LogConf {
 		} else {
 	        bindService(new Intent(this, NetSpoofService.class), mConnection, Context.BIND_AUTO_CREATE);
 		}
-        
+		
+		Config.configureRunningPage(this);
+		
+		// Google analytics
+		Tracker t = ((App)getApplication()).getTracker();
+		if(t != null) {
+			t.setScreenName(getClass().getCanonicalName());
+			t.send(new HitBuilders.AppViewBuilder().build());
+		}
 	}
 	
 	@Override

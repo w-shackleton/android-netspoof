@@ -2,7 +2,7 @@
  * This file is part of Network Spoofer for Android.
  * Network Spoofer lets you change websites on other people’s computers
  * from an Android phone.
- * Copyright (C) 2011 Will Shackleton
+ * Copyright (C) 2014 Will Shackleton <will@digitalsquid.co.uk>
  *
  * Network Spoofer is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,9 +121,6 @@ public final class ProcessRunner implements LogConf {
 		HashMap<String, String> fullEnv = env == null ?
 				new HashMap<String, String>() :
 				new HashMap<String, String>(env);
-		fullEnv.put("PATH", "/usr/local/bin:/usr/bin:/usr/sbin:/bin:$PATH");
-		fullEnv.put("TERM", "linux");
-		fullEnv.put("HOME", "/root");
 		String scriptPath = FileInstaller.getScriptPath(context, "config");
 		FileWriter writer = null;
 		try {

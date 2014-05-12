@@ -2,7 +2,7 @@
  * This file is part of Network Spoofer for Android.
  * Network Spoofer lets you change websites on other people’s computers
  * from an Android phone.
- * Copyright (C) 2011 Will Shackleton
+ * Copyright (C) 2014 Will Shackleton <will@digitalsquid.co.uk>
  *
  * Network Spoofer is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ package uk.digitalsquid.netspoofer.spoofs;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 import uk.digitalsquid.netspoofer.VictimSelector.Victim;
 import uk.digitalsquid.netspoofer.config.NetHelpers;
@@ -65,7 +66,7 @@ public class SpoofData implements Serializable {
 		"255.255.255.254",
 		"255.255.255.255",
 	};
-	private final Spoof spoof;
+	private final ArrayList<Spoof> spoofs;
 	
 	private String myIf;
 	/**
@@ -79,13 +80,20 @@ public class SpoofData implements Serializable {
 	private boolean runningPassively = false;
 
 	public SpoofData(Spoof spoof, boolean runningPassively) {
+		this(Spoof.expandSpoof(spoof), runningPassively);
+	}
+	public SpoofData(Spoof spoof, String myIp, String mySubnet, String myIf, String routerIp) throws UnknownHostException {
+		this(Spoof.expandSpoof(spoof), myIp, mySubnet, myIf, routerIp);
+	}
+
+	public SpoofData(ArrayList<Spoof> spoofs, boolean runningPassively) {
 		if(!runningPassively) throw new IllegalStateException("Please use the other constructor");
-		this.spoof = spoof;
+		this.spoofs = spoofs;
 		this.setRunningPassively(true);
 	}
 
-	public SpoofData(Spoof spoof, String myIp, String mySubnet, String myIf, String routerIp) throws UnknownHostException {
-		this.spoof = spoof;
+	public SpoofData(ArrayList<Spoof> spoofs, String myIp, String mySubnet, String myIf, String routerIp) throws UnknownHostException {
+		this.spoofs = spoofs;
 		this.myIp = InetAddress.getByName(myIp);
 		for(int i = 0; i < SUBNETS.length; i++) {
 			if(mySubnet.equals(SUBNETS[i])) this.mySubnet = i;
@@ -94,8 +102,8 @@ public class SpoofData implements Serializable {
 		this.routerIp = InetAddress.getByName(routerIp);
 	}
 
-	public Spoof getSpoof() {
-		return spoof;
+	public ArrayList<Spoof> getSpoofs() {
+		return spoofs;
 	}
 	public InetAddress getMyIp() {
 		return myIp;
@@ -158,6 +166,7 @@ public class SpoofData implements Serializable {
 	}
 	
 	public String getVictimString() {
+		if(victim == null) return "all";
 		if(isRunningPassively()) return "none";
 		if(isEveryoneVictim()) return "all";
 		return victim.getIpString();

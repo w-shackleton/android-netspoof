@@ -2,7 +2,7 @@
  * This file is part of Network Spoofer for Android.
  * Network Spoofer lets you change websites on other people’s computers
  * from an Android phone.
- * Copyright (C) 2011 Will Shackleton
+ * Copyright (C) 2014 Will Shackleton <will@digitalsquid.co.uk>
  *
  * Network Spoofer is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,22 +21,14 @@
 
 package uk.digitalsquid.netspoofer;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import uk.digitalsquid.netspoofer.config.ChrootConfig;
-import uk.digitalsquid.netspoofer.config.ChrootManager;
-import uk.digitalsquid.netspoofer.config.FileFinder;
-import uk.digitalsquid.netspoofer.config.IOHelpers;
+import uk.digitalsquid.netspoofer.config.HardwareConfig;
+import uk.digitalsquid.netspoofer.config.RunManager;
 import uk.digitalsquid.netspoofer.config.LogConf;
 import uk.digitalsquid.netspoofer.misc.AsyncTaskHelper;
-import uk.digitalsquid.netspoofer.servicemsg.ImageLoader;
 import uk.digitalsquid.netspoofer.servicemsg.ServiceMsg;
 import uk.digitalsquid.netspoofer.servicemsg.SpoofStarter;
 import uk.digitalsquid.netspoofer.servicestatus.InitialiseStatus;
@@ -50,15 +42,10 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.util.Log;
-import android.widget.Toast;
 
 public class NetSpoofService extends Service implements LogConf {
 	public static final int STATUS_LOADING = 0;
@@ -104,20 +91,6 @@ public class NetSpoofService extends Service implements LogConf {
           uiThreadHandler = new Handler();
     }
     
-    /**
-     * Shows a toast on the UI thread
-     * @param text
-     * @param duration
-     */
-    private void showToast(final String text, final int duration) {
-    	uiThreadHandler.post(new Runnable() {
-			@Override
-			public void run() {
-				Toast.makeText(getBaseContext(), text, duration).show();
-			}
-		});
-    }
-    
     private boolean started = false;
 	
 	private int status;
@@ -143,9 +116,7 @@ public class NetSpoofService extends Service implements LogConf {
     }
     
     private void start() {
-    	Toast.makeText(getApplicationContext(), "Loaded setup", Toast.LENGTH_LONG).show();
-    	
-    	AsyncTaskHelper.execute(mainLoopManager, new ChrootConfig(getBaseContext()));
+    	AsyncTaskHelper.execute(mainLoopManager, new HardwareConfig(getBaseContext()));
     	setStatus(STATUS_LOADING);
     	
 		notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -155,7 +126,6 @@ public class NetSpoofService extends Service implements LogConf {
     
     @Override
     public void onDestroy() {
-    	Toast.makeText(getApplicationContext(), "Unloaded setup", Toast.LENGTH_LONG).show();
     	mainLoopManager.cancel(false);
     	tasks.add(new ServiceMsg(ServiceMsg.MESSAGE_STOP));
     	super.onDestroy();
@@ -197,48 +167,18 @@ public class NetSpoofService extends Service implements LogConf {
 		sendBroadcast(intent);
     }
     
-    public void saveImageToWebserver(Uri image) {
-    	try {
-	    	tasks.add(new ImageLoader(image));
-    	} catch(IllegalStateException e) {
-    		e.printStackTrace();
-    	}
-    }
-    
 	private final BlockingQueue<ServiceMsg> tasks = new LinkedBlockingQueue<ServiceMsg>();
     
-    private final AsyncTask<ChrootConfig, ServiceStatus, Void> mainLoopManager = new AsyncTask<ChrootConfig, ServiceStatus, Void>() {
+    private final AsyncTask<HardwareConfig, ServiceStatus, Void> mainLoopManager = new AsyncTask<HardwareConfig, ServiceStatus, Void>() {
 
 		@Override
-		protected Void doInBackground(ChrootConfig... params) {
-			Log.i(TAG, "Setting up chroot...");
-			final ChrootManager chroot = new ChrootManager(NetSpoofService.this, params[0]);
+		protected Void doInBackground(HardwareConfig... params) {
+			Log.i(TAG, "Setting up system...");
+			final RunManager runner = new RunManager(NetSpoofService.this, params[0]);
 	    	
-			Log.i(TAG, "Starting chroot...");
-			try {
-				if(!chroot.start()) {
-					Log.e(TAG, "Chroot start returned false, not mounted");
-					throw new IOException("Mounted chroot not found after start command executed.");
-				}
-			} catch (IOException e) {
-				Log.e(TAG, "Chroot failed to load!");
-				publishProgress(new InitialiseStatus(STATUS_FAILED));
-				e.printStackTrace();
-				try {
-					chroot.stop();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-				return null;
-			}
 			publishProgress(new InitialiseStatus(STATUS_LOADED));
 			if(isCancelled()) {
 				Log.i(TAG, "Stop initiated, stopping...");
-				try {
-					chroot.stop();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
 				Log.i(TAG, "Done.");
 				return null;
 			}
@@ -252,16 +192,14 @@ public class NetSpoofService extends Service implements LogConf {
 					case ServiceMsg.MESSAGE_OTHER:
 						if(task instanceof SpoofStarter) {
 							SpoofStarter starter = (SpoofStarter) task;
-							spoofLoop(chroot, starter.getSpoof());
-						} else if(task instanceof ImageLoader) {
-							loadImageToDebian(chroot, ((ImageLoader)task).getUri());
+							spoofLoop(runner, starter.getSpoof());
 						}
 						break;
 					case ServiceMsg.MESSAGE_STOP:
 						running = false;
 						break;
 					case ServiceMsg.MESSAGE_GETSPOOFS:
-						SpoofList list = new SpoofList(chroot.getSpoofList());
+						SpoofList list = new SpoofList(runner.getSpoofList());
 						publishProgress(list);
 						break;
 					}
@@ -270,22 +208,15 @@ public class NetSpoofService extends Service implements LogConf {
 				}
 			}
 	
-			Log.i(TAG, "Stopping chroot...");
-			try {
-				chroot.stop();
-			} catch (IOException e) {
-				e.printStackTrace();
-				Log.e(TAG, "Chroot failed to stop.");
-				publishProgress(new InitialiseStatus(STATUS_FAILED));
-			}
+			Log.i(TAG, "Stopping system...");
 			Log.i(TAG, "Done.");
 			return null;
 		}
 		
-		private void spoofLoop(final ChrootManager chroot, SpoofData spoof) {
+		private void spoofLoop(final RunManager runner, SpoofData spoof) {
 			publishProgress(new InitialiseStatus(STATUS_STARTING));
 			try {
-				chroot.startSpoof(spoof);
+				runner.startSpoof(spoof);
 			} catch (IOException e) {
 				e.printStackTrace();
 				Log.e(TAG, "Failed to start spoof.");
@@ -300,26 +231,26 @@ public class NetSpoofService extends Service implements LogConf {
 				if(task != null) {
 					switch(task.getMessage()) {
 					case ServiceMsg.MESSAGE_STOPSPOOF:
-						stopSpoof(chroot, spoof);
+						stopSpoof(runner, spoof);
 						running = false;
 						break;
 					}
 				}
 				
 				if(isCancelled()) {
-					stopSpoof(chroot, spoof);
+					stopSpoof(runner, spoof);
 					running = false;
 					break;
 				}
 				
-				if(chroot.checkIfStopped()) {
-					finishSpoof(chroot, spoof);
+				if(runner.checkIfStopped()) {
+					finishSpoof(runner, spoof);
 					running = false;
 					break;
 				}
 				
 				try {
-					publishProgress(new NewLogOutput(chroot.getNewSpoofOutput())); // Send log back to anything listening.
+					publishProgress(new NewLogOutput(runner.getNewSpoofOutput())); // Send log back to anything listening.
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -328,11 +259,11 @@ public class NetSpoofService extends Service implements LogConf {
 			}
 		}
 		
-		private void stopSpoof(ChrootManager chroot, SpoofData spoof) {
+		private void stopSpoof(RunManager runner, SpoofData spoof) {
 			publishProgress(new InitialiseStatus(STATUS_STOPPING));
 			publishProgress(new Notifyer(NS_RUNNING, Notifyer.STATUS_HIDE));
 			try {
-				chroot.stopSpoof(spoof);
+				runner.stopSpoof(spoof);
 			} catch (IOException e) {
 				e.printStackTrace();
 				Log.e(TAG, "Failed to stop spoof.");
@@ -341,73 +272,15 @@ public class NetSpoofService extends Service implements LogConf {
 			}
 		}
 		
-		private void finishSpoof(ChrootManager chroot, SpoofData spoof) {
+		private void finishSpoof(RunManager runner, SpoofData spoof) {
 			try {
-				publishProgress(new NewLogOutput(chroot.finishStopSpoof())); // Also send final output.
+				publishProgress(new NewLogOutput(runner.finishStopSpoof())); // Also send final output.
 			} catch (IOException e) {
 				e.printStackTrace();
 				Log.e(TAG, "Failed to finish spoof.");
 				return;
 			}
 			publishProgress(new InitialiseStatus(STATUS_LOADED));
-		}
-		
-		/**
-		 * Loads the image then saves it as a jpg to the debian.
-		 * @param imageUri
-		 */
-		private void loadImageToDebian(ChrootManager chroot, Uri imageUri) {
-			
-			File tmpImage = new File(getFilesDir(), "customimage.jpg");
-			Log.i(TAG, "Loading image from media store");
-			try {
-				Bitmap image = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
-				Log.i(TAG, "Writing image");
-				FileOutputStream out = openFileOutput("customimage.jpg", MODE_WORLD_READABLE);
-				image.compress(CompressFormat.JPEG, 80, out);
-				out.close();
-				image.recycle();
-				Log.i(TAG, "Written image");
-				
-				// Use BB to copy this as SU (need root to write to debian area)
-				final String su = FileFinder.SU;
-				final String bb = FileFinder.BUSYBOX;
-				final File debianImageFolder = new File(chroot.config.getDebianMount() + "/var/www/images");
-				final File debianImage = new File(debianImageFolder, "customimage.jpg");
-				
-				final List<String> mkdirArgs = new LinkedList<String>();
-				// su -c busybox mkdir 
-				mkdirArgs.add(su);
-				mkdirArgs.add("-c");
-				mkdirArgs.add(bb + " " + "mkdir" + " " + debianImageFolder.getCanonicalPath());
-				Log.v(TAG, "Running " + mkdirArgs);
-				try {
-					IOHelpers.runProcess(mkdirArgs); // Is this necessary?
-				} catch (IOException e) {
-					Log.e(TAG, "Failed to create image folder.");
-				}
-				
-				final List<String> cpArgs = new LinkedList<String>();
-				// su busybox cp tmp.jpg deb.jpg
-				cpArgs.add(su);
-				cpArgs.add("-c");
-				cpArgs.add(bb + " " + "cp" + " " + tmpImage.getCanonicalPath() + " " + debianImage.getCanonicalPath());
-				Log.v(TAG, "Running " + cpArgs);
-				if(IOHelpers.runProcess(cpArgs) != 0) {
-					throw new IOException("Couldn't copy image from tmp to debian.\n Used cmdline " + cpArgs.toString());
-				}
-				Log.i(TAG, "Copied image to debian folder.");
-			} catch (FileNotFoundException e) {
-				Log.e(TAG, "Couldn't open temporary file to write image", e);
-				showToast("Couldn't load selected image!", Toast.LENGTH_LONG);
-			} catch (IOException e) {
-				Log.e(TAG, "Couldn't write to temporary image", e);
-				showToast("Couldn't load selected image!", Toast.LENGTH_LONG);
-			} finally {
-				try {
-					tmpImage.delete();
-				} catch(Exception e) { } // Don't care if it fails.
-			}
 		}
     	
 		protected void onProgressUpdate(ServiceStatus... progress) {

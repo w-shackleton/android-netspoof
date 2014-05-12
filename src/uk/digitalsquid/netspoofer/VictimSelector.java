@@ -2,7 +2,7 @@
  * This file is part of Network Spoofer for Android.
  * Network Spoofer lets you change websites on other people’s computers
  * from an Android phone.
- * Copyright (C) 2011 Will Shackleton
+ * Copyright (C) 2014 Will Shackleton <will@digitalsquid.co.uk>
  *
  * Network Spoofer is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,6 +59,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
 public class VictimSelector extends Activity implements OnClickListener, LogConf {
 	public static final String EXTRA_SPOOFDATA = "uk.digitalsquid.netspoofer.VictimSelector.SPOOFDATA";
 	
@@ -101,13 +104,34 @@ public class VictimSelector extends Activity implements OnClickListener, LogConf
 		
 		startScanners();
 		AsyncTaskHelper.execute(hostnameFinder);
+		
+		// Google analytics
+		Tracker t = ((App)getApplication()).getTracker();
+		if(t != null) {
+			t.setScreenName(getClass().getCanonicalName());
+			t.send(new HitBuilders.AppViewBuilder().build());
+		}
 	}
 	
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+		stopAllTasks();
+	}
+
+	@Override
+	public void onStop() {
+		super.onStop();
+		stopAllTasks();
+	}
+	
+	private void stopAllTasks() {
 		Log.v(TAG, "VictimSelector stopping");
-		hostnameFinder.cancel(false);
+		hostnameFinder.cancel(true);
+		if(scanners != null) {
+			for(IPScanner s : scanners)
+				s.cancel(true);
+		}
 	}
 	
 	private VictimListAdapter victimListAdapter;
@@ -276,6 +300,7 @@ public class VictimSelector extends Activity implements OnClickListener, LogConf
 		protected Void doInBackground(Void... params) {
 			Log.d(TAG, String.format("Starting scanning IPs %d to %d.", ipFrom, ipTo));
 			for(long ip = ipFrom; ip < ipTo; ip++) {
+				if(isCancelled()) return null;
 				try {
 					InetAddress addr = NetHelpers.reverseInetFromInt(ip);
 					if(addr.isReachable(100)) {

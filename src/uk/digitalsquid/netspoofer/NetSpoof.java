@@ -2,7 +2,7 @@
  * This file is part of Network Spoofer for Android.
  * Network Spoofer lets you change websites on other people’s computers
  * from an Android phone.
- * Copyright (C) 2011 Will Shackleton
+ * Copyright (C) 2014 Will Shackleton <will@digitalsquid.co.uk>
  *
  * Network Spoofer is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,27 +24,23 @@ package uk.digitalsquid.netspoofer;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.Serializable;
 
-import uk.digitalsquid.netspoofer.config.Config;
-import uk.digitalsquid.netspoofer.config.ConfigChecker;
+import uk.digitalsquid.netspoofer.UpdateChecker.OnUpdateListener;
+import uk.digitalsquid.netspoofer.UpdateChecker.UpdateInfo;
 import uk.digitalsquid.netspoofer.config.FileFinder;
 import uk.digitalsquid.netspoofer.config.FileInstaller;
 import uk.digitalsquid.netspoofer.config.LogConf;
-import uk.digitalsquid.netspoofer.config.NetHelpers;
 import uk.digitalsquid.netspoofer.misc.AsyncTaskHelper;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources.NotFoundException;
-import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -58,9 +54,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager.BadTokenException;
 import android.widget.Button;
-import android.widget.Toast;
 
-public class NetSpoof extends Activity implements OnClickListener, LogConf {
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
+public class NetSpoof extends Activity implements OnClickListener, LogConf, OnUpdateListener {
 	/**
 	 * A dialog to tell the user to mount their SD card.
 	 */
@@ -78,15 +76,18 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 	static final int DIALOG_ABOUT = 5;
 	static final int DIALOG_AGREEMENT = 7;
 	static final int DIALOG_CHANGELOG = 8;
+
+	static final int DIALOG_UPDATE_AVAILABLE = 9;
 	
-	private Button startButton, setupButton;
-	
-	private LoadResult loadResult;
+	private Button startButton;
 	
 	private boolean showChangelog = false;
+	
+	private UpdateChecker updateChecker;
 
 	private SharedPreferences prefs;
 	/** Called when the activity is first created. */
+	@SuppressLint("NewApi")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -94,24 +95,17 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 	
 		startButton = (Button) findViewById(R.id.startButton);
 		startButton.setOnClickListener(this);
-		setupButton = (Button) findViewById(R.id.setupButton);
-		setupButton.setOnClickListener(this);
 		
-		if(!ConfigChecker.checkInstalledLatest(getApplicationContext())) {
-			setupButton.setTypeface(setupButton.getTypeface(), Typeface.BOLD);
-			if(ConfigChecker.checkInstalled(getApplicationContext())) { // Installed, but not latest version.
-				Toast.makeText(this, "New version of setup files, please download", Toast.LENGTH_LONG).show();
-			}
-		} else {
-			setupButton.setTypeface(setupButton.getTypeface(), Typeface.NORMAL);
+		try {
+			updateChecker = new UpdateChecker((App) getApplication(), this);
+			if(Build.VERSION.SDK_INT <= 10)
+				updateChecker.execute();
+			else
+				updateChecker.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+		} catch (NameNotFoundException e1) {
+			Log.e(TAG, "Failed to initialise UpdateChecker", e1);
 		}
-		
 		AsyncTaskHelper.execute(loadTask);
-		
-	    statusFilter = new IntentFilter();
-	    statusFilter.addAction(InstallService.INTENT_STATUSUPDATE);
-		
-		registerReceiver(statusReceiver, statusFilter);
 		
 		// Changelog dialog
 		int versionCode = -1;
@@ -132,12 +126,13 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 		if(prefs.getBoolean("firstTime", true)) { // First time, show license thing
 			showDialog(DIALOG_AGREEMENT);
 		} else postInit(); // This isn't called on first time, as new users don't need to see changelog
-	}
-	
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		unregisterReceiver(statusReceiver);
+		
+		// Google analytics
+		Tracker t = ((App)getApplication()).getTracker();
+		if(t != null) {
+			t.setScreenName(getClass().getCanonicalName());
+			t.send(new HitBuilders.AppViewBuilder().build());
+		}
 	}
 	
 	/**
@@ -151,18 +146,16 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 	@Override
 	public void onClick(View v) {
 		switch(v.getId()) {
-			case R.id.setupButton:
-				Intent intent = new Intent(this, InstallStatus.class);
-				intent.putExtra(InstallStatus.EXTRA_DL_INFO, loadResult);
-				startActivity(intent);
-				break;
 			case R.id.startButton:
 				startActivity(new Intent(this, SpoofSelector.class));
 				break;
 		}
 	}
 
-	protected Dialog onCreateDialog(int id) {
+	@SuppressWarnings("deprecation")
+	@Override
+	protected Dialog onCreateDialog(int id, final Bundle args) {
+		super.onCreateDialog(id, args);
 		Dialog dialog = null;
 		AlertDialog.Builder builder;
 		View view;
@@ -248,30 +241,33 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 				});
 				dialog = builder.create();
 				break;
+			case DIALOG_UPDATE_AVAILABLE:
+				final UpdateInfo info = (UpdateInfo) args.get("info");
+				builder = new AlertDialog.Builder(this);
+				builder.setTitle(R.string.updateAvailableTitle);
+				builder.setMessage(
+						getResources().getString(
+								R.string.updateAvailableDescription,
+								info.versionName));
+				builder.setPositiveButton(R.string.updateAvailableYes, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						Intent update = new Intent(Intent.ACTION_VIEW, Uri.parse(info.url));
+						startActivity(update);
+					}
+				});
+				builder.setNegativeButton(R.string.updateAvailableNo, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+					}
+				});
+				dialog = builder.create();
+				break;
 		}
 		return dialog;
 	}
 	
 	private String missingBBComponent = "?";
-	
-	private IntentFilter statusFilter;
-	private final BroadcastReceiver statusReceiver = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			switch(intent.getIntExtra(InstallService.INTENT_EXTRA_STATUS, InstallService.STATUS_FINISHED)) {
-			case InstallService.STATUS_FINISHED:
-				switch(intent.getIntExtra(InstallService.INTENT_EXTRA_DLSTATE, InstallService.STATUS_DL_FAIL_DLERROR)) {
-				case InstallService.STATUS_DL_SUCCESS:
-					startButton.setEnabled(true);
-					break;
-				default:
-					startButton.setEnabled(false);
-					break;
-				}
-				break;
-			}
-		}
-	};
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -293,62 +289,28 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 	        return super.onOptionsItemSelected(item);
 	    }
 	}
-	
-	/**
-	 * Results acquired while loading
-	 * @author william
-	 *
-	 */
-	public static class LoadResult implements Serializable {
-		private static final long serialVersionUID = 6559183327061065064L;
 		
-		public int versionNumber = -1;
-		/**
-		 * An upgrade refers to a patch, not a new reinstall.
-		 */
-		public boolean doUpgrade = false;
-		public String upgradeUrl = "";
-		
-		public boolean doReinstall = false;
-		
-		public boolean firstTime = false;
-	}
-		
-	private AsyncTask<Void, Integer, LoadResult> loadTask = new AsyncTask<Void, Integer, LoadResult>() {
+	private AsyncTask<Void, Integer, Void> loadTask = new AsyncTask<Void, Integer, Void>() {
 		
 		@Override
-		protected LoadResult doInBackground(Void... params) {
+		protected Void doInBackground(Void... params) {
 			if(prefs == null) prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 			
 			// Install scripts & BB
 			installFiles();
 	
-			// Check SD and files on it
-			if(!ConfigChecker.getSDStatus(false)) {
-				publishProgress(DIALOG_R_SD);
-			} else {
-				if(!ConfigChecker.getSDStatus(true)) {
-					publishProgress(DIALOG_W_SD);
-				}
-				
-				final File sd = getExternalFilesDir(null);
-				File imgDir = new File(sd, "img");
-				if(!imgDir.exists()) if(!imgDir.mkdir()) Log.e(TAG, "Couldn't create 'img' dir");
-				
-				// Find files etc.
-				try {
-					FileFinder.initialise(getApplicationContext());
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-					if(e.getMessage().equals("su")) {
-						publishProgress(DIALOG_ROOT);
-					} else if(e.getMessage().equals("busybox")) {
-						publishProgress(DIALOG_BB);
-					} else if(e.getMessage().startsWith("bb:")) {
-						missingBBComponent = e.getMessage().substring(2); // 2 = end of bb:
-						publishProgress(DIALOG_BB_2);
-					}
-					
+			// Find files etc.
+			try {
+				FileFinder.initialise(getApplicationContext());
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+				if(e.getMessage().equals("su")) {
+					publishProgress(DIALOG_ROOT);
+				} else if(e.getMessage().equals("busybox")) {
+					publishProgress(DIALOG_BB);
+				} else if(e.getMessage().startsWith("bb:")) {
+					missingBBComponent = e.getMessage().substring(2); // 2 = end of bb:
+					publishProgress(DIALOG_BB_2);
 				}
 			}
 
@@ -358,24 +320,7 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 						Environment.getExternalStorageDirectory()));
 			}
 			
-			LoadResult result = new LoadResult();
-			
-			// Get current version and check for upgrade availability.
-			result.versionNumber = ConfigChecker.getVersionNumber(getApplicationContext());
-			if(result.versionNumber >= Config.DEB_IMG_URL_VERSION) { // If current version
-				return result;
-			}
-			
-			// Check for possible upgrade file. Otherwise just prompt user to redownload whole file.
-			String url = String.format(Config.UPGRADE_URI_FORMAT, result.versionNumber, Config.DEB_IMG_URL_VERSION);
-			result.doUpgrade = NetHelpers.checkFileExistsOnWeb(url, Config.UPGRADE_URI_FAIL);
-			result.upgradeUrl = url;
-			result.firstTime = !ConfigChecker.checkInstalled(getApplicationContext());
-			
-			// If can't upgrade, reinstall.
-			if(!result.doUpgrade) result.doReinstall = true;
-		
-			return result;
+			return null;
 		}
 		
 		/**
@@ -392,22 +337,8 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 		}
 		
 		@Override
-		protected void onPostExecute(LoadResult result) {
-			// Set button statuses
-			if(!ConfigChecker.checkInstalledLatest(getApplicationContext())) {
-				setupButton.setTypeface(setupButton.getTypeface(), Typeface.BOLD);
-			} else {
-				setupButton.setTypeface(setupButton.getTypeface(), Typeface.NORMAL);
-			}
-			if(result.doUpgrade) setupButton.setText(R.string.setup_upgrade);
-			if(result.doReinstall) setupButton.setText(R.string.setup_upgrade2);
-			if(result.firstTime) setupButton.setText(R.string.setup);
-			
-			startButton.setEnabled(ConfigChecker.checkInstalled(getApplicationContext()));
-			setupButton.setEnabled(true);
-			
-			loadResult = result;
-			
+		protected void onPostExecute(Void result) {
+			startButton.setEnabled(true);
 			findViewById(R.id.loading).setVisibility(View.INVISIBLE);
 		}
 		
@@ -418,13 +349,23 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 			try {
 				FileInstaller fi = new FileInstaller(getBaseContext());
 				
-				fi.installScript("config", R.raw.config);
-				fi.installScript("start", R.raw.start);
-				fi.installScript("mount", R.raw.mount);
-				fi.installScript("umount", R.raw.umount);
-				
 				fi.installScript("busybox", R.raw.busybox);
-				fi.installScript("applyupgrade", R.raw.applyupgrade);
+				
+				fi.installScript("arpspoof", R.raw.arpspoof);
+				fi.installScript("iptables", R.raw.iptables);
+				fi.installScript("spoof", R.raw.spoof);
+				
+				// Remove old debimg file
+				if(getExternalFilesDir(null) != null) {
+					File imgFolder = new File(
+							getExternalFilesDir(null).getAbsolutePath() + "/img");
+					String[] files = imgFolder.list();
+					if(files != null) {
+						for(String file : files)
+							new File(imgFolder, file).delete();
+					}
+					imgFolder.delete();
+				}
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (NotFoundException e) {
@@ -435,4 +376,10 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf {
 			}
 		}
 	};
+	@Override
+	public void updateAvailable(UpdateInfo info) {
+		Bundle args = new Bundle();
+		args.putParcelable("info", info);
+		showDialog(DIALOG_UPDATE_AVAILABLE, args);
+	}
 }

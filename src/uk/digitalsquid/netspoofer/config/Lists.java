@@ -2,7 +2,7 @@
  * This file is part of Network Spoofer for Android.
  * Network Spoofer lets you change websites on other people’s computers
  * from an Android phone.
- * Copyright (C) 2011 Will Shackleton
+ * Copyright (C) 2014 Will Shackleton <will@digitalsquid.co.uk>
  *
  * Network Spoofer is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,29 +19,16 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-package uk.digitalsquid.netspoofer.servicemsg;
+package uk.digitalsquid.netspoofer.config;
 
-import android.net.Uri;
+import java.util.ArrayList;
 
-/**
- * Loads an image from the user's gallery, saves it as a jpg and puts it in the debian images folder for use.
- * @author william
- *
- */
-public class ImageLoader extends ServiceMsg {
+public final class Lists {
+	private Lists() {}
 
-	private static final long serialVersionUID = -2360307367080536820L;
-	
-	/**
-	 * The content:// uri of the image.
-	 */
-	private final Uri uri;
-
-	public ImageLoader(Uri uri) {
-		this.uri = uri;
-	}
-
-	public Uri getUri() {
-		return uri;
+	public static final <T> ArrayList<T> singleton(T x) {
+		ArrayList<T> result = new ArrayList<T>();
+		result.add(x);
+		return result;
 	}
 }

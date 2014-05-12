@@ -2,7 +2,7 @@
  * This file is part of Network Spoofer for Android.
  * Network Spoofer lets you change websites on other people’s computers
  * from an Android phone.
- * Copyright (C) 2011 Will Shackleton
+ * Copyright (C) 2014 Will Shackleton <will@digitalsquid.co.uk>
  *
  * Network Spoofer is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,27 +22,31 @@
 package uk.digitalsquid.netspoofer.spoofs;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 import uk.digitalsquid.netspoofer.MultiSpoofDialogRunner;
 import uk.digitalsquid.netspoofer.SpoofSelector;
+import uk.digitalsquid.netspoofer.config.LogConf;
+import uk.digitalsquid.netspoofer.proxy.HttpRequest;
+import uk.digitalsquid.netspoofer.proxy.HttpResponse;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 /**
- * A spoof which runs multiple other spoofs, and concatenates them by piping the scripts together.
- * @author william
+ * A spoof which runs multiple other spoofs.
+ * @author Will Shackleton <will@digitalsquid.co.uk>
  *
  */
-public class MultiSpoof extends Spoof {
+public class MultiSpoof extends Spoof implements LogConf {
 
 	public MultiSpoof() {
+		// TODO: Localise
 		super("Multiple spoofs", "Run multiple spoofs at once. May run slowly.");
 	}
 	
 	private ArrayList<Spoof> selectedSpoofs;
-	private ArrayList<SquidScriptSpoof> finalSpoofs;
+	private ArrayList<Spoof> finalSpoofs;
 
 	private static final long serialVersionUID = -848683524539301592L;
 
@@ -63,60 +67,33 @@ public class MultiSpoof extends Spoof {
 	@Override
 	public Intent activityForResult2(Context context) {
 		Intent ret = new Intent(context, MultiSpoofDialogRunner.class);
-		ArrayList<SquidScriptSpoof> filteredSpoofs = new ArrayList<SquidScriptSpoof>();
-		for(Spoof spoof : selectedSpoofs) {
-			if(spoof instanceof SquidScriptSpoof) {
-				filteredSpoofs.add((SquidScriptSpoof) spoof);
-			}
-		}
-		ret.putExtra(MultiSpoofDialogRunner.SPOOF_LIST, filteredSpoofs);
+		ret.putExtra(MultiSpoofDialogRunner.SPOOF_LIST, selectedSpoofs);
 		return ret;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean activityFinished2(Context context, Intent result) {
-		finalSpoofs = (ArrayList<SquidScriptSpoof>) result.getSerializableExtra(MultiSpoofDialogRunner.SPOOF_LIST);
+		finalSpoofs = (ArrayList<Spoof>) result.getSerializableExtra(MultiSpoofDialogRunner.SPOOF_LIST);
 		return true;
 	}
 	
-	private static final String BASE_REWRITE_URL = "/rewriters/";
-
-	@Override
-	public String getSpoofCmd(String victim, String router) {
-		if(finalSpoofs == null) return null;
-		final StringBuilder cmdBuilder = new StringBuilder();
-		cmdBuilder.append("spoof %s %s 3 \"");
-		boolean first = true;
-		for(SquidScriptSpoof spoof : finalSpoofs) {
-			// Leaving no spaces in script def
-			if(!first) {
-				cmdBuilder.append('|');
-			} else {
-				first = false;
-			}
-			cmdBuilder.append(BASE_REWRITE_URL);
-			cmdBuilder.append(spoof.getScriptName());
-		}
-		cmdBuilder.append('"');
-		return String.format(cmdBuilder.toString(), victim, router);
-	}
-
-	@Override
-	public String getStopCmd() {
-		return "\n";
+	@Override public Dialog displayExtraDialog(Context context, OnExtraDialogDoneListener onDone) { return null; }
+	
+	public ArrayList<Spoof> getSpoofs() {
+		return finalSpoofs;
 	}
 	
+	// These functions do nothing; MultiSpoof is never actually used (its inner
+	// spoofs are expanded before runtime)
+
 	@Override
-	public Map<String, String> getCustomEnv() {
-		Map<String, String> ret = super.getCustomEnv();
-		if(finalSpoofs != null) {
-			for(SquidScriptSpoof spoof : finalSpoofs) {
-				ret.putAll(spoof.getCustomEnv());
-			}
-		}
-		return ret;
+	public void modifyRequest(HttpRequest request) {
+		Log.e(TAG, "MultiSpoof.modifyRequest called!");
 	}
 
-	@Override public Dialog displayExtraDialog(Context context, OnExtraDialogDoneListener onDone) { return null; }
+	@Override
+	public void modifyResponse(HttpResponse response, HttpRequest request) {
+		Log.e(TAG, "MultiSpoof.modifyResponse called!");
+	}
 }

@@ -2,7 +2,7 @@
  * This file is part of Network Spoofer for Android.
  * Network Spoofer lets you change websites on other people’s computers
  * from an Android phone.
- * Copyright (C) 2011 Will Shackleton
+ * Copyright (C) 2014 Will Shackleton <will@digitalsquid.co.uk>
  *
  * Network Spoofer is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,19 +24,27 @@ package uk.digitalsquid.netspoofer;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import uk.digitalsquid.netspoofer.spoofs.Spoof;
 import uk.digitalsquid.netspoofer.spoofs.Spoof.OnExtraDialogDoneListener;
-import uk.digitalsquid.netspoofer.spoofs.SquidScriptSpoof;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
+/**
+ * Displays the dialogs and configuration options for multiple spoofs.
+ * @author Will Shackleton <will@digitalsquid.co.uk>
+ *
+ */
 public class MultiSpoofDialogRunner extends Activity implements OnExtraDialogDoneListener {
 	public static final String SPOOF_LIST = "uk.digitalsquid.netspoofer.MultiSpoofDialogRunner.list";
 	
-	ArrayList<SquidScriptSpoof> spoofs;
-	Iterator<SquidScriptSpoof> currentSpoof;
-	SquidScriptSpoof spoof;
+	ArrayList<Spoof> spoofs;
+	Iterator<Spoof> currentSpoof;
+	Spoof spoof;
 	
 	Dialog currentDialog;
 	
@@ -44,10 +52,17 @@ public class MultiSpoofDialogRunner extends Activity implements OnExtraDialogDon
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		spoofs = (ArrayList<SquidScriptSpoof>) getIntent().getSerializableExtra(SPOOF_LIST);
+		spoofs = (ArrayList<Spoof>) getIntent().getSerializableExtra(SPOOF_LIST);
 		currentSpoof = spoofs.iterator();
 		
 		processNextSpoof(false);
+		
+		// Google analytics
+		Tracker t = ((App)getApplication()).getTracker();
+		if(t != null) {
+			t.setScreenName(getClass().getCanonicalName());
+			t.send(new HitBuilders.AppViewBuilder().build());
+		}
 	}
 	
 	private static final int ITERATED_ACTIVITY_ID = 1;

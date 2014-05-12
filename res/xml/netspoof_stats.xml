@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="ga_sessionTimeout">300</integer>
+    <bool name="ga_autoActivityTracking">true</bool>
+    <screenName name="uk.digitalsquid.netspoofer.NetSpoof">
+        Network Spoofer home screen
+    </screenName>
+    <screenName name="uk.digitalsquid.netspoofer.About">
+        About page
+    </screenName>
+    <screenName name="uk.digitalsquid.netspoofer.MultiSpoofDialogRunner">
+        Multi spoof dialog runner
+    </screenName>
+    <screenName name="uk.digitalsquid.netspoofer.RouterSelector">
+        Router selector
+    </screenName>
+    <screenName name="uk.digitalsquid.netspoofer.SpoofRunning">
+        Spoof running screen
+    </screenName>
+    <screenName name="uk.digitalsquid.netspoofer.SpoofSelector">
+        Spoof selector
+    </screenName>
+    <screenName name="uk.digitalsquid.netspoofer.VictimSelector">
+        Victim selector
+    </screenName>
+    <string name="ga_trackingId">UA-46867807-4</string>
+</resources>

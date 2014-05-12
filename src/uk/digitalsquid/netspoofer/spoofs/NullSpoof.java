@@ -2,7 +2,7 @@
  * This file is part of Network Spoofer for Android.
  * Network Spoofer lets you change websites on other people’s computers
  * from an Android phone.
- * Copyright (C) 2011 Will Shackleton
+ * Copyright (C) 2014 Will Shackleton <will@digitalsquid.co.uk>
  *
  * Network Spoofer is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,45 +21,41 @@
 
 package uk.digitalsquid.netspoofer.spoofs;
 
+import uk.digitalsquid.netspoofer.proxy.HttpRequest;
+import uk.digitalsquid.netspoofer.proxy.HttpResponse;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 
-public class SquidScriptSpoof extends Spoof {
-	private static final long serialVersionUID = 52887789907180627L;
-	
-	private final String scriptName;
-	
-	public SquidScriptSpoof(String title, String description, String scriptName) {
-		super(title, description);
-		this.scriptName = scriptName;
+public class NullSpoof extends Spoof {
+
+	private static final long serialVersionUID = 3975389786995524404L;
+
+	public NullSpoof() {
+		super("Man-in-the-middle", "Redirect traffic but don't change anything");
 	}
 
 	@Override
-	public String getSpoofCmd(String victim, String router) {
-		if(victim == null) victim = "all";
-		return String.format("spoof %s %s 2 %s", victim, router, scriptName);
-	}
-
-	@Override
-	public String getStopCmd() {
-		return "\n";
-	}
-
-	@Override
-	public Dialog displayExtraDialog(Context context, OnExtraDialogDoneListener onDone) {
+	public Dialog displayExtraDialog(Context context,
+			OnExtraDialogDoneListener onDone) {
 		return null;
 	}
+
 	@Override
 	public Intent activityForResult(Context context) {
 		return null;
 	}
+
 	@Override
 	public boolean activityFinished(Context context, Intent result) {
 		return false;
 	}
 
-	public String getScriptName() {
-		return scriptName;
+	@Override
+	public void modifyRequest(HttpRequest request) {
+	}
+
+	@Override
+	public void modifyResponse(HttpResponse response, HttpRequest request) {
 	}
 }

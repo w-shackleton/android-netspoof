@@ -2,7 +2,7 @@
  * This file is part of Network Spoofer for Android.
  * Network Spoofer lets you change websites on other people’s computers
  * from an Android phone.
- * Copyright (C) 2011 Will Shackleton
+ * Copyright (C) 2014 Will Shackleton <will@digitalsquid.co.uk>
  *
  * Network Spoofer is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,6 @@ import uk.digitalsquid.netspoofer.misc.CheckedLinearLayout;
 import uk.digitalsquid.netspoofer.servicestatus.SpoofList;
 import uk.digitalsquid.netspoofer.spoofs.Spoof;
 import uk.digitalsquid.netspoofer.spoofs.Spoof.OnExtraDialogDoneListener;
-import uk.digitalsquid.netspoofer.spoofs.SquidScriptSpoof;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog.Builder;
@@ -63,9 +62,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
 /**
  * Shows a list of possible spoofs, either a single one or a multi choice.
- * @author william
+ * @author Will Shackleton <will@digitalsquid.co.uk>
  *
  */
 public class SpoofSelector extends Activity implements OnClickListener, OnItemClickListener, LogConf {
@@ -107,6 +109,13 @@ public class SpoofSelector extends Activity implements OnClickListener, OnItemCl
 	    statusFilter.addAction(NetSpoofService.INTENT_STATUSUPDATE);
 	    statusFilter.addAction(NetSpoofService.INTENT_SPOOFLIST);
 		registerReceiver(statusReceiver, statusFilter);
+		
+		// Google analytics
+		Tracker t = ((App)getApplication()).getTracker();
+		if(t != null) {
+			t.setScreenName(getClass().getCanonicalName());
+			t.send(new HitBuilders.AppViewBuilder().build());
+		}
 	}
 	@Override
 	public void onDestroy() {
@@ -189,9 +198,7 @@ public class SpoofSelector extends Activity implements OnClickListener, OnItemCl
 				if(multiChoice) {
 					multiSpoofList = new ArrayList<Spoof>();
 					for(Spoof s : spoofs.getSpoofs()) {
-						if(s instanceof SquidScriptSpoof) {
-							multiSpoofList.add(s);
-						}
+						multiSpoofList.add(s);
 					}
 					Collections.sort(multiSpoofList);
 					spoofList.setAdapter(new ArrayAdapter<Spoof>(SpoofSelector.this, android.R.layout.simple_list_item_multiple_choice, multiSpoofList));
@@ -289,9 +296,7 @@ public class SpoofSelector extends Activity implements OnClickListener, OnItemCl
 				// Remove non squid spoofs
 				this.spoofs = new LinkedList<Spoof>();
 				for(Spoof spoof : spoofs) {
-					if(spoof instanceof SquidScriptSpoof) {
-						this.spoofs.add(spoof);
-					}
+					this.spoofs.add(spoof);
 				}
 			}
 			notifyDataSetChanged();

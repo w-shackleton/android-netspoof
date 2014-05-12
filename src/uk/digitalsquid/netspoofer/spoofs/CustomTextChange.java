@@ -2,7 +2,7 @@
  * This file is part of Network Spoofer for Android.
  * Network Spoofer lets you change websites on other people’s computers
  * from an Android phone.
- * Copyright (C) 2011 Will Shackleton
+ * Copyright (C) 2014 Will Shackleton <will@digitalsquid.co.uk>
  *
  * Network Spoofer is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,9 @@ package uk.digitalsquid.netspoofer.spoofs;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+
 import uk.digitalsquid.netspoofer.R;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -37,14 +40,15 @@ import android.widget.TextView;
 
 /**
  * A custom version of the Google spoof which allows the user to enter their own google search query.
- * @author william
+ * @author Will Shackleton <will@digitalsquid.co.uk>
  *
  */
-public class CustomTextChange extends SquidScriptSpoof {
+public class CustomTextChange extends HtmlEditorSpoof {
 	private static final long serialVersionUID = 8490503138296852028L;
 
 	public CustomTextChange() {
-		super("Text change", "Change all text on all websites", "textchange.sh");
+		// TODO: Localise
+		super("Text change", "Change all text on all websites");
 	}
 	
 	private final Map<String, String> changeValues = new HashMap<String, String>(8);
@@ -132,5 +136,12 @@ public class CustomTextChange extends SquidScriptSpoof {
 	@Override
 	public Map<String, String> getCustomEnv() {
 		return changeValues;
+	}
+
+	@Override
+	protected void modifyDocument(Document document, Element body) {
+		if(body != null) {
+			
+		}
 	}
 }

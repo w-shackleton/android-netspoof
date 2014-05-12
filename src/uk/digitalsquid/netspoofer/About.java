@@ -2,7 +2,7 @@
  * This file is part of Network Spoofer for Android.
  * Network Spoofer lets you change websites on other people’s computers
  * from an Android phone.
- * Copyright (C) 2011 Will Shackleton
+ * Copyright (C) 2014 Will Shackleton <will@digitalsquid.co.uk>
  *
  * Network Spoofer is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
 public class About extends Activity implements OnClickListener {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -36,10 +39,14 @@ public class About extends Activity implements OnClickListener {
 		
 		findViewById(R.id.website).setOnClickListener(this);
 		findViewById(R.id.devsite).setOnClickListener(this);
-		findViewById(R.id.contactDev).setOnClickListener(this);
 		findViewById(R.id.reportBug).setOnClickListener(this);
-		findViewById(R.id.udternet).setOnClickListener(this);
-		findViewById(R.id.squidscripts).setOnClickListener(this);
+		
+		// Google analytics
+		Tracker t = ((App)getApplication()).getTracker();
+		if(t != null) {
+			t.setScreenName(getClass().getCanonicalName());
+			t.send(new HitBuilders.AppViewBuilder().build());
+		}
 	}
 
 	@Override
@@ -54,20 +61,8 @@ public class About extends Activity implements OnClickListener {
 			intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://digitalsquid.co.uk/"));
 			startActivity(intent);
 			break;
-		case R.id.contactDev:
-			intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://digitalsquid.co.uk/contact"));
-			startActivity(intent);
-			break;
 		case R.id.reportBug:
-			intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://bugs.launchpad.net/android-netspoof"));
-			startActivity(intent);
-			break;
-		case R.id.udternet:
-			intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.ex-parrot.com/pete/upside-down-ternet.html"));
-			startActivity(intent);
-			break;
-		case R.id.squidscripts:
-			intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://g0tmi1k.blogspot.com/2011/04/video-playing-with-traffic-squid.html"));
+			intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/w-shackleton/android-netspoof/issues/new"));
 			startActivity(intent);
 			break;
 		}

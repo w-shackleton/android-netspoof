@@ -2,7 +2,7 @@
  * This file is part of Network Spoofer for Android.
  * Network Spoofer lets you change websites on other people’s computers
  * from an Android phone.
- * Copyright (C) 2011 Will Shackleton
+ * Copyright (C) 2014 Will Shackleton <will@digitalsquid.co.uk>
  *
  * Network Spoofer is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +40,7 @@ public final class FileFinder implements LogConf {
 	
 	public static String SU = "";
 	public static String BUSYBOX = "";
+	public static String IPTABLES = "";
 	
 	/**
 	 * The system's version of BB, if it exists.
@@ -47,6 +48,7 @@ public final class FileFinder implements LogConf {
 	public static String SYSTEM_BUSYBOX = "";
 	
 	private static final String[] BB_PATHS = { "/system/bin/busybox", "/system/xbin/busybox", "/system/sbin/busybox", "/vendor/bin/busybox", "busybox" };
+	private static final String[] IPTABLES_PATHS = { "/system/bin/iptables", "/system/xbin/iptables", "/system/sbin/iptables", "/vendor/bin/iptables", "iptables" };
 	private static final String[] SU_PATHS = { "/system/bin/su", "/system/xbin/su", "/system/sbin/su", "/vendor/bin/su", "su" };
 	
 	/**
@@ -70,6 +72,28 @@ public final class FileFinder implements LogConf {
 		}
 		return "";
 	}
+
+	/**
+	 * Searches for the iptables executable
+	 * @return
+	 */
+	private static final String findIptables(boolean useLocal, SharedPreferences prefs) {
+		if(useLocal && prefs != null) {
+			if(prefs.getBoolean("builtiniptables", true)) {
+				Log.i(TAG, "Using local copy of iptables");
+				return FileInstaller.getScriptPath(context, "iptables");
+			}
+			String customPath = prefs.getString("pathToIptables", "");
+			if(!customPath.equals("") && new File(customPath).exists()) return customPath;
+		}
+		for(String bb : IPTABLES_PATHS) {
+			if(new File(bb).exists()) {
+				return bb;
+			}
+		}
+		return "";
+	}
+	
 	
 	/**
 	 * Searches for the su executable
@@ -115,6 +139,12 @@ public final class FileFinder implements LogConf {
 		if(SU.equals("")) {
 			throw new FileNotFoundException("su");
 		}
+		
+		IPTABLES = findIptables(true, prefs);
+		if(IPTABLES.equals("")) {
+			throw new FileNotFoundException("iptables");
+		}
+
 		try {
 			checkBBInstalledFunctions();
 		} catch (FileNotFoundException e) { // If fails with this BB, try system BB.
@@ -136,11 +166,6 @@ public final class FileFinder implements LogConf {
 			e.printStackTrace();
 		}
 		String requiredApplets[] = {
-				"chroot",
-				"losetup",
-				"mount",
-				"mkdir",
-				"mknod",
 				"cp",
 		};
 		boolean foundApplets[] = new boolean[requiredApplets.length];

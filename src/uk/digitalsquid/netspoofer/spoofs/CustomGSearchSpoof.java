@@ -2,7 +2,7 @@
  * This file is part of Network Spoofer for Android.
  * Network Spoofer lets you change websites on other people’s computers
  * from an Android phone.
- * Copyright (C) 2011 Will Shackleton
+ * Copyright (C) 2014 Will Shackleton <will@digitalsquid.co.uk>
  *
  * Network Spoofer is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,30 +21,31 @@
 
 package uk.digitalsquid.netspoofer.spoofs;
 
-import java.util.Map;
-
+import uk.digitalsquid.netspoofer.proxy.HttpRequest;
+import uk.digitalsquid.netspoofer.proxy.HttpResponse;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.widget.EditText;
 
 /**
  * A custom version of the Google spoof which allows the user to enter their own google search query.
- * @author william
+ * @author Will Shackleton <will@digitalsquid.co.uk>
  *
  */
-public class CustomGSearchSpoof extends SquidScriptSpoof {
+public class CustomGSearchSpoof extends Spoof {
 	private static final long serialVersionUID = 8490503138296852028L;
 
 	public CustomGSearchSpoof() {
-		super("Custom Google search change", "Change the text in google searches", "googlemod.sh");
+		super("Custom Google search change", "Change the text in google searches");
 	}
 	
-	private String customFilter;
+	private String customFilter = "% in my pants";
 	
 	@Override
 	public Dialog displayExtraDialog(final Context context, final OnExtraDialogDoneListener onDone) {
@@ -69,11 +70,21 @@ public class CustomGSearchSpoof extends SquidScriptSpoof {
 
 		return alert.create();
 	}
-	
+
 	@Override
-	public Map<String, String> getCustomEnv() {
-		Map<String, String> ret = super.getCustomEnv();
-		ret.put("GSEARCHSTRING", customFilter);
-		return ret;
+	public void modifyRequest(HttpRequest request) {
+		if(request.getHost().contains(".google."));
+     	Uri uri = request.getUri();
+
+		String userQuery = uri.getQueryParameter("q");
+		String newQuery = customFilter.replace("%", userQuery).replace(' ', '+');
+
+     	Uri.Builder builder = uri.buildUpon();
+     	builder.appendQueryParameter("q", newQuery);
+     	request.setUri(builder.build());
+	}
+
+	@Override
+	public void modifyResponse(HttpResponse response, HttpRequest request) {
 	}
 }
