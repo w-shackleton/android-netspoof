@@ -47,7 +47,7 @@ public class ContentChange extends HtmlEditorSpoof implements LogConf {
 		}
 	}
 
-	private final int mode;
+	protected final int mode;
 	
 	private final String js;
 
@@ -73,10 +73,23 @@ public class ContentChange extends HtmlEditorSpoof implements LogConf {
 			break;
 		}
 	}
+	
+	/**
+	 * If using a custom mode it MUST NOT collide with existing modes.
+	 * @param title
+	 * @param description
+	 * @param mode
+	 */
+	protected ContentChange(String title, String description, int mode) {
+		super(title, description);
+		js = "";
+		this.mode = mode;
+	}
 
 	@Override
 	protected void modifyDocument(Document document, Element body) {
 		switch(mode) {
+		default: // To allow custom implementations to pass through
 		case MODE_FLIP:
 			modifyElement(body);
 			break;
@@ -102,7 +115,7 @@ public class ContentChange extends HtmlEditorSpoof implements LogConf {
 		}
 	}
 	
-	private void modifyTextNode(TextNode node) {
+	protected void modifyTextNode(TextNode node) {
 		switch(mode) {
 		case MODE_FLIP:
 			String reversed =

@@ -55,4 +55,7 @@
     <string name="spoof_gravity_description">All elements on websites fall to the bottom of the page</string>
     <string name="spoof_delete">Delete random words</string>
     <string name="spoof_delete_description">Words disappear from pages every second</string>
+
+    <string name="spoof_textchange">Change text</string>
+    <string name="spoof_textchange_description">Replace words with others</string>
 </resources>

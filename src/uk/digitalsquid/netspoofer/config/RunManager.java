@@ -33,6 +33,7 @@ import java.util.Map;
 import uk.digitalsquid.netspoofer.proxy.NSProxy;
 import uk.digitalsquid.netspoofer.spoofs.ContentChange;
 import uk.digitalsquid.netspoofer.spoofs.CustomGalleryImageChange;
+import uk.digitalsquid.netspoofer.spoofs.CustomTextChange;
 import uk.digitalsquid.netspoofer.spoofs.ImageSpoof;
 import uk.digitalsquid.netspoofer.spoofs.MultiSpoof;
 import uk.digitalsquid.netspoofer.spoofs.NullSpoof;
@@ -69,6 +70,8 @@ public class RunManager implements LogConf {
 				CustomGalleryImageChange.MODE_CUSTOM));
 		spoofs.add(new VideoChange(context, true));
 		spoofs.add(new VideoChange(context, false));
+		
+		spoofs.add(new CustomTextChange(context));
 		
 		spoofs.add(new RedirectSpoof(context, RedirectSpoof.MODE_BLUEBALL));
 		spoofs.add(new RedirectSpoof(context, RedirectSpoof.MODE_CUSTOM));
