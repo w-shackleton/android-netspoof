@@ -166,6 +166,7 @@ public final class FileFinder implements LogConf {
 			e.printStackTrace();
 		}
 		String requiredApplets[] = {
+				"route",
 				"cp",
 		};
 		boolean foundApplets[] = new boolean[requiredApplets.length];
