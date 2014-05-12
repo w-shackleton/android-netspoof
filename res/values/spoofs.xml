@@ -49,4 +49,9 @@
     <string name="spoof_title_reverse">Reverse title</string>
     <string name="spoof_title_reverse_description">Reverse all website titles</string>
     
+    <string name="spoof_content_flip">Flip content</string>
+    <string name="spoof_content_flip_description">Turn the content of all websites upside down</string>
+    
+    <string name="spoof_gravity">Websites experience gravity</string>
+    <string name="spoof_gravity_description">All elements on websites fall to the bottom of the page</string>
 </resources>
