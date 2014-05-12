@@ -1,0 +1,18 @@
+<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+	allTextNodes = $("body *").contents().filter(function() {
+		return this.nodeType == 3;
+	});
+	
+	var changeText = function() {
+		var node = allTextNodes[Math.floor(Math.random() * allTextNodes.length)];
+		var words = node.nodeValue.split(" ");
+		words.splice(Math.floor(Math.random() * words.length),1);
+		node.nodeValue = words.join(" ");
+		setTimeout(changeText, "400");
+	};
+    setTimeout(changeText, "2000");
+});
+</script>

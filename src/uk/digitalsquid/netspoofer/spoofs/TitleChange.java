@@ -7,6 +7,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import uk.digitalsquid.netspoofer.R;
+import uk.digitalsquid.netspoofer.config.Lists;
 import android.content.Context;
 
 public class TitleChange extends HtmlEditorSpoof {
@@ -52,13 +53,7 @@ public class TitleChange extends HtmlEditorSpoof {
 				Element title = titles.first();
 				String reversed =
 						new StringBuilder(title.text()).reverse().toString();
-				StringBuilder result = new StringBuilder(reversed.length());
-				for(char c : reversed.toCharArray()) {
-					Character ud = upsideDown.get(c);
-					if(ud == null) ud = c;
-					result.append(ud);
-				}
-				title.text(result.toString());
+				title.text(Lists.map(upsideDown, reversed));
 			}
 			break;
 		case MODE_REVERSE:

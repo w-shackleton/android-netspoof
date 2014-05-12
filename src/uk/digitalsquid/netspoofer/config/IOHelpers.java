@@ -27,6 +27,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,12 +41,14 @@ public final class IOHelpers {
 	 * @throws IOException
 	 */
 	public static final String readFileContents(InputStream is) throws IOException {
-		StringBuffer out = new StringBuffer();
-		byte[] b = new byte[256];
-		for (int n; (n = is.read(b)) != -1;) {
-			out.append(new String(b, 0, n));
+		StringWriter out = new StringWriter();
+		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+		String line;
+		while((line = reader.readLine()) != null) {
+			out.append(line);
+			out.append('\n');
 		}
-		is.close();
+		reader.close();
 		return out.toString();
 	}
 	

@@ -24,8 +24,7 @@ package uk.digitalsquid.netspoofer.spoofs;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
+import org.jsoup.nodes.TextNode;
 
 import uk.digitalsquid.netspoofer.R;
 import android.app.AlertDialog;
@@ -43,12 +42,14 @@ import android.widget.TextView;
  * @author Will Shackleton <will@digitalsquid.co.uk>
  *
  */
-public class CustomTextChange extends HtmlEditorSpoof {
+public class CustomTextChange extends ContentChange {
 	private static final long serialVersionUID = 8490503138296852028L;
+	
+	private static final int MODE = 1005;
 
-	public CustomTextChange() {
-		// TODO: Localise
-		super("Text change", "Change all text on all websites");
+	public CustomTextChange(Context context) {
+		super(context.getResources().getString(R.string.spoof_textchange),
+				context.getResources().getString(R.string.spoof_textchange_description), MODE);
 	}
 	
 	private final Map<String, String> changeValues = new HashMap<String, String>(8);
@@ -134,14 +135,19 @@ public class CustomTextChange extends HtmlEditorSpoof {
 	}
 	
 	@Override
-	public Map<String, String> getCustomEnv() {
-		return changeValues;
-	}
-
-	@Override
-	protected void modifyDocument(Document document, Element body) {
-		if(body != null) {
-			
+	protected void modifyTextNode(TextNode node) {
+		super.modifyTextNode(node);
+		switch(mode) {
+		case MODE:
+			String text = node.text();
+			for(int i = 0 ; i < 8; i++) {
+				String from = changeValues.get(String.format("TEXT%dOLD", i));
+				String to = changeValues.get(String.format("TEXT%dNEW", i));
+				if(from != null && to != null)
+					text = text.replace(from, to);
+			}
+			node.text(text);
+			break;
 		}
 	}
 }

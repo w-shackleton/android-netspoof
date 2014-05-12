@@ -166,7 +166,8 @@ public class NSProxy implements LogConf {
 					Log.d(TAG, "Sending request");
 					HttpResponse response = executeRequest(request);
 					Log.d(TAG, "Response received");
-					manipulateResponse(response, request);
+					if(!whitelistRequest(request))
+						manipulateResponse(response, request);
 					Log.d(TAG, "Response manipulated");
 					output.write(String.format("HTTP/1.1 %d %s\r\n",
 							response.getResponseCode(),
@@ -277,5 +278,16 @@ public class NSProxy implements LogConf {
 		String host = request.getHost();
 		if(host.contains(".dropbox.com")) return false;
 		return true;
+	}
+	
+	/**
+	 * Filters out requests that shouldn't be modified.
+	 * @param request
+	 * @return <code>true</code> if the request shouldn't be modified.
+	 */
+	private boolean whitelistRequest(HttpRequest request) {
+		String host = request.getHost();
+		if(host.equals("gravityscript.googlecode.com")) return true;
+		return false;
 	}
 }

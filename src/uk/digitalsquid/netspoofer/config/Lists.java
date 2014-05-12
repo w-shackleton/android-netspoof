@@ -22,6 +22,7 @@
 package uk.digitalsquid.netspoofer.config;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public final class Lists {
 	private Lists() {}
@@ -30,5 +31,15 @@ public final class Lists {
 		ArrayList<T> result = new ArrayList<T>();
 		result.add(x);
 		return result;
+	}
+	
+	public static final String map(Map<Character, Character> map, String in) {
+		StringBuilder result = new StringBuilder(in.length());
+		for(char c : in.toCharArray()) {
+			Character ud = map.get(c);
+			if(ud == null) ud = c;
+			result.append(ud);
+		}
+		return result.toString();
 	}
 }
