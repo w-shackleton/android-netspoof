@@ -78,6 +78,7 @@ public class RunManager implements LogConf {
 
 		spoofs.add(new ContentChange(context, ContentChange.MODE_FLIP));
 		spoofs.add(new ContentChange(context, ContentChange.MODE_GRAVITY));
+		spoofs.add(new ContentChange(context, ContentChange.MODE_DELETE));
 		
 		Collections.sort(spoofs);
 		

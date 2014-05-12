@@ -51,7 +51,8 @@
     
     <string name="spoof_content_flip">Flip content</string>
     <string name="spoof_content_flip_description">Turn the content of all websites upside down</string>
-    
     <string name="spoof_gravity">Websites experience gravity</string>
     <string name="spoof_gravity_description">All elements on websites fall to the bottom of the page</string>
+    <string name="spoof_delete">Delete random words</string>
+    <string name="spoof_delete_description">Words disappear from pages every second</string>
 </resources>
