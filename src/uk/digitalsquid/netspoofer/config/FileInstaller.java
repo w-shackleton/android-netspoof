@@ -74,7 +74,7 @@ public final class FileInstaller implements LogConf {
 	}
 	
 	public static String getScriptPath(Context context, String scriptName) {
-		return context.getFilesDir().getParent() + BIN_DIR + "/" + scriptName;
+		return new File(context.getFilesDir().getParent() + BIN_DIR).getAbsolutePath() + "/" + scriptName;
 	}
 	
 	private String getScriptPath(String scriptName) {

