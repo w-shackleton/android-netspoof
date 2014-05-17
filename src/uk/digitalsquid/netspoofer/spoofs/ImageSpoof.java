@@ -125,7 +125,6 @@ public class ImageSpoof extends Spoof implements LogConf {
 				Log.v(TAG, "Failed to decode image");
 				return; // Failed to decode
 			}
-			Log.v(TAG, "Manipulating image");
 			// Now it's decoded, unset in response to allow GC to work
 			response.clearContent();
 
