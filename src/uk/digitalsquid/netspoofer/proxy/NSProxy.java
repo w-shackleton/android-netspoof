@@ -152,8 +152,6 @@ public class NSProxy implements LogConf {
 							request.getHeader("Content-Length").get(0));
 					request.readAllContent(input, len);
 				}
-				Log.d(TAG, "Connection header parsed:");
-				Log.v(TAG, request.toString());
 				
 				// Filter annoying requests
 				if(!filterRequest(request)) return 1;
@@ -163,12 +161,9 @@ public class NSProxy implements LogConf {
 				
 				// Execute
 				try {
-					Log.d(TAG, "Sending request");
 					HttpResponse response = executeRequest(request);
-					Log.d(TAG, "Response received");
 					if(!whitelistRequest(request))
 						manipulateResponse(response, request);
-					Log.d(TAG, "Response manipulated");
 					output.write(String.format("HTTP/1.1 %d %s\r\n",
 							response.getResponseCode(),
 							response.getResponseMessage()).getBytes());
