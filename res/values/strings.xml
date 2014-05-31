@@ -114,6 +114,8 @@
     <string name="aboutTextRefs">Many thanks to the developer of the \'upside-down-ternet\' (see above link) and the writer of \'playing with traffic\' (also above) for the inspiration for this project.</string>
     <string name="builtinbusybox">Use builtin Busybox</string>
     <string name="builtinbusyboxDesc">Use the version of Busybox distributed with Network Spoofer. Uncheck to use the phone\'s version.</string>
+    <string name="alternateArpspoof">Use alternative arpspoof</string>
+    <string name="alternateArpspoofDesc">If arpspoof isn\'t working, check this box to try a different version and restart the app.</string>
     <string name="selectvideo">Please Select a Youtube Video</string>
     <string name="returntoyt">Return to Youtube</string>
     <string name="customText">Change page text</string>

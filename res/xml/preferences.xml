@@ -26,6 +26,7 @@
         <EditTextPreference android:title="@string/pathToSu" android:key="pathToSu" android:summary="@string/pathToSuDesc"></EditTextPreference>
         <CheckBoxPreference android:defaultValue="true" android:summary="@string/builtinbusyboxDesc" android:key="builtinbusybox" android:title="@string/builtinbusybox"></CheckBoxPreference>
         <EditTextPreference android:key="pathToBB" android:title="@string/pathToBB" android:summary="@string/pathToBBDesc"></EditTextPreference>
+        <CheckBoxPreference android:defaultValue="false" android:summary="@string/alternateArpspoofDesc" android:key="alternatearpspoof" android:title="@string/alternateArpspoof"></CheckBoxPreference>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/automaticOptions">
         <CheckBoxPreference android:title="@string/autoChooseRouter" android:key="autoChooseRouter" android:summary="@string/autoChooseRouterDesc"></CheckBoxPreference>
