@@ -78,6 +78,7 @@
     <string name="ipScanThreads">IP scanners</string>
     <string name="ipScanThreadsDesc">The number of simultaneous threads for scanning the local network - can make the process faster</string>
     <string name="about">About</string>
+    <string name="aboutSplash">About\nTerms\nDonate</string>
     <string name="gotosite">Go to website</string>
     <string name="aboutText1">Network Spoofer lets you change websites on other people’s computers from an Android phone.</string>
     <string name="aboutText2">DISCLAIMER: This application is not to be used for any purposes other than to demonstrate its functions, and must only be used on networks for which you have permission to do so. Any other use is not the responsibility of the developer.\nIn other words, don\'t be stupid, and don\'t direct angry people towards me.</string>

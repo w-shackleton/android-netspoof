@@ -38,7 +38,7 @@ public class About extends Activity implements OnClickListener {
 		setContentView(R.layout.about);
 		
 		findViewById(R.id.website).setOnClickListener(this);
-		findViewById(R.id.devsite).setOnClickListener(this);
+		findViewById(R.id.donate).setOnClickListener(this);
 		findViewById(R.id.reportBug).setOnClickListener(this);
 		
 		// Google analytics
@@ -57,12 +57,12 @@ public class About extends Activity implements OnClickListener {
 			intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://digitalsquid.co.uk/netspoof"));
 			startActivity(intent);
 			break;
-		case R.id.devsite:
-			intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://digitalsquid.co.uk/"));
-			startActivity(intent);
-			break;
 		case R.id.reportBug:
 			intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/w-shackleton/android-netspoof/issues/new"));
+			startActivity(intent);
+			break;
+		case R.id.donate:
+			intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://digitalsquid.co.uk/netspoof/donate"));
 			startActivity(intent);
 			break;
 		}

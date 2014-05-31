@@ -95,6 +95,7 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf, OnUp
 	
 		startButton = (Button) findViewById(R.id.startButton);
 		startButton.setOnClickListener(this);
+		findViewById(R.id.about).setOnClickListener(this);
 		
 		try {
 			updateChecker = new UpdateChecker((App) getApplication(), this);
@@ -148,6 +149,9 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf, OnUp
 		switch(v.getId()) {
 			case R.id.startButton:
 				startActivity(new Intent(this, SpoofSelector.class));
+				break;
+			case R.id.about:
+				startActivity(new Intent(this, About.class));
 				break;
 		}
 	}
