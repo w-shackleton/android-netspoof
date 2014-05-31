@@ -26,6 +26,13 @@
 	    android:gravity="center_horizontal" android:layout_height="wrap_content" android:background="@drawable/bg" android:layout_width="wrap_content" android:layout_gravity="center">
 		<Button android:id="@+id/startButton" android:layout_width="wrap_content" android:text="@string/start" android:layout_height="wrap_content" android:state_enabled="false"></Button>
 
+		<Button
+		    android:id="@+id/about"
+		    style="?android:attr/buttonStyleSmall"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:text="@string/aboutSplash" />
+
 		<TextView android:id="@+id/loading" android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="@string/loading"></TextView>
 	</LinearLayout>
 </ScrollView>
