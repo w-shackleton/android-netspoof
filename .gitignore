@@ -30,7 +30,7 @@ bin/AndroidManifest.xml
 bin/dexedLibs
 bin/jarlist.cache
 
-src/uk/digitalsquid/netspoofer/Config.java
-
-# Android gen/ generated files
-gen/
+# Gradle
+.gradle/
+build/
+local.properties

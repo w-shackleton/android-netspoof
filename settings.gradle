@@ -1,0 +1,2 @@
+include ':androidsupportv4preferencefragment', ':google-play-services_lib', ':jsoup'
+include ':androidnetspoof'
