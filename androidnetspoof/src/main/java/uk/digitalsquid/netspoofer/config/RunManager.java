@@ -146,8 +146,7 @@ public class RunManager implements LogConf {
 			
 			env.put("ARPSPOOF", FileInstaller.getScriptPath(context, "arpspoof"));
 			env.put("IPTABLES", FileFinder.IPTABLES);
-			env.put("BB", FileFinder.BUSYBOX);
-			
+
 			ProcessRunner.writeEnvConfigFile(context, env);
 			
 			// Start proxy

@@ -22,6 +22,7 @@
 package uk.digitalsquid.netspoofer.config;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -32,6 +33,7 @@ import uk.digitalsquid.netspoofer.JNI;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.os.Build;
 import android.util.Log;
 
 public final class FileInstaller implements LogConf {
@@ -72,11 +74,37 @@ public final class FileInstaller implements LogConf {
         out.close();
         is.close();
 	}
+
+    /**
+     * Installs a binary from the assets folder.
+     * @param binaryName
+     */
+    public void installBinary(String binaryName) throws IOException {
+        String path = String.format("binaries/%s/%s", Build.CPU_ABI, binaryName);
+
+        String filename = getScriptPath(binaryName);
+
+        InputStream is = context.getAssets().open(path);
+        File outFile = new File(filename);
+        outFile.createNewFile();
+        Log.d(TAG, String.format("Copying from %s to %s", path, filename));
+        byte buf[] = new byte[1024];
+        int len;
+        OutputStream out = new FileOutputStream(outFile);
+        while((len = is.read(buf)) > 0) {
+            out.write(buf, 0, len);
+        }
+        out.close();
+        is.close();
+
+        // Mark as executable
+        JNI.setExecutable(filename);
+    }
 	
 	public static String getScriptPath(Context context, String scriptName) {
 		return new File(context.getFilesDir().getParent() + BIN_DIR).getAbsolutePath() + "/" + scriptName;
 	}
-	
+
 	private String getScriptPath(String scriptName) {
 		return getScriptPath(context, scriptName);
 	}
