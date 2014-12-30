@@ -116,19 +116,9 @@ public class RunManager implements LogConf {
 			final String spoofParams = String.format("%s %s", victim, router);
 			
 			ArrayList<String> output = new ArrayList<String>();
-			ProcessRunner.runProcess(context, null, output, FileFinder.SU, "-c",
-					FileInstaller.getScriptPath(context, "busybox") +
-					" chmod 755 " + FileInstaller.getScriptPath(context, "spoof"));
-			ProcessRunner.runProcess(context, null, output, FileFinder.SU, "-c",
-					FileInstaller.getScriptPath(context, "busybox") +
-					" chmod 755 " + FileInstaller.getScriptPath(context, "arpspoof"));
-			ProcessRunner.runProcess(context, null, output, FileFinder.SU, "-c",
-					FileInstaller.getScriptPath(context, "busybox") +
-					" chmod 755 " + FileInstaller.getScriptPath(context, "iptables"));
-			
+
 			ProcessBuilder pb = new ProcessBuilder(FileFinder.SU, "-c",
-					FileInstaller.getScriptPath(context, "busybox") + " ash " +
-					FileInstaller.getScriptPath(context, "spoof") + " " + FileInstaller.getScriptPath(context, "config") + " " + 
+					FileInstaller.getScriptPath(context, "spoof") + " " + FileInstaller.getScriptPath(context, "config") + " " +
 					spoofParams); // Pass config script as arg.
 			
 			Log.d(TAG, "Command: " + pb.command());

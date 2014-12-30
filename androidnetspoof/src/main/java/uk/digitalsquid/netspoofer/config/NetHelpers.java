@@ -194,49 +194,6 @@ public final class NetHelpers implements LogConf {
 		}
 		return new GatewayData(InetAddress.getByName(gateway), subnet);
 	}
-	
-	public static final ArrayList<RouteEntry> getRoutes() throws UnknownHostException {
-		try { FileFinder.initialise(); } catch (FileNotFoundException e1) { }
-		
-		List<String> routeArgs = new ArrayList<String>();
-		// If not using BB, don't add it.
-		if(!FileFinder.BUSYBOX.equals("")) routeArgs.add(FileFinder.BUSYBOX);
-		routeArgs.add("route");
-		routeArgs.add("-n");
-		
-		ArrayList<RouteEntry> routes = new ArrayList<NetHelpers.RouteEntry>();
-		try {
-			// Run route -n, get lines
-			List<String> routeTable = IOHelpers.runProcessOutputToLines(routeArgs);
-			
-			int linePosition = 0; // Used to ignore the first 2 lines
-			for(String line : routeTable) {
-				if(linePosition++ < 2) continue;
-				String line2 = line.replaceAll("\\s+", " "); // Single space only between each part
-				Log.v(TAG, "Parsing routing line " + line2);
-				StringTokenizer parts = new StringTokenizer(line2, " ");
-				if(parts.countTokens() < 8) { // Should be 8 parts
-					Log.w(TAG, "Found incorrectly formatted route line!");
-					continue;
-				}
-				
-				RouteEntry entry = new RouteEntry();
-				entry.setDestination(parts.nextToken());
-				entry.setGateway(parts.nextToken());
-				entry.setGenmask(parts.nextToken());
-				parts.nextToken(); // Unused parts
-				parts.nextToken();
-				parts.nextToken();
-				entry.setIface(parts.nextToken());
-				routes.add(entry);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new UnknownHostException("Error executing 'route' command.");
-		}
-		
-		return routes;
-	}
 
     public static final ArrayList<RouteEntry> parseRoutes() {
         try {

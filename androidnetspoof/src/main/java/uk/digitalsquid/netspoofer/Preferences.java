@@ -71,12 +71,6 @@ public class Preferences extends FragmentActivity {
 			prefs.registerOnSharedPreferenceChangeListener(this);
 			
 			findPreference("noadverts").setOnPreferenceChangeListener(this);
-
-			if(prefs.getBoolean("builtinbusybox", true)) { // If builtinBB is true
-				findPreference("pathToBB").setEnabled(false);
-			} else {
-				findPreference("pathToBB").setEnabled(true);
-			}
 		}
 
 		@Override
@@ -87,21 +81,6 @@ public class Preferences extends FragmentActivity {
 
 		@Override
 		public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-			if(key.equals("builtinbusybox")) {
-				if(prefs.getBoolean(key, true)) { // If builtinBB is true
-					findPreference("pathToBB").setEnabled(false);
-				} else {
-					findPreference("pathToBB").setEnabled(true);
-				}
-			}
-
-			if(key.equals("builtinbusybox") || key.equals("pathToBB")) {
-				try {
-					FileFinder.loadPaths();
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-				}
-			}
 			if(key.equals("noadverts")) {
 				CheckBoxPreference noAdverts =
 						(CheckBoxPreference) findPreference("noadverts");
