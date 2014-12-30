@@ -21,7 +21,6 @@
  * -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="uk.digitalsquid.netspoofer"
     android:versionCode="202"
     android:versionName="2.0.2">
@@ -33,7 +32,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_SUPERUSER" />
 
-    <application android:icon="@drawable/icon" android:label="@string/app_name" android:name="App" android:allowBackup="true" tools:replace="android:icon">
+    <application android:icon="@drawable/icon" android:label="@string/app_name" android:name="App" android:allowBackup="true">
         <activity android:name=".NetSpoof"
                   android:label="@string/app_name" android:screenOrientation="portrait">
             <intent-filter>
