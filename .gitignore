@@ -34,3 +34,6 @@ bin/jarlist.cache
 .gradle/
 build/
 local.properties
+
+# gedit
+*~
