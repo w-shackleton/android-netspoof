@@ -354,11 +354,11 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf, OnUp
 				FileInstaller fi = new FileInstaller(getBaseContext());
 				
 				fi.installScript("busybox", R.raw.busybox);
-				
-				fi.installScript("arpspoof", R.raw.arpspoof);
 				fi.installScript("iptables", R.raw.iptables);
 				fi.installScript("spoof", R.raw.spoof);
-				
+
+                fi.installBinary("arpspoof");
+
 				// Remove old debimg file
 				if(getExternalFilesDir(null) != null) {
 					File imgFolder = new File(
