@@ -21,16 +21,6 @@
 
 package uk.digitalsquid.netspoofer;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
-import uk.digitalsquid.netspoofer.UpdateChecker.OnUpdateListener;
-import uk.digitalsquid.netspoofer.UpdateChecker.UpdateInfo;
-import uk.digitalsquid.netspoofer.config.FileFinder;
-import uk.digitalsquid.netspoofer.config.FileInstaller;
-import uk.digitalsquid.netspoofer.config.LogConf;
-import uk.digitalsquid.netspoofer.misc.AsyncTaskHelper;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -57,6 +47,17 @@ import android.widget.Button;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import uk.digitalsquid.netspoofer.UpdateChecker.OnUpdateListener;
+import uk.digitalsquid.netspoofer.UpdateChecker.UpdateInfo;
+import uk.digitalsquid.netspoofer.config.FileFinder;
+import uk.digitalsquid.netspoofer.config.FileInstaller;
+import uk.digitalsquid.netspoofer.config.LogConf;
+import uk.digitalsquid.netspoofer.misc.AsyncTaskHelper;
 
 public class NetSpoof extends Activity implements OnClickListener, LogConf, OnUpdateListener {
 	/**
