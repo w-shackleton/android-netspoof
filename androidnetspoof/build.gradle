@@ -16,7 +16,6 @@ android {
 
     buildTypes {
         release {
-            runProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
@@ -24,9 +23,7 @@ android {
 
 dependencies {
     compile project(':androidsupportv4preferencefragment')
-    compile project(':jsoup')
-    compile project(':google-play-services_lib')
+    compile 'org.jsoup:jsoup:1.8.1'
     compile 'com.android.support:support-v4:19.1.0'
-    // TODO: Switch back when internet access
-    // compile 'com.google.android.gms:play-services:+'
+    compile 'com.google.android.gms:play-services:+'
 }

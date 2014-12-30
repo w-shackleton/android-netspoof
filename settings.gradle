@@ -1,2 +1,2 @@
-include ':androidsupportv4preferencefragment', ':google-play-services_lib', ':jsoup'
+include ':androidsupportv4preferencefragment'
 include ':androidnetspoof'
