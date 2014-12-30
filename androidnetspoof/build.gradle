@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "uk.digitalsquid.netspoofer"
-        minSdkVersion 15
+        minSdkVersion 10
         targetSdkVersion 19
 
         ndk {
