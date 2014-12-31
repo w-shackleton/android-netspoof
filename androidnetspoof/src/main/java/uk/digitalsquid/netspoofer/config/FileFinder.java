@@ -39,40 +39,11 @@ public final class FileFinder implements LogConf {
 	private static Context context;
 	
 	public static String SU = "";
-	public static String BUSYBOX = "";
 	public static String IPTABLES = "";
-	
-	/**
-	 * The system's version of BB, if it exists.
-	 */
-	public static String SYSTEM_BUSYBOX = "";
-	
-	private static final String[] BB_PATHS = { "/system/bin/busybox", "/system/xbin/busybox", "/system/sbin/busybox", "/vendor/bin/busybox", "busybox" };
+
 	private static final String[] IPTABLES_PATHS = { "/system/bin/iptables", "/system/xbin/iptables", "/system/sbin/iptables", "/vendor/bin/iptables", "iptables" };
 	private static final String[] SU_PATHS = { "/system/bin/su", "/system/xbin/su", "/system/sbin/su", "/vendor/bin/su", "su" };
 	
-	/**
-	 * Searches for the busybox executable. Uses the builtin one if user wants. This is also the default behaviour.
-	 * @return
-	 */
-	private static final String findBusybox(boolean useLocal, SharedPreferences prefs) {
-		if(useLocal && prefs != null) {
-			if(prefs.getBoolean("builtinbusybox", true)) {
-				String myBB = FileInstaller.getScriptPath(context, "busybox");
-				Log.i(TAG, "Using local copy of BB");
-				return myBB; // Found our copy of BB
-			}
-			String customPath = prefs.getString("pathToBB", "");
-			if(!customPath.equals("") && new File(customPath).exists()) return customPath;
-		}
-		for(String bb : BB_PATHS) {
-			if(new File(bb).exists()) {
-				return bb;
-			}
-		}
-		return "";
-	}
-
 	/**
 	 * Searches for the iptables executable
 	 * @return
@@ -130,11 +101,6 @@ public final class FileFinder implements LogConf {
 		if(context != null) {
 			prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		}
-		BUSYBOX = findBusybox(true, prefs);
-		SYSTEM_BUSYBOX = findBusybox(false, prefs);
-		if(BUSYBOX.equals("")) {
-			throw new FileNotFoundException("busybox");
-		}
 		SU = findSu(prefs);
 		if(SU.equals("")) {
 			throw new FileNotFoundException("su");
@@ -144,47 +110,8 @@ public final class FileFinder implements LogConf {
 		if(IPTABLES.equals("")) {
 			throw new FileNotFoundException("iptables");
 		}
+	}
 
-		try {
-			checkBBInstalledFunctions();
-		} catch (FileNotFoundException e) { // If fails with this BB, try system BB.
-			BUSYBOX = SYSTEM_BUSYBOX;
-			checkBBInstalledFunctions(); // Let this one throw error
-		}
-	}
-	
-	/**
-	 * Checks that the necessary BB commands are available
-	 * @throws FileNotFoundException 
-	 */
-	static final void checkBBInstalledFunctions() throws FileNotFoundException {
-		List<String> result = new LinkedList<String>();
-		try {
-			ProcessRunner.runProcess(context, null, result, BUSYBOX);
-		} catch (IOException e) {
-			Log.e(TAG, "Failed to check BB programs, probably as BB doesn't exist?");
-			e.printStackTrace();
-		}
-		String requiredApplets[] = {
-				"route",
-				"cp",
-		};
-		boolean foundApplets[] = new boolean[requiredApplets.length];
-		for(String line : result) {
-			int i = 0;
-			for(String applet : requiredApplets) {
-				if(line.contains(applet))
-					foundApplets[i] = true;
-				i++;
-			}
-		}
-		int i = 0;
-		for(boolean found : foundApplets) {
-			if(!found) throw new FileNotFoundException("bb:"+requiredApplets[i]);
-			i++;
-		}
-	}
-	
 	/**
 	 * Initialise that doesn't search custom paths. Not recommended.
 	 * @throws FileNotFoundException
@@ -194,10 +121,7 @@ public final class FileFinder implements LogConf {
 			return;
 		}
 		initialised = true;
-		BUSYBOX = findBusybox(true, null);
-		if(BUSYBOX.equals("")) {
-			throw new FileNotFoundException("busybox");
-		}
+
 		SU = findSu(null);
 		if(SU.equals("")) {
 			throw new FileNotFoundException("su");

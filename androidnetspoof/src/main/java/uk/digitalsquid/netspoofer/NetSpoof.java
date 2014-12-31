@@ -21,16 +21,6 @@
 
 package uk.digitalsquid.netspoofer;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
-import uk.digitalsquid.netspoofer.UpdateChecker.OnUpdateListener;
-import uk.digitalsquid.netspoofer.UpdateChecker.UpdateInfo;
-import uk.digitalsquid.netspoofer.config.FileFinder;
-import uk.digitalsquid.netspoofer.config.FileInstaller;
-import uk.digitalsquid.netspoofer.config.LogConf;
-import uk.digitalsquid.netspoofer.misc.AsyncTaskHelper;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -58,6 +48,17 @@ import android.widget.Button;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import uk.digitalsquid.netspoofer.UpdateChecker.OnUpdateListener;
+import uk.digitalsquid.netspoofer.UpdateChecker.UpdateInfo;
+import uk.digitalsquid.netspoofer.config.FileFinder;
+import uk.digitalsquid.netspoofer.config.FileInstaller;
+import uk.digitalsquid.netspoofer.config.LogConf;
+import uk.digitalsquid.netspoofer.misc.AsyncTaskHelper;
+
 public class NetSpoof extends Activity implements OnClickListener, LogConf, OnUpdateListener {
 	/**
 	 * A dialog to tell the user to mount their SD card.
@@ -68,11 +69,6 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf, OnUp
 	 */
 	static final int DIALOG_W_SD = 2;
 	static final int DIALOG_ROOT = 3;
-	static final int DIALOG_BB = 4;
-	/**
-	 * BB found, no chroot.
-	 */
-	static final int DIALOG_BB_2 = 6;
 	static final int DIALOG_ABOUT = 5;
 	static final int DIALOG_AGREEMENT = 7;
 	static final int DIALOG_CHANGELOG = 8;
@@ -194,24 +190,6 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf, OnUp
 					});
 				dialog = builder.create();
 				break;
-			case DIALOG_BB:
-				builder = new AlertDialog.Builder(this);
-				builder.setMessage("Please install Busybox (either manually or from the Android Market) before using this application. Network Spoofer will try to run, but may be unstable as Busybox is missing.")
-					.setCancelable(false)
-					.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int id) { }
-					});
-				dialog = builder.create();
-			case DIALOG_BB_2:
-				builder = new AlertDialog.Builder(this);
-				builder.setTitle("So close..");
-				builder.setMessage("You have Busybox installed, but it doesn't appear to have a required component '" + missingBBComponent + "'. Please update Busybox or try a different version of Busybox. Network Spoofer will most likely not work until you have updated Busybox")
-					.setCancelable(false)
-					.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int id) { }
-					});
-				dialog = builder.create();
-				break;
 			case DIALOG_AGREEMENT:
 				builder = new AlertDialog.Builder(this);
 				view = getLayoutInflater().inflate(R.layout.agreement, null);
@@ -271,8 +249,6 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf, OnUp
 		return dialog;
 	}
 	
-	private String missingBBComponent = "?";
-	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 	    MenuInflater inflater = getMenuInflater();
@@ -300,7 +276,7 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf, OnUp
 		protected Void doInBackground(Void... params) {
 			if(prefs == null) prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 			
-			// Install scripts & BB
+			// Install scripts
 			installFiles();
 	
 			// Find files etc.
@@ -310,11 +286,6 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf, OnUp
 				e.printStackTrace();
 				if(e.getMessage().equals("su")) {
 					publishProgress(DIALOG_ROOT);
-				} else if(e.getMessage().equals("busybox")) {
-					publishProgress(DIALOG_BB);
-				} else if(e.getMessage().startsWith("bb:")) {
-					missingBBComponent = e.getMessage().substring(2); // 2 = end of bb:
-					publishProgress(DIALOG_BB_2);
 				}
 			}
 
@@ -353,7 +324,6 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf, OnUp
 			try {
 				FileInstaller fi = new FileInstaller(getBaseContext());
 				
-				fi.installScript("busybox", R.raw.busybox);
 				fi.installScript("iptables", R.raw.iptables);
 				fi.installScript("spoof", R.raw.spoof);
 

@@ -21,7 +21,12 @@
 
 package uk.digitalsquid.netspoofer.config;
 
+import android.util.Log;
+import android.widget.MultiAutoCompleteTextView;
+
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.HttpURLConnection;
@@ -34,8 +39,6 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
-
-import android.util.Log;
 
 public final class NetHelpers implements LogConf {
 	private NetHelpers() {}
@@ -77,6 +80,19 @@ public final class NetHelpers implements LogConf {
 				(byte) ((ip >> 0 ) & 0xFF),
 						});
 	}
+
+    public static final String inetFromHex(String hex) {
+        if(hex.length() == 8) {
+            String[] s4 = new String[4];
+            s4[3] = String.valueOf(Integer.parseInt(hex.substring(0, 2), 16));
+            s4[2] = String.valueOf(Integer.parseInt(hex.substring(2, 4), 16));
+            s4[1] = String.valueOf(Integer.parseInt(hex.substring(4, 6), 16));
+            s4[0] = String.valueOf(Integer.parseInt(hex.substring(6, 8), 16));
+
+            return s4[0] + "." + s4[1] + "." + s4[2] + "." + s4[3];
+        }
+        return null;
+    }
 	
 	/**
 	 * 
@@ -116,14 +132,13 @@ public final class NetHelpers implements LogConf {
 	 * @author Will Shackleton <will@digitalsquid.co.uk>
 	 *
 	 */
-	static final class RouteEntry implements Serializable {
+	public static final class RouteEntry implements Serializable {
 
 		private static final long serialVersionUID = 7930709441175690366L;
 		
 		private String destination;
 		private String gateway;
 		private String genmask;
-		private String flags;
 		private String iface;
 		public void setDestination(String destination) {
 			this.destination = destination;
@@ -142,12 +157,6 @@ public final class NetHelpers implements LogConf {
 		}
 		public String getGenmask() {
 			return genmask;
-		}
-		public void setFlags(String flags) {
-			this.flags = flags;
-		}
-		public String getFlags() {
-			return flags;
 		}
 		public void setIface(String iface) {
 			this.iface = iface;
@@ -171,85 +180,64 @@ public final class NetHelpers implements LogConf {
 		final String ifacename = iface.getDisplayName();
 		Log.d(TAG, "Checking for routes on iface " + ifacename);
 		
-		ArrayList<RouteEntry> routes = getRoutes();
+		ArrayList<RouteEntry> routes = parseRoutes();
 		
 		String gateway = "", subnet = "";
 		for(RouteEntry route : routes) {
 			if(!route.getIface().equalsIgnoreCase(ifacename)) continue; // Ignore routes not on wifi
-			if(route.getFlags().contains("G")) { // This is a route with a gateway
+			if(route.getDestination().equals("0.0.0.0")) {
 				gateway = route.getGateway();
 			}
-			if(route.getFlags().equals("U")) {
+            if(route.getGateway().equals("0.0.0.0")) {
 				subnet = route.getGenmask();
-			}
-		}
-		if(gateway.equals("")) { // Try again
-			Log.i(TAG, "Trying more agressive approach to finding gateway");
-			for(RouteEntry route : routes) {
-				if(!route.getIface().equalsIgnoreCase(ifacename)) continue; // Ignore routes not on wifi
-				if(!route.getGateway().equals("0.0.0.0")) { // Just try the first proper gateway
-					gateway = route.getGateway();
-					break;
-				}
-			}
-		}
-		if(subnet.equals("")) { // Try again
-			Log.i(TAG, "Trying more agressive approach to finding subnet");
-			for(RouteEntry route : routes) {
-				if(!route.getIface().equalsIgnoreCase(ifacename)) continue; // Ignore routes not on wifi
-				if(!route.getGateway().equals("0.0.0.0")) { // Just try the first proper subnet mask
-					subnet = route.getGenmask();
-					break;
-				}
 			}
 		}
 		return new GatewayData(InetAddress.getByName(gateway), subnet);
 	}
-	
-	public static final ArrayList<RouteEntry> getRoutes() throws UnknownHostException {
-		try { FileFinder.initialise(); } catch (FileNotFoundException e1) { }
-		
-		List<String> routeArgs = new ArrayList<String>();
-		// If not using BB, don't add it.
-		if(!FileFinder.BUSYBOX.equals("")) routeArgs.add(FileFinder.BUSYBOX);
-		routeArgs.add("route");
-		routeArgs.add("-n");
-		
-		ArrayList<RouteEntry> routes = new ArrayList<NetHelpers.RouteEntry>();
-		try {
-			// Run route -n, get lines
-			List<String> routeTable = IOHelpers.runProcessOutputToLines(routeArgs);
-			
-			int linePosition = 0; // Used to ignore the first 2 lines
-			for(String line : routeTable) {
-				if(linePosition++ < 2) continue;
-				String line2 = line.replaceAll("\\s+", " "); // Single space only between each part
-				Log.v(TAG, "Parsing routing line " + line2);
-				StringTokenizer parts = new StringTokenizer(line2, " ");
-				if(parts.countTokens() < 8) { // Should be 8 parts
-					Log.w(TAG, "Found incorrectly formatted route line!");
-					continue;
-				}
-				
-				RouteEntry entry = new RouteEntry();
-				entry.setDestination(parts.nextToken());
-				entry.setGateway(parts.nextToken());
-				entry.setGenmask(parts.nextToken());
-				entry.setFlags(parts.nextToken());
-				parts.nextToken(); // Unused parts
-				parts.nextToken();
-				parts.nextToken();
-				entry.setIface(parts.nextToken());
-				routes.add(entry);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new UnknownHostException("Error executing 'route' command.");
-		}
-		
-		return routes;
-	}
-	
+
+    public static final ArrayList<RouteEntry> parseRoutes() {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("/proc/net/route"));
+
+            ArrayList<RouteEntry> result = new ArrayList<RouteEntry>();
+
+            String line;
+            while((line = reader.readLine())!=null) {
+                line = line.trim();
+                StringTokenizer tkz = new StringTokenizer(line, "\t");
+                ArrayList<String> tokens = new ArrayList<String>();
+                while(tkz.hasMoreElements()) {
+                    tokens.add(tkz.nextToken());
+                }
+                // If valid line and line represents a gateway
+                if(tokens.size() >= 8) {
+                    if (tokens.get(0).equalsIgnoreCase("iface")) {
+                        continue;
+                    }
+                    String iface = tokens.get(0);
+                    String destination = inetFromHex(tokens.get(1));
+                    String gateway = inetFromHex(tokens.get(2));
+                    String mask = inetFromHex(tokens.get(7));
+                    if(destination != null && gateway != null && mask != null) {
+                        RouteEntry elem = new RouteEntry();
+                        elem.setGateway(gateway);
+                        elem.setDestination(destination);
+                        elem.setIface(iface);
+                        elem.setGenmask(mask);
+                        result.add(elem);
+                    }
+                }
+            }
+            reader.close();
+            return result;
+        }
+        catch(IOException e)
+        {
+            Log.e(TAG, "Failed to read route info", e);
+            return new ArrayList<RouteEntry>();
+        }
+    }
+
 	/**
 	 * Checks for a file's existence on an HTTP server.
 	 * @param file
