@@ -22,7 +22,6 @@
 package uk.digitalsquid.netspoofer.config;
 
 import android.util.Log;
-import android.widget.MultiAutoCompleteTextView;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -37,7 +36,6 @@ import java.net.SocketException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.StringTokenizer;
 
 public final class NetHelpers implements LogConf {

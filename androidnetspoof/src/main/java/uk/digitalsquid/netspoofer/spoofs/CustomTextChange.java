@@ -21,12 +21,6 @@
 
 package uk.digitalsquid.netspoofer.spoofs;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.jsoup.nodes.TextNode;
-
-import uk.digitalsquid.netspoofer.R;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -36,6 +30,13 @@ import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
+import org.jsoup.nodes.TextNode;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import uk.digitalsquid.netspoofer.R;
 
 /**
  * A custom version of the Google spoof which allows the user to enter their own google search query.

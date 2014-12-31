@@ -21,11 +21,6 @@
 
 package uk.digitalsquid.netspoofer;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import uk.digitalsquid.netspoofer.spoofs.Spoof;
-import uk.digitalsquid.netspoofer.spoofs.Spoof.OnExtraDialogDoneListener;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
@@ -33,6 +28,12 @@ import android.os.Bundle;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import uk.digitalsquid.netspoofer.spoofs.Spoof;
+import uk.digitalsquid.netspoofer.spoofs.Spoof.OnExtraDialogDoneListener;
 
 /**
  * Displays the dialogs and configuration options for multiple spoofs.

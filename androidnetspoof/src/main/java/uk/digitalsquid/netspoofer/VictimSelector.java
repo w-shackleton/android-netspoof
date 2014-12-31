@@ -21,20 +21,6 @@
 
 package uk.digitalsquid.netspoofer;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
-
-import uk.digitalsquid.netspoofer.config.LogConf;
-import uk.digitalsquid.netspoofer.config.NetHelpers;
-import uk.digitalsquid.netspoofer.misc.AsyncTaskHelper;
-import uk.digitalsquid.netspoofer.spoofs.SpoofData;
 import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
@@ -61,6 +47,21 @@ import android.widget.Toast;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+
+import java.io.IOException;
+import java.io.Serializable;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
+
+import uk.digitalsquid.netspoofer.config.LogConf;
+import uk.digitalsquid.netspoofer.config.NetHelpers;
+import uk.digitalsquid.netspoofer.misc.AsyncTaskHelper;
+import uk.digitalsquid.netspoofer.spoofs.SpoofData;
 
 public class VictimSelector extends Activity implements OnClickListener, LogConf {
 	public static final String EXTRA_SPOOFDATA = "uk.digitalsquid.netspoofer.VictimSelector.SPOOFDATA";

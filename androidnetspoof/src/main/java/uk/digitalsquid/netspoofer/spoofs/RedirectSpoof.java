@@ -21,13 +21,6 @@
 
 package uk.digitalsquid.netspoofer.spoofs;
 
-import java.net.UnknownHostException;
-import java.util.Locale;
-
-import uk.digitalsquid.netspoofer.R;
-import uk.digitalsquid.netspoofer.config.LogConf;
-import uk.digitalsquid.netspoofer.proxy.HttpRequest;
-import uk.digitalsquid.netspoofer.proxy.HttpResponse;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -37,6 +30,14 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
+
+import java.net.UnknownHostException;
+import java.util.Locale;
+
+import uk.digitalsquid.netspoofer.R;
+import uk.digitalsquid.netspoofer.config.LogConf;
+import uk.digitalsquid.netspoofer.proxy.HttpRequest;
+import uk.digitalsquid.netspoofer.proxy.HttpResponse;
 
 /**
  * A spoof which redirects a website to another.

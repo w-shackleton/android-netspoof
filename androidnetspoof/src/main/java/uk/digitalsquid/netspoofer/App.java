@@ -1,6 +1,5 @@
 package uk.digitalsquid.netspoofer;
 
-import uk.digitalsquid.netspoofer.config.LogConf;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -8,6 +7,8 @@ import android.util.Log;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
+
+import uk.digitalsquid.netspoofer.config.LogConf;
 
 public class App extends Application implements LogConf{
 	

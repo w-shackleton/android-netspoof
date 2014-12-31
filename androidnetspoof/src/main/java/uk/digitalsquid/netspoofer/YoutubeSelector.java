@@ -21,7 +21,6 @@
 
 package uk.digitalsquid.netspoofer;
 
-import uk.digitalsquid.netspoofer.config.LogConf;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -33,6 +32,8 @@ import android.view.MenuItem;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
+
+import uk.digitalsquid.netspoofer.config.LogConf;
 
 /**
  * <p>Selects a Youtube video. Currently uses the mobile site.</p>

@@ -1,8 +1,11 @@
 package uk.digitalsquid.netspoofer;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.os.AsyncTask;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Log;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -12,14 +15,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
 import uk.digitalsquid.netspoofer.UpdateChecker.UpdateInfo;
 import uk.digitalsquid.netspoofer.config.LogConf;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.os.AsyncTask;
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.util.Log;
 
 public class UpdateChecker extends AsyncTask<Void, Void, UpdateInfo>
                 implements LogConf {

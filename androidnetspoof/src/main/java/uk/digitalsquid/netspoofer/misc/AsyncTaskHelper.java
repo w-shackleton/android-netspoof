@@ -21,13 +21,14 @@
 
 package uk.digitalsquid.netspoofer.misc;
 
+import android.os.AsyncTask;
+import android.util.Log;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.concurrent.Executor;
 
 import uk.digitalsquid.netspoofer.config.LogConf;
-import android.os.AsyncTask;
-import android.util.Log;
 
 /**
  * Provides helper methods for {@link AsyncTask} to do with differing API versions

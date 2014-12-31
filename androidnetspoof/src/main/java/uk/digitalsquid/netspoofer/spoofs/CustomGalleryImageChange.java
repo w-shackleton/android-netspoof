@@ -21,6 +21,13 @@
 
 package uk.digitalsquid.netspoofer.spoofs;
 
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.provider.MediaStore;
+import android.util.Log;
+
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -37,12 +44,6 @@ import uk.digitalsquid.netspoofer.R;
 import uk.digitalsquid.netspoofer.config.LogConf;
 import uk.digitalsquid.netspoofer.proxy.HttpRequest;
 import uk.digitalsquid.netspoofer.proxy.HttpResponse;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.provider.MediaStore;
-import android.util.Log;
 
 /**
  * A custom version of the Google spoof which allows the user to enter their own google search query.

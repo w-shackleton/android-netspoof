@@ -1,19 +1,20 @@
 package uk.digitalsquid.netspoofer.spoofs;
 
-import java.io.IOException;
+import android.content.Context;
+import android.content.res.Resources.NotFoundException;
+import android.util.Log;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
 
+import java.io.IOException;
+
 import uk.digitalsquid.netspoofer.R;
 import uk.digitalsquid.netspoofer.config.IOHelpers;
 import uk.digitalsquid.netspoofer.config.Lists;
 import uk.digitalsquid.netspoofer.config.LogConf;
-import android.content.Context;
-import android.content.res.Resources.NotFoundException;
-import android.util.Log;
 
 public class ContentChange extends HtmlEditorSpoof implements LogConf {
 	

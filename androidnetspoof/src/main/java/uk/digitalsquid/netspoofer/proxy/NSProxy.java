@@ -21,6 +21,11 @@
 
 package uk.digitalsquid.netspoofer.proxy;
 
+import android.annotation.SuppressLint;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.util.Log;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -35,10 +40,6 @@ import java.util.Map.Entry;
 import uk.digitalsquid.netspoofer.config.LogConf;
 import uk.digitalsquid.netspoofer.misc.MagicInputStream;
 import uk.digitalsquid.netspoofer.spoofs.Spoof;
-import android.annotation.SuppressLint;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.util.Log;
 
 public class NSProxy implements LogConf {
 	

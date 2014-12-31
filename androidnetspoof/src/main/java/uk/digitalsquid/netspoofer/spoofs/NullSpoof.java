@@ -21,11 +21,12 @@
 
 package uk.digitalsquid.netspoofer.spoofs;
 
-import uk.digitalsquid.netspoofer.proxy.HttpRequest;
-import uk.digitalsquid.netspoofer.proxy.HttpResponse;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+
+import uk.digitalsquid.netspoofer.proxy.HttpRequest;
+import uk.digitalsquid.netspoofer.proxy.HttpResponse;
 
 public class NullSpoof extends Spoof {
 

@@ -21,8 +21,12 @@
 
 package uk.digitalsquid.netspoofer.config;
 
+import android.content.Context;
+import android.content.res.Resources;
+import android.os.Build;
+import android.util.Log;
+
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -30,11 +34,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import uk.digitalsquid.netspoofer.JNI;
-
-import android.content.Context;
-import android.content.res.Resources;
-import android.os.Build;
-import android.util.Log;
 
 public final class FileInstaller implements LogConf {
 	private static final String BIN_DIR = "/bin";

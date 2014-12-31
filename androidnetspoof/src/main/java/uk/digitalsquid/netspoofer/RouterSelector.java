@@ -21,15 +21,6 @@
 
 package uk.digitalsquid.netspoofer;
 
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.UnknownHostException;
-
-import uk.digitalsquid.netspoofer.config.LogConf;
-import uk.digitalsquid.netspoofer.config.NetHelpers;
-import uk.digitalsquid.netspoofer.config.NetHelpers.GatewayData;
-import uk.digitalsquid.netspoofer.spoofs.Spoof;
-import uk.digitalsquid.netspoofer.spoofs.SpoofData;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -63,6 +54,16 @@ import android.widget.Toast;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.UnknownHostException;
+
+import uk.digitalsquid.netspoofer.config.LogConf;
+import uk.digitalsquid.netspoofer.config.NetHelpers;
+import uk.digitalsquid.netspoofer.config.NetHelpers.GatewayData;
+import uk.digitalsquid.netspoofer.spoofs.Spoof;
+import uk.digitalsquid.netspoofer.spoofs.SpoofData;
 
 public class RouterSelector extends Activity implements OnClickListener, LogConf {
 	public static final String EXTRA_SPOOF = "uk.digitalsquid.netspoofer.RouterSelector.SPOOF";

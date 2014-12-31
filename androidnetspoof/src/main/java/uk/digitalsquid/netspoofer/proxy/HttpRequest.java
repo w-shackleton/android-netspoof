@@ -21,9 +21,9 @@
 
 package uk.digitalsquid.netspoofer.proxy;
 
-import java.util.StringTokenizer;
-
 import android.net.Uri;
+
+import java.util.StringTokenizer;
 
 public class HttpRequest extends HttpMessage {
 	private String method;

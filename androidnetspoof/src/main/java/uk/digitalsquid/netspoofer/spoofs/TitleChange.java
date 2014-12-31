@@ -1,14 +1,15 @@
 package uk.digitalsquid.netspoofer.spoofs;
 
-import java.util.HashMap;
+import android.content.Context;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.util.HashMap;
+
 import uk.digitalsquid.netspoofer.R;
 import uk.digitalsquid.netspoofer.config.Lists;
-import android.content.Context;
 
 public class TitleChange extends HtmlEditorSpoof {
 	

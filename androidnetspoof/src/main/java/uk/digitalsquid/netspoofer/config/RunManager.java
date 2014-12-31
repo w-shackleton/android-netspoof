@@ -21,6 +21,9 @@
 
 package uk.digitalsquid.netspoofer.config;
 
+import android.content.Context;
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -42,8 +45,6 @@ import uk.digitalsquid.netspoofer.spoofs.Spoof;
 import uk.digitalsquid.netspoofer.spoofs.SpoofData;
 import uk.digitalsquid.netspoofer.spoofs.TitleChange;
 import uk.digitalsquid.netspoofer.spoofs.VideoChange;
-import android.content.Context;
-import android.util.Log;
 
 /**
  * Manages the lifecycle of a spoof, including running the iptables and arpspoof.

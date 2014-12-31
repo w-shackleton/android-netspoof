@@ -21,8 +21,6 @@
 
 package uk.digitalsquid.netspoofer.spoofs;
 
-import uk.digitalsquid.netspoofer.proxy.HttpRequest;
-import uk.digitalsquid.netspoofer.proxy.HttpResponse;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -32,6 +30,9 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.widget.EditText;
+
+import uk.digitalsquid.netspoofer.proxy.HttpRequest;
+import uk.digitalsquid.netspoofer.proxy.HttpResponse;
 
 /**
  * A custom version of the Google spoof which allows the user to enter their own google search query.

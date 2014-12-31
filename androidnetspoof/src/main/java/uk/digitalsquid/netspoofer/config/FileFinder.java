@@ -21,16 +21,13 @@
 
 package uk.digitalsquid.netspoofer.config;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
+
+import java.io.File;
+import java.io.FileNotFoundException;
 
 public final class FileFinder implements LogConf {
 	private FileFinder() { }

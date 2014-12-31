@@ -21,12 +21,6 @@
 
 package uk.digitalsquid.netspoofer;
 
-import java.util.ArrayList;
-
-import uk.digitalsquid.netspoofer.NetSpoofService.NetSpoofServiceBinder;
-import uk.digitalsquid.netspoofer.config.LogConf;
-import uk.digitalsquid.netspoofer.servicestatus.NewLogOutput;
-import uk.digitalsquid.netspoofer.spoofs.SpoofData;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -45,6 +39,13 @@ import android.widget.Toast;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+
+import java.util.ArrayList;
+
+import uk.digitalsquid.netspoofer.NetSpoofService.NetSpoofServiceBinder;
+import uk.digitalsquid.netspoofer.config.LogConf;
+import uk.digitalsquid.netspoofer.servicestatus.NewLogOutput;
+import uk.digitalsquid.netspoofer.spoofs.SpoofData;
 
 public class SpoofRunning extends Activity implements OnClickListener, LogConf {
 	public static final String EXTRA_SPOOFDATA = "uk.digitalsquid.netspoofer.SpoofRunning.SPOOFDATA";

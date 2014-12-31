@@ -21,9 +21,6 @@
 
 package uk.digitalsquid.netspoofer;
 
-import java.io.FileNotFoundException;
-
-import uk.digitalsquid.netspoofer.config.FileFinder;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;

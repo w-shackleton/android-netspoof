@@ -21,6 +21,17 @@
 
 package uk.digitalsquid.netspoofer.spoofs;
 
+import android.app.Dialog;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.util.Log;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
@@ -32,16 +43,6 @@ import uk.digitalsquid.netspoofer.config.Lists;
 import uk.digitalsquid.netspoofer.config.LogConf;
 import uk.digitalsquid.netspoofer.proxy.HttpRequest;
 import uk.digitalsquid.netspoofer.proxy.HttpResponse;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.util.Log;
 
 /**
  * A type of spoof that manipulates an image.

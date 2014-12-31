@@ -21,17 +21,6 @@
 
 package uk.digitalsquid.netspoofer;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-
-import uk.digitalsquid.netspoofer.NetSpoofService.NetSpoofServiceBinder;
-import uk.digitalsquid.netspoofer.config.LogConf;
-import uk.digitalsquid.netspoofer.misc.CheckedLinearLayout;
-import uk.digitalsquid.netspoofer.servicestatus.SpoofList;
-import uk.digitalsquid.netspoofer.spoofs.Spoof;
-import uk.digitalsquid.netspoofer.spoofs.Spoof.OnExtraDialogDoneListener;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog.Builder;
@@ -64,6 +53,18 @@ import android.widget.Toast;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
+import uk.digitalsquid.netspoofer.NetSpoofService.NetSpoofServiceBinder;
+import uk.digitalsquid.netspoofer.config.LogConf;
+import uk.digitalsquid.netspoofer.misc.CheckedLinearLayout;
+import uk.digitalsquid.netspoofer.servicestatus.SpoofList;
+import uk.digitalsquid.netspoofer.spoofs.Spoof;
+import uk.digitalsquid.netspoofer.spoofs.Spoof.OnExtraDialogDoneListener;
 
 /**
  * Shows a list of possible spoofs, either a single one or a multi choice.

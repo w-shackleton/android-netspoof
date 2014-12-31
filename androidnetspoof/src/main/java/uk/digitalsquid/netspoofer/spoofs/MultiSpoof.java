@@ -21,6 +21,11 @@
 
 package uk.digitalsquid.netspoofer.spoofs;
 
+import android.app.Dialog;
+import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
+
 import java.util.ArrayList;
 
 import uk.digitalsquid.netspoofer.MultiSpoofDialogRunner;
@@ -28,10 +33,6 @@ import uk.digitalsquid.netspoofer.SpoofSelector;
 import uk.digitalsquid.netspoofer.config.LogConf;
 import uk.digitalsquid.netspoofer.proxy.HttpRequest;
 import uk.digitalsquid.netspoofer.proxy.HttpResponse;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
 
 /**
  * A spoof which runs multiple other spoofs.

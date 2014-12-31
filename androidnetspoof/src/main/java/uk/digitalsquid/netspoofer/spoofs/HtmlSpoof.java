@@ -21,15 +21,15 @@
 
 package uk.digitalsquid.netspoofer.spoofs;
 
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import uk.digitalsquid.netspoofer.proxy.HttpRequest;
 import uk.digitalsquid.netspoofer.proxy.HttpResponse;

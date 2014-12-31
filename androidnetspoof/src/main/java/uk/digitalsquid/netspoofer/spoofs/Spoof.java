@@ -21,6 +21,10 @@
 
 package uk.digitalsquid.netspoofer.spoofs;
 
+import android.app.Dialog;
+import android.content.Context;
+import android.content.Intent;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,9 +33,6 @@ import java.util.Map;
 import uk.digitalsquid.netspoofer.config.Lists;
 import uk.digitalsquid.netspoofer.proxy.HttpRequest;
 import uk.digitalsquid.netspoofer.proxy.HttpResponse;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.Intent;
 
 public abstract class Spoof implements Serializable, Comparable<Spoof> {
 	private static final long serialVersionUID = -3207729013734241941L;

@@ -21,22 +21,6 @@
 
 package uk.digitalsquid.netspoofer;
 
-import java.io.IOException;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-
-import uk.digitalsquid.netspoofer.config.HardwareConfig;
-import uk.digitalsquid.netspoofer.config.RunManager;
-import uk.digitalsquid.netspoofer.config.LogConf;
-import uk.digitalsquid.netspoofer.misc.AsyncTaskHelper;
-import uk.digitalsquid.netspoofer.servicemsg.ServiceMsg;
-import uk.digitalsquid.netspoofer.servicemsg.SpoofStarter;
-import uk.digitalsquid.netspoofer.servicestatus.InitialiseStatus;
-import uk.digitalsquid.netspoofer.servicestatus.NewLogOutput;
-import uk.digitalsquid.netspoofer.servicestatus.Notifyer;
-import uk.digitalsquid.netspoofer.servicestatus.ServiceStatus;
-import uk.digitalsquid.netspoofer.servicestatus.SpoofList;
-import uk.digitalsquid.netspoofer.spoofs.SpoofData;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -46,6 +30,23 @@ import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Handler;
 import android.util.Log;
+
+import java.io.IOException;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
+import uk.digitalsquid.netspoofer.config.HardwareConfig;
+import uk.digitalsquid.netspoofer.config.LogConf;
+import uk.digitalsquid.netspoofer.config.RunManager;
+import uk.digitalsquid.netspoofer.misc.AsyncTaskHelper;
+import uk.digitalsquid.netspoofer.servicemsg.ServiceMsg;
+import uk.digitalsquid.netspoofer.servicemsg.SpoofStarter;
+import uk.digitalsquid.netspoofer.servicestatus.InitialiseStatus;
+import uk.digitalsquid.netspoofer.servicestatus.NewLogOutput;
+import uk.digitalsquid.netspoofer.servicestatus.Notifyer;
+import uk.digitalsquid.netspoofer.servicestatus.ServiceStatus;
+import uk.digitalsquid.netspoofer.servicestatus.SpoofList;
+import uk.digitalsquid.netspoofer.spoofs.SpoofData;
 
 public class NetSpoofService extends Service implements LogConf {
 	public static final int STATUS_LOADING = 0;
