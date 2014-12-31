@@ -324,11 +324,12 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf, OnUp
             try {
                 FileInstaller fi = new FileInstaller(getBaseContext());
                 
-                fi.installScript("iptables", R.raw.iptables);
                 fi.installScript("spoof", R.raw.spoof);
 
                 fi.installBinary("arp-scan");
                 fi.installBinary("arpspoof");
+                fi.installBinary("iptables");
+
                 fi.installData("arp-scan", "ieee-iab.txt");
                 fi.installData("arp-scan", "ieee-oui.txt");
                 fi.installData("arp-scan", "mac-vendor.txt");
