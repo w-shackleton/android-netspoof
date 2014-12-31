@@ -21,12 +21,6 @@
 
 package uk.digitalsquid.netspoofer.spoofs;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.jsoup.nodes.TextNode;
-
-import uk.digitalsquid.netspoofer.R;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -37,117 +31,124 @@ import android.view.LayoutInflater;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import org.jsoup.nodes.TextNode;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import uk.digitalsquid.netspoofer.R;
+
 /**
  * A custom version of the Google spoof which allows the user to enter their own google search query.
  * @author Will Shackleton <will@digitalsquid.co.uk>
  *
  */
 public class CustomTextChange extends ContentChange {
-	private static final long serialVersionUID = 8490503138296852028L;
-	
-	private static final int MODE = 1005;
+    private static final long serialVersionUID = 8490503138296852028L;
+    
+    private static final int MODE = 1005;
 
-	public CustomTextChange(Context context) {
-		super(context.getResources().getString(R.string.spoof_textchange),
-				context.getResources().getString(R.string.spoof_textchange_description), MODE);
-	}
-	
-	private final Map<String, String> changeValues = new HashMap<String, String>(8);
-	
-	private static final int[] froms = {
-		R.id.textFrom1,
-		R.id.textFrom2,
-		R.id.textFrom3,
-		R.id.textFrom4,
-		R.id.textFrom5,
-		R.id.textFrom6,
-		R.id.textFrom7,
-		R.id.textFrom8,
-	};
-	private static final int[] tos = {
-		R.id.textTo1,
-		R.id.textTo2,
-		R.id.textTo3,
-		R.id.textTo4,
-		R.id.textTo5,
-		R.id.textTo6,
-		R.id.textTo7,
-		R.id.textTo8,
-	};
-	
-	/**
-	 * Sets the value in the environment map, and also saves to shared prefs.
-	 * @param old
-	 * @param position
-	 * @param value
-	 */
-	private final void setValue(SharedPreferences prefs, boolean old, int position, String value) {
-		if(old) {
-			final String key = String.format("TEXT%dOLD", position);
-			changeValues.put(key, value);
-			prefs.edit().putString(key, value).commit();
-		} else {
-			final String key = String.format("TEXT%dNEW", position);
-			changeValues.put(key, value);
-			prefs.edit().putString(key, value).commit();
-		}
-	}
-	
-	@Override
-	public Dialog displayExtraDialog(final Context context, final OnExtraDialogDoneListener onDone) {
-		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-		final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-		
-		final LayoutInflater inflater = LayoutInflater.from(context);
-		final ScrollView view = (ScrollView)inflater.inflate(R.layout.customtextdialog, null);
-		
-		// Iterate through all
-		for(int i = 0; i < 8; i++) {
-			String from = prefs.getString(String.format("TEXT%dOLD", i), "");
-			String to = prefs.getString(String.format("TEXT%dNEW", i), "");
-			((TextView)view.findViewById(froms[i])).setText(from);
-			((TextView)view.findViewById(tos[i])).setText(to);
-		}
-		
-		
-		builder.setView(view);
-		builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				// Iterate through all
-				for(int i = 0; i < 8; i++) {
-					String from = ((TextView)view.findViewById(froms[i])).getText().toString();
-					String to = ((TextView)view.findViewById(tos[i])).getText().toString();
-					
-					setValue(prefs, true, i, from);
-					setValue(prefs, false, i, to);
-				}
-				
-				onDone.onDone();
-			}
-		}).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				
-			}
-		}).setTitle(R.string.customText);
-		return builder.create();
-	}
-	
-	@Override
-	protected void modifyTextNode(TextNode node) {
-		super.modifyTextNode(node);
-		switch(mode) {
-		case MODE:
-			String text = node.text();
-			for(int i = 0 ; i < 8; i++) {
-				String from = changeValues.get(String.format("TEXT%dOLD", i));
-				String to = changeValues.get(String.format("TEXT%dNEW", i));
-				if(from != null && to != null)
-					text = text.replace(from, to);
-			}
-			node.text(text);
-			break;
-		}
-	}
+    public CustomTextChange(Context context) {
+        super(context.getResources().getString(R.string.spoof_textchange),
+                context.getResources().getString(R.string.spoof_textchange_description), MODE);
+    }
+    
+    private final Map<String, String> changeValues = new HashMap<String, String>(8);
+    
+    private static final int[] froms = {
+        R.id.textFrom1,
+        R.id.textFrom2,
+        R.id.textFrom3,
+        R.id.textFrom4,
+        R.id.textFrom5,
+        R.id.textFrom6,
+        R.id.textFrom7,
+        R.id.textFrom8,
+    };
+    private static final int[] tos = {
+        R.id.textTo1,
+        R.id.textTo2,
+        R.id.textTo3,
+        R.id.textTo4,
+        R.id.textTo5,
+        R.id.textTo6,
+        R.id.textTo7,
+        R.id.textTo8,
+    };
+    
+    /**
+     * Sets the value in the environment map, and also saves to shared prefs.
+     * @param old
+     * @param position
+     * @param value
+     */
+    private final void setValue(SharedPreferences prefs, boolean old, int position, String value) {
+        if(old) {
+            final String key = String.format("TEXT%dOLD", position);
+            changeValues.put(key, value);
+            prefs.edit().putString(key, value).commit();
+        } else {
+            final String key = String.format("TEXT%dNEW", position);
+            changeValues.put(key, value);
+            prefs.edit().putString(key, value).commit();
+        }
+    }
+    
+    @Override
+    public Dialog displayExtraDialog(final Context context, final OnExtraDialogDoneListener onDone) {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        
+        final LayoutInflater inflater = LayoutInflater.from(context);
+        final ScrollView view = (ScrollView)inflater.inflate(R.layout.customtextdialog, null);
+        
+        // Iterate through all
+        for(int i = 0; i < 8; i++) {
+            String from = prefs.getString(String.format("TEXT%dOLD", i), "");
+            String to = prefs.getString(String.format("TEXT%dNEW", i), "");
+            ((TextView)view.findViewById(froms[i])).setText(from);
+            ((TextView)view.findViewById(tos[i])).setText(to);
+        }
+        
+        
+        builder.setView(view);
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Iterate through all
+                for(int i = 0; i < 8; i++) {
+                    String from = ((TextView)view.findViewById(froms[i])).getText().toString();
+                    String to = ((TextView)view.findViewById(tos[i])).getText().toString();
+                    
+                    setValue(prefs, true, i, from);
+                    setValue(prefs, false, i, to);
+                }
+                
+                onDone.onDone();
+            }
+        }).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                
+            }
+        }).setTitle(R.string.customText);
+        return builder.create();
+    }
+    
+    @Override
+    protected void modifyTextNode(TextNode node) {
+        super.modifyTextNode(node);
+        switch(mode) {
+        case MODE:
+            String text = node.text();
+            for(int i = 0 ; i < 8; i++) {
+                String from = changeValues.get(String.format("TEXT%dOLD", i));
+                String to = changeValues.get(String.format("TEXT%dNEW", i));
+                if(from != null && to != null)
+                    text = text.replace(from, to);
+            }
+            node.text(text);
+            break;
+        }
+    }
 }

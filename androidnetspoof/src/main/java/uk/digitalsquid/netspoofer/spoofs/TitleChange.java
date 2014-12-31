@@ -1,74 +1,75 @@
 package uk.digitalsquid.netspoofer.spoofs;
 
-import java.util.HashMap;
+import android.content.Context;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.util.HashMap;
+
 import uk.digitalsquid.netspoofer.R;
 import uk.digitalsquid.netspoofer.config.Lists;
-import android.content.Context;
 
 public class TitleChange extends HtmlEditorSpoof {
-	
-	private static final long serialVersionUID = 7266206237358568955L;
-	public static final int MODE_FLIP = 1;
-	public static final int MODE_REVERSE = 2;
+    
+    private static final long serialVersionUID = 7266206237358568955L;
+    public static final int MODE_FLIP = 1;
+    public static final int MODE_REVERSE = 2;
 
-	private static String getTitle(Context context, int mode) {
-		switch(mode) {
-		case MODE_FLIP:
-			return context.getResources().getString(R.string.spoof_title_flip);
-		case MODE_REVERSE:
-			return context.getResources().getString(R.string.spoof_title_reverse);
-		default:
-			return "Unknown image spoof";
-		}
-	}
-	private static String getDescription(Context context, int mode) {
-		switch(mode) {
-		case MODE_FLIP:
-			return context.getResources().getString(R.string.spoof_title_flip_description);
-		case MODE_REVERSE:
-			return context.getResources().getString(R.string.spoof_title_reverse_description);
-		default:
-			return "";
-		}
-	}
+    private static String getTitle(Context context, int mode) {
+        switch(mode) {
+        case MODE_FLIP:
+            return context.getResources().getString(R.string.spoof_title_flip);
+        case MODE_REVERSE:
+            return context.getResources().getString(R.string.spoof_title_reverse);
+        default:
+            return "Unknown image spoof";
+        }
+    }
+    private static String getDescription(Context context, int mode) {
+        switch(mode) {
+        case MODE_FLIP:
+            return context.getResources().getString(R.string.spoof_title_flip_description);
+        case MODE_REVERSE:
+            return context.getResources().getString(R.string.spoof_title_reverse_description);
+        default:
+            return "";
+        }
+    }
 
-	private final int mode;
+    private final int mode;
 
-	public TitleChange(Context context, int mode) {
-		super(getTitle(context, mode), getDescription(context, mode));
-		this.mode = mode;
-	}
+    public TitleChange(Context context, int mode) {
+        super(getTitle(context, mode), getDescription(context, mode));
+        this.mode = mode;
+    }
 
-	@Override
-	protected void modifyDocument(Document document, Element body) {
-		Elements titles = document.select("title");
-		switch(mode) {
-		case MODE_FLIP:
-			if(titles.size() > 0) {
-				Element title = titles.first();
-				String reversed =
-						new StringBuilder(title.text()).reverse().toString();
-				title.text(Lists.map(upsideDown, reversed));
-			}
-			break;
-		case MODE_REVERSE:
-			if(titles.size() > 0) {
-				Element title = titles.first();
-				title.text(new StringBuilder(title.text()).reverse().toString());
-			}
-			break;
-		}
-	}
+    @Override
+    protected void modifyDocument(Document document, Element body) {
+        Elements titles = document.select("title");
+        switch(mode) {
+        case MODE_FLIP:
+            if(titles.size() > 0) {
+                Element title = titles.first();
+                String reversed =
+                        new StringBuilder(title.text()).reverse().toString();
+                title.text(Lists.map(upsideDown, reversed));
+            }
+            break;
+        case MODE_REVERSE:
+            if(titles.size() > 0) {
+                Element title = titles.first();
+                title.text(new StringBuilder(title.text()).reverse().toString());
+            }
+            break;
+        }
+    }
 
     static final HashMap<Character, Character> upsideDown =
         new HashMap<Character, Character>() {
-			private static final long serialVersionUID = -9085470439710161129L;
-			{
+            private static final long serialVersionUID = -9085470439710161129L;
+            {
                 put('z','\u007A');
                 put('y','\u028E');
                 put('x','\u0078');

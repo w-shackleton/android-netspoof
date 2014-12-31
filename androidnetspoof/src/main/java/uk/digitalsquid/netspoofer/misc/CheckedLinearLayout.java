@@ -32,34 +32,34 @@ import android.widget.LinearLayout;
  *
  */
 public class CheckedLinearLayout extends LinearLayout implements Checkable {
-	
-	private Checkable check;
+    
+    private Checkable check;
 
-	public CheckedLinearLayout(Context context, AttributeSet attrs) {
-		super(context, attrs);
-	}
+    public CheckedLinearLayout(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
 
-	@Override
-	public boolean isChecked() {
-		if(check != null) return check.isChecked();
-		return false;
-	}
+    @Override
+    public boolean isChecked() {
+        if(check != null) return check.isChecked();
+        return false;
+    }
 
-	@Override
-	public void setChecked(boolean arg0) {
-		if(check != null) check.setChecked(arg0);
-	}
+    @Override
+    public void setChecked(boolean arg0) {
+        if(check != null) check.setChecked(arg0);
+    }
 
-	@Override
-	public void toggle() {
-		if(check != null) check.toggle();
-	}
-	
-	/**
-	 * Sets the subclass to derive from
-	 * @param check
-	 */
-	public void setCheckable(Checkable check) {
-		this.check = check;
-	}
+    @Override
+    public void toggle() {
+        if(check != null) check.toggle();
+    }
+    
+    /**
+     * Sets the subclass to derive from
+     * @param check
+     */
+    public void setCheckable(Checkable check) {
+        this.check = check;
+    }
 }

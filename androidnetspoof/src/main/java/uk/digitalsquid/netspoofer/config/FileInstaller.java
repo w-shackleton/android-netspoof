@@ -21,8 +21,12 @@
 
 package uk.digitalsquid.netspoofer.config;
 
+import android.content.Context;
+import android.content.res.Resources;
+import android.os.Build;
+import android.util.Log;
+
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -31,39 +35,34 @@ import java.io.OutputStream;
 
 import uk.digitalsquid.netspoofer.JNI;
 
-import android.content.Context;
-import android.content.res.Resources;
-import android.os.Build;
-import android.util.Log;
-
 public final class FileInstaller implements LogConf {
-	private static final String BIN_DIR = "/bin";
-	private final Context context;
-	
-	public FileInstaller(Context context) throws FileNotFoundException {
-		this.context = context;
-		try {
-		new File(context.getFilesDir().getParent() + BIN_DIR).mkdir();
-		} catch (NullPointerException e) {
-			// One of the above fileops failed, most likely due to broken phone.
-			Log.e(TAG, "Failed to create binary directory!");
-		}
-	}
-	
-	private void installFile(String filename, boolean executable, int id) throws Resources.NotFoundException, IOException {
-		installFile(filename, id);
-		if(executable) JNI.setExecutable(filename);
-	}
-	
-	public void installScript(String scriptName, int id) throws Resources.NotFoundException, IOException {
-		String scriptPath = getScriptPath(scriptName);
-		installFile(scriptPath, true, id);
-	}
-	
-	private void installFile(String filename, int id) throws Resources.NotFoundException, IOException {
-		InputStream is = context.getResources().openRawResource(id);
-		File outFile = new File(filename);
-		outFile.createNewFile();
+    private static final String BIN_DIR = "/bin";
+    private final Context context;
+    
+    public FileInstaller(Context context) throws FileNotFoundException {
+        this.context = context;
+        try {
+        new File(context.getFilesDir().getParent() + BIN_DIR).mkdir();
+        } catch (NullPointerException e) {
+            // One of the above fileops failed, most likely due to broken phone.
+            Log.e(TAG, "Failed to create binary directory!");
+        }
+    }
+    
+    private void installFile(String filename, boolean executable, int id) throws Resources.NotFoundException, IOException {
+        installFile(filename, id);
+        if(executable) JNI.setExecutable(filename);
+    }
+    
+    public void installScript(String scriptName, int id) throws Resources.NotFoundException, IOException {
+        String scriptPath = getScriptPath(scriptName);
+        installFile(scriptPath, true, id);
+    }
+    
+    private void installFile(String filename, int id) throws Resources.NotFoundException, IOException {
+        InputStream is = context.getResources().openRawResource(id);
+        File outFile = new File(filename);
+        outFile.createNewFile();
         Log.d(TAG, "Copying file '"+filename+"' ...");
         byte buf[] = new byte[1024];
         int len;
@@ -73,7 +72,7 @@ public final class FileInstaller implements LogConf {
         }
         out.close();
         is.close();
-	}
+    }
 
     /**
      * Installs a binary from the assets folder.
@@ -100,12 +99,12 @@ public final class FileInstaller implements LogConf {
         // Mark as executable
         JNI.setExecutable(filename);
     }
-	
-	public static String getScriptPath(Context context, String scriptName) {
-		return new File(context.getFilesDir().getParent() + BIN_DIR).getAbsolutePath() + "/" + scriptName;
-	}
+    
+    public static String getScriptPath(Context context, String scriptName) {
+        return new File(context.getFilesDir().getParent() + BIN_DIR).getAbsolutePath() + "/" + scriptName;
+    }
 
-	private String getScriptPath(String scriptName) {
-		return getScriptPath(context, scriptName);
-	}
+    private String getScriptPath(String scriptName) {
+        return getScriptPath(context, scriptName);
+    }
 }

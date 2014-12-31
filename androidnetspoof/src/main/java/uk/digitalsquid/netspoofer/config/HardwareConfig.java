@@ -31,20 +31,20 @@ import android.preference.PreferenceManager;
  *
  */
 public final class HardwareConfig {
-	static HardwareConfig DEFAULTS = null;
-	
-	private String iface;
-	
-	public HardwareConfig(Context context) {
-		if(DEFAULTS == null) DEFAULTS = new HardwareConfig("eth0");
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+    static HardwareConfig DEFAULTS = null;
+    
+    private String iface;
+    
+    public HardwareConfig(Context context) {
+        if(DEFAULTS == null) DEFAULTS = new HardwareConfig("eth0");
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
-		iface = prefs.getString("iface", DEFAULTS.iface);
-		if(iface.equals("")) iface = DEFAULTS.iface;
-		// values.put("WLAN", iface); - Set in other places
-	}
-	
-	private HardwareConfig(String iface) {
-		this.iface = iface;
-	}
+        iface = prefs.getString("iface", DEFAULTS.iface);
+        if(iface.equals("")) iface = DEFAULTS.iface;
+        // values.put("WLAN", iface); - Set in other places
+    }
+    
+    private HardwareConfig(String iface) {
+        this.iface = iface;
+    }
 }

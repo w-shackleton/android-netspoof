@@ -21,9 +21,6 @@
 
 package uk.digitalsquid.netspoofer;
 
-import java.io.FileNotFoundException;
-
-import uk.digitalsquid.netspoofer.config.FileFinder;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -46,108 +43,108 @@ import android.widget.Button;
 
 public class Preferences extends FragmentActivity {
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		
-		FragmentManager fm = getSupportFragmentManager();
-		FragmentTransaction transaction = fm.beginTransaction();
-		SettingsFragment frag = new SettingsFragment();
-		transaction.replace(android.R.id.content, frag);
-		transaction.commit();
-	}
-	
-	public static class SettingsFragment extends PreferenceFragment implements
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction transaction = fm.beginTransaction();
+        SettingsFragment frag = new SettingsFragment();
+        transaction.replace(android.R.id.content, frag);
+        transaction.commit();
+    }
+    
+    public static class SettingsFragment extends PreferenceFragment implements
                 OnSharedPreferenceChangeListener,
                 OnPreferenceChangeListener {
 
-		SharedPreferences prefs;
+        SharedPreferences prefs;
 
-		@Override
-		public void onCreate(Bundle savedInstanceState) {
-			super.onCreate(savedInstanceState);
-			addPreferencesFromResource(R.xml.preferences);
-			prefs = getPreferenceManager().getSharedPreferences();
-			prefs.registerOnSharedPreferenceChangeListener(this);
-			
-			findPreference("noadverts").setOnPreferenceChangeListener(this);
-		}
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            addPreferencesFromResource(R.xml.preferences);
+            prefs = getPreferenceManager().getSharedPreferences();
+            prefs.registerOnSharedPreferenceChangeListener(this);
+            
+            findPreference("noadverts").setOnPreferenceChangeListener(this);
+        }
 
-		@Override
-		public void onDestroy() {
-			super.onDestroy();
-			prefs.unregisterOnSharedPreferenceChangeListener(this);
-		}
+        @Override
+        public void onDestroy() {
+            super.onDestroy();
+            prefs.unregisterOnSharedPreferenceChangeListener(this);
+        }
 
-		@Override
-		public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-			if(key.equals("noadverts")) {
-				CheckBoxPreference noAdverts =
-						(CheckBoxPreference) findPreference("noadverts");
-				noAdverts.setChecked(prefs.getBoolean("noadverts", false));
-			}
-		}
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+            if(key.equals("noadverts")) {
+                CheckBoxPreference noAdverts =
+                        (CheckBoxPreference) findPreference("noadverts");
+                noAdverts.setChecked(prefs.getBoolean("noadverts", false));
+            }
+        }
 
-		@Override
-		public boolean onPreferenceChange(Preference preference, Object newValue) {
-			if(!preference.hasKey()) return true;
-			if(preference.getKey().equals("noadverts")) {
-				CheckBoxPreference noAdvert = (CheckBoxPreference) preference;
-				if(!noAdvert.isChecked()) { // False -> True, display dialog
-			        FragmentManager fm = getFragmentManager();
-			        AdvertDialog dialog = new AdvertDialog();
-			        dialog.show(fm, "fragment_advert_disable");
-			        return false;
-				}
-			}
-			return true;
-		}
-	}
-	
-	public static class AdvertDialog extends DialogFragment implements OnClickListener {
-		
-		@Override
-		public void onCreate(Bundle savedInstanceState) {
-			super.onCreate(savedInstanceState);
-			setCancelable(false);
-		}
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+            if(!preference.hasKey()) return true;
+            if(preference.getKey().equals("noadverts")) {
+                CheckBoxPreference noAdvert = (CheckBoxPreference) preference;
+                if(!noAdvert.isChecked()) { // False -> True, display dialog
+                    FragmentManager fm = getFragmentManager();
+                    AdvertDialog dialog = new AdvertDialog();
+                    dialog.show(fm, "fragment_advert_disable");
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+    
+    public static class AdvertDialog extends DialogFragment implements OnClickListener {
+        
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setCancelable(false);
+        }
 
-	    @Override
-	    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-	            Bundle savedInstanceState) {
-	        View view = inflater.inflate(R.layout.advert_dialog, container);
-	        Button donate = (Button) view.findViewById(R.id.donate);
-	        donate.setOnClickListener(this);
-	        Button disable = (Button) view.findViewById(R.id.disable);
-	        disable.setOnClickListener(this);
-	        Button cancel = (Button) view.findViewById(R.id.cancel);
-	        cancel.setOnClickListener(this);
-	        getDialog().setTitle("Disable adverts?");
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                Bundle savedInstanceState) {
+            View view = inflater.inflate(R.layout.advert_dialog, container);
+            Button donate = (Button) view.findViewById(R.id.donate);
+            donate.setOnClickListener(this);
+            Button disable = (Button) view.findViewById(R.id.disable);
+            disable.setOnClickListener(this);
+            Button cancel = (Button) view.findViewById(R.id.cancel);
+            cancel.setOnClickListener(this);
+            getDialog().setTitle("Disable adverts?");
 
-	        return view;
-	    }
+            return view;
+        }
 
-		@Override
-		public void onClick(View v) {
-			switch(v.getId()) {
-			case R.id.donate:
-				PreferenceManager.getDefaultSharedPreferences(getActivity())
-					.edit().putBoolean("noadverts", true).commit();
-				getDialog().dismiss();
-				Intent intent = new Intent(
-						Intent.ACTION_VIEW, Uri.parse(
-								"http://digitalsquid.co.uk/netspoof/donate"));
-				startActivity(intent);
-				break;
-			case R.id.disable:
-				PreferenceManager.getDefaultSharedPreferences(getActivity())
-					.edit().putBoolean("noadverts", true).commit();
-				getDialog().dismiss();
-				break;
-			case R.id.cancel:
-				getDialog().dismiss();
-				break;
-			}
-		}
-	}
+        @Override
+        public void onClick(View v) {
+            switch(v.getId()) {
+            case R.id.donate:
+                PreferenceManager.getDefaultSharedPreferences(getActivity())
+                    .edit().putBoolean("noadverts", true).commit();
+                getDialog().dismiss();
+                Intent intent = new Intent(
+                        Intent.ACTION_VIEW, Uri.parse(
+                                "http://digitalsquid.co.uk/netspoof/donate"));
+                startActivity(intent);
+                break;
+            case R.id.disable:
+                PreferenceManager.getDefaultSharedPreferences(getActivity())
+                    .edit().putBoolean("noadverts", true).commit();
+                getDialog().dismiss();
+                break;
+            case R.id.cancel:
+                getDialog().dismiss();
+                break;
+            }
+        }
+    }
 }

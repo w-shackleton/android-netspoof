@@ -25,10 +25,10 @@ import java.io.IOException;
 
 public class HttpExecuteException extends IOException {
 
-	public HttpExecuteException(String msg) {
-		super(msg);
-	}
+    public HttpExecuteException(String msg) {
+        super(msg);
+    }
 
-	private static final long serialVersionUID = -1116123986417670569L;
+    private static final long serialVersionUID = -1116123986417670569L;
 
 }

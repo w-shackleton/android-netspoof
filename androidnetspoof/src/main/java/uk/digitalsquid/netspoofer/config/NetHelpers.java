@@ -22,7 +22,6 @@
 package uk.digitalsquid.netspoofer.config;
 
 import android.util.Log;
-import android.widget.MultiAutoCompleteTextView;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -37,49 +36,48 @@ import java.net.SocketException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.StringTokenizer;
 
 public final class NetHelpers implements LogConf {
-	private NetHelpers() {}
-	
-	public static final NetworkInterface getIface(InetAddress iface) {
-		try {
-			return NetworkInterface.getByInetAddress(iface);
-		} catch (SocketException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-	
-	public static final InetAddress inetFromInt(int ip) throws UnknownHostException {
-		return InetAddress.getByAddress(new byte[] {
-				(byte) ((ip >> 0 ) & 0xFF),
-				(byte) ((ip >> 8 ) & 0xFF),
-				(byte) ((ip >> 16) & 0xFF),
-				(byte) ((ip >>>24) & 0xFF),
-						});
-	}
-	
-	public static final long inetFromByte(byte[] ip) {
-		return
-			((long)(ip[0]&0xFF) << 0 ) +
-			((long)(ip[1]&0xFF) << 8 ) +
-			((long)(ip[2]&0xFF) << 16) +
-			((long)(ip[3]&0xFF) << 24);
-	}
-	
-	public static final InetAddress reverseInetFromInt(int ip) throws UnknownHostException {
-		return reverseInetFromInt((long)ip);
-	}
-	public static final InetAddress reverseInetFromInt(long ip) throws UnknownHostException {
-		return InetAddress.getByAddress(new byte[] {
-				(byte) ((ip >>>24) & 0xFF),
-				(byte) ((ip >> 16) & 0xFF),
-				(byte) ((ip >> 8 ) & 0xFF),
-				(byte) ((ip >> 0 ) & 0xFF),
-						});
-	}
+    private NetHelpers() {}
+    
+    public static final NetworkInterface getIface(InetAddress iface) {
+        try {
+            return NetworkInterface.getByInetAddress(iface);
+        } catch (SocketException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    public static final InetAddress inetFromInt(int ip) throws UnknownHostException {
+        return InetAddress.getByAddress(new byte[] {
+                (byte) ((ip >> 0 ) & 0xFF),
+                (byte) ((ip >> 8 ) & 0xFF),
+                (byte) ((ip >> 16) & 0xFF),
+                (byte) ((ip >>>24) & 0xFF),
+                        });
+    }
+    
+    public static final long inetFromByte(byte[] ip) {
+        return
+            ((long)(ip[0]&0xFF) << 0 ) +
+            ((long)(ip[1]&0xFF) << 8 ) +
+            ((long)(ip[2]&0xFF) << 16) +
+            ((long)(ip[3]&0xFF) << 24);
+    }
+    
+    public static final InetAddress reverseInetFromInt(int ip) throws UnknownHostException {
+        return reverseInetFromInt((long)ip);
+    }
+    public static final InetAddress reverseInetFromInt(long ip) throws UnknownHostException {
+        return InetAddress.getByAddress(new byte[] {
+                (byte) ((ip >>>24) & 0xFF),
+                (byte) ((ip >> 16) & 0xFF),
+                (byte) ((ip >> 8 ) & 0xFF),
+                (byte) ((ip >> 0 ) & 0xFF),
+                        });
+    }
 
     public static final String inetFromHex(String hex) {
         if(hex.length() == 8) {
@@ -93,107 +91,107 @@ public final class NetHelpers implements LogConf {
         }
         return null;
     }
-	
-	/**
-	 * 
-	 * @param ip
-	 * @return a long value, to avoid IP signed-ness
-	 */
-	public static final long reverseInetFromByte(byte[] ip) {
-		return
-			((long)(ip[0]&0xFF) << 24) +
-			((long)(ip[1]&0xFF) << 16) +
-			((long)(ip[2]&0xFF) << 8 ) +
-			((long)(ip[3]&0xFF) << 0 );
-	}
-	
-	public static final class GatewayData implements Serializable {
-		private static final long serialVersionUID = -2588873022535534899L;
-		
-		private final InetAddress gateway;
-		private final String subnet;
-		
-		public GatewayData(InetAddress gateway, String subnet) {
-			this.gateway = gateway;
-			this.subnet = subnet;
-		}
+    
+    /**
+     * 
+     * @param ip
+     * @return a long value, to avoid IP signed-ness
+     */
+    public static final long reverseInetFromByte(byte[] ip) {
+        return
+            ((long)(ip[0]&0xFF) << 24) +
+            ((long)(ip[1]&0xFF) << 16) +
+            ((long)(ip[2]&0xFF) << 8 ) +
+            ((long)(ip[3]&0xFF) << 0 );
+    }
+    
+    public static final class GatewayData implements Serializable {
+        private static final long serialVersionUID = -2588873022535534899L;
+        
+        private final InetAddress gateway;
+        private final String subnet;
+        
+        public GatewayData(InetAddress gateway, String subnet) {
+            this.gateway = gateway;
+            this.subnet = subnet;
+        }
 
-		public InetAddress getGateway() {
-			return gateway;
-		}
+        public InetAddress getGateway() {
+            return gateway;
+        }
 
-		public String getSubnet() {
-			return subnet;
-		}
-	}
-	
-	/**
-	 * Represents an entry in the route table.
-	 * @author Will Shackleton <will@digitalsquid.co.uk>
-	 *
-	 */
-	public static final class RouteEntry implements Serializable {
+        public String getSubnet() {
+            return subnet;
+        }
+    }
+    
+    /**
+     * Represents an entry in the route table.
+     * @author Will Shackleton <will@digitalsquid.co.uk>
+     *
+     */
+    public static final class RouteEntry implements Serializable {
 
-		private static final long serialVersionUID = 7930709441175690366L;
-		
-		private String destination;
-		private String gateway;
-		private String genmask;
-		private String iface;
-		public void setDestination(String destination) {
-			this.destination = destination;
-		}
-		public String getDestination() {
-			return destination;
-		}
-		public void setGateway(String gateway) {
-			this.gateway = gateway;
-		}
-		public String getGateway() {
-			return gateway;
-		}
-		public void setGenmask(String genmask) {
-			this.genmask = genmask;
-		}
-		public String getGenmask() {
-			return genmask;
-		}
-		public void setIface(String iface) {
-			this.iface = iface;
-		}
-		public String getIface() {
-			return iface;
-		}
-	}
-	
-	/**
-	 * 
-	 * @param iface
-	 * @return
-	 * @throws UnknownHostException
-	 */
-	public static final GatewayData getDefaultGateway(NetworkInterface iface) throws UnknownHostException {
-		if(iface == null) throw new IllegalArgumentException("iface is null");
-		
-		try { FileFinder.initialise(); } catch (FileNotFoundException e1) { }
-		
-		final String ifacename = iface.getDisplayName();
-		Log.d(TAG, "Checking for routes on iface " + ifacename);
-		
-		ArrayList<RouteEntry> routes = parseRoutes();
-		
-		String gateway = "", subnet = "";
-		for(RouteEntry route : routes) {
-			if(!route.getIface().equalsIgnoreCase(ifacename)) continue; // Ignore routes not on wifi
-			if(route.getDestination().equals("0.0.0.0")) {
-				gateway = route.getGateway();
-			}
+        private static final long serialVersionUID = 7930709441175690366L;
+        
+        private String destination;
+        private String gateway;
+        private String genmask;
+        private String iface;
+        public void setDestination(String destination) {
+            this.destination = destination;
+        }
+        public String getDestination() {
+            return destination;
+        }
+        public void setGateway(String gateway) {
+            this.gateway = gateway;
+        }
+        public String getGateway() {
+            return gateway;
+        }
+        public void setGenmask(String genmask) {
+            this.genmask = genmask;
+        }
+        public String getGenmask() {
+            return genmask;
+        }
+        public void setIface(String iface) {
+            this.iface = iface;
+        }
+        public String getIface() {
+            return iface;
+        }
+    }
+    
+    /**
+     * 
+     * @param iface
+     * @return
+     * @throws UnknownHostException
+     */
+    public static final GatewayData getDefaultGateway(NetworkInterface iface) throws UnknownHostException {
+        if(iface == null) throw new IllegalArgumentException("iface is null");
+        
+        try { FileFinder.initialise(); } catch (FileNotFoundException e1) { }
+        
+        final String ifacename = iface.getDisplayName();
+        Log.d(TAG, "Checking for routes on iface " + ifacename);
+        
+        ArrayList<RouteEntry> routes = parseRoutes();
+        
+        String gateway = "", subnet = "";
+        for(RouteEntry route : routes) {
+            if(!route.getIface().equalsIgnoreCase(ifacename)) continue; // Ignore routes not on wifi
+            if(route.getDestination().equals("0.0.0.0")) {
+                gateway = route.getGateway();
+            }
             if(route.getGateway().equals("0.0.0.0")) {
-				subnet = route.getGenmask();
-			}
-		}
-		return new GatewayData(InetAddress.getByName(gateway), subnet);
-	}
+                subnet = route.getGenmask();
+            }
+        }
+        return new GatewayData(InetAddress.getByName(gateway), subnet);
+    }
 
     public static final ArrayList<RouteEntry> parseRoutes() {
         try {
@@ -238,31 +236,31 @@ public final class NetHelpers implements LogConf {
         }
     }
 
-	/**
-	 * Checks for a file's existence on an HTTP server.
-	 * @param file
-	 * @param isFail If the redirected url = isFail, returns false
-	 * @return
-	 */
-	public static final boolean checkFileExistsOnWeb(String file, String isFail) {
-		try {
-			URL upgradeUrl = new URL(file);
-			HttpURLConnection.setFollowRedirects(true);
-			HttpURLConnection conn = (HttpURLConnection) upgradeUrl.openConnection();
-			conn.setConnectTimeout(5000);
-			conn.setRequestMethod("HEAD");
-			
-			int code = conn.getResponseCode();
-			URL url = conn.getURL();
-			
-			if(isFail == null) isFail = "";
-			
-			return code == HttpURLConnection.HTTP_OK && !url.toExternalForm().equals(isFail);
-		} catch (MalformedURLException e) {
-			Log.e(TAG, "Malformed URL", e);
-		} catch (IOException e) {
-			Log.d(TAG, "Failed to check for HTTP file, probably no internet.");
-		}
-		return false;
-	}
+    /**
+     * Checks for a file's existence on an HTTP server.
+     * @param file
+     * @param isFail If the redirected url = isFail, returns false
+     * @return
+     */
+    public static final boolean checkFileExistsOnWeb(String file, String isFail) {
+        try {
+            URL upgradeUrl = new URL(file);
+            HttpURLConnection.setFollowRedirects(true);
+            HttpURLConnection conn = (HttpURLConnection) upgradeUrl.openConnection();
+            conn.setConnectTimeout(5000);
+            conn.setRequestMethod("HEAD");
+            
+            int code = conn.getResponseCode();
+            URL url = conn.getURL();
+            
+            if(isFail == null) isFail = "";
+            
+            return code == HttpURLConnection.HTTP_OK && !url.toExternalForm().equals(isFail);
+        } catch (MalformedURLException e) {
+            Log.e(TAG, "Malformed URL", e);
+        } catch (IOException e) {
+            Log.d(TAG, "Failed to check for HTTP file, probably no internet.");
+        }
+        return false;
+    }
 }

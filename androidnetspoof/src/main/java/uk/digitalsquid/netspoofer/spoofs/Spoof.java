@@ -21,6 +21,10 @@
 
 package uk.digitalsquid.netspoofer.spoofs;
 
+import android.app.Dialog;
+import android.content.Context;
+import android.content.Intent;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,76 +33,73 @@ import java.util.Map;
 import uk.digitalsquid.netspoofer.config.Lists;
 import uk.digitalsquid.netspoofer.proxy.HttpRequest;
 import uk.digitalsquid.netspoofer.proxy.HttpResponse;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.Intent;
 
 public abstract class Spoof implements Serializable, Comparable<Spoof> {
-	private static final long serialVersionUID = -3207729013734241941L;
-	
-	private final String title, description;
-	
-	public Spoof(String title, String description) {
-		this.description = description;
-		this.title = title;
-	}
-	
-	public Dialog displayExtraDialog(Context context, OnExtraDialogDoneListener onDone) {
-		return null;
-	}
-	
-	public Intent activityForResult(Context context) {
-		return null;
-	}
-	/**
-	 * A second activity to be displayed afterwards.
-	 * @param context
-	 * @return
-	 */
-	public Intent activityForResult2(Context context){ return null; }
-	
-	/**
-	 * 
-	 * @param result
-	 * @return <code>true</code> to continue the process.
-	 */
-	public boolean activityFinished(Context context, Intent result) { return true; }
-	/**
-	 * 
-	 * @param result
-	 * @return <code>true</code> to continue the process.
-	 */
-	public boolean activityFinished2(Context context, Intent result) { return true; }
-	
-	public String getDescription() {
-		return description;
-	}
-	
-	public String getTitle() {
-		return title;
-	}
+    private static final long serialVersionUID = -3207729013734241941L;
+    
+    private final String title, description;
+    
+    public Spoof(String title, String description) {
+        this.description = description;
+        this.title = title;
+    }
+    
+    public Dialog displayExtraDialog(Context context, OnExtraDialogDoneListener onDone) {
+        return null;
+    }
+    
+    public Intent activityForResult(Context context) {
+        return null;
+    }
+    /**
+     * A second activity to be displayed afterwards.
+     * @param context
+     * @return
+     */
+    public Intent activityForResult2(Context context){ return null; }
+    
+    /**
+     * 
+     * @param result
+     * @return <code>true</code> to continue the process.
+     */
+    public boolean activityFinished(Context context, Intent result) { return true; }
+    /**
+     * 
+     * @param result
+     * @return <code>true</code> to continue the process.
+     */
+    public boolean activityFinished2(Context context, Intent result) { return true; }
+    
+    public String getDescription() {
+        return description;
+    }
+    
+    public String getTitle() {
+        return title;
+    }
 
-	public static interface OnExtraDialogDoneListener {
-		void onDone();
-	}
+    public static interface OnExtraDialogDoneListener {
+        void onDone();
+    }
 
-	public static interface OnActivityResultListener {
-		void onResult(Intent result);
-	}
-	
-	@Deprecated
-	public Map<String, String> getCustomEnv() {return new HashMap<String, String>();}
-	
-	@Override
-	public int compareTo(Spoof other) {
-		return getTitle().compareTo(other.getTitle());
-	}
-	
-	@Override
-	public String toString() {
-		return title;
-	}
-	// TODO: Make abstract
+    public static interface OnActivityResultListener {
+        void onResult(Intent result);
+    }
+    
+    @Deprecated
+    public Map<String, String> getCustomEnv() {return new HashMap<String, String>();}
+    
+    @Override
+    public int compareTo(Spoof other) {
+        return getTitle().compareTo(other.getTitle());
+    }
+    
+    @Override
+    public String toString() {
+        return title;
+    }
+    // TODO: Make abstract
     public abstract void modifyRequest( HttpRequest request);
     public abstract void modifyResponse( HttpResponse response, HttpRequest request);
     
@@ -112,43 +113,43 @@ public abstract class Spoof implements Serializable, Comparable<Spoof> {
      * @return A list of expanded spoofs, or a singleton of spoof.
      */
     public static ArrayList<Spoof> expandSpoof(Spoof spoof) {
-    	if(spoof instanceof MultiSpoof) {
-    		ArrayList<Spoof> spoofs = ((MultiSpoof)spoof).getSpoofs();
+        if(spoof instanceof MultiSpoof) {
+            ArrayList<Spoof> spoofs = ((MultiSpoof)spoof).getSpoofs();
 
-    		// Sort into a list of ImageSpoof and a list of others
-    		ArrayList<ImageSpoof> imageSpoofs = new ArrayList<ImageSpoof>();
-    		ArrayList<HtmlEditorSpoof> htmlSpoofs = new ArrayList<HtmlEditorSpoof>();
+            // Sort into a list of ImageSpoof and a list of others
+            ArrayList<ImageSpoof> imageSpoofs = new ArrayList<ImageSpoof>();
+            ArrayList<HtmlEditorSpoof> htmlSpoofs = new ArrayList<HtmlEditorSpoof>();
             ArrayList<Spoof> otherSpoofs = new ArrayList<Spoof>();
-    		for(Spoof s : spoofs) {
-    			if(s instanceof ImageSpoof)
-    				imageSpoofs.add((ImageSpoof)s);
-    			else if(s instanceof HtmlEditorSpoof)
-    				htmlSpoofs.add((HtmlEditorSpoof)s);
-    			else otherSpoofs.add(s);
-    		}
-    		
-    		// Fold ImageSpoofs up
-    		if(imageSpoofs.size() > 0) {
-    			ImageSpoof first = imageSpoofs.remove(0);
-    			for(ImageSpoof next : imageSpoofs) {
-    				first.mergeImageSpoof(next);
-    			}
-    			otherSpoofs.add(first);
-    		}
-    		
-    		// Group HtmlEditorSpoofs up
-    		if(htmlSpoofs.size() > 0) {
-    			HtmlSpoof group = new HtmlSpoof();
-    			for(HtmlEditorSpoof s : htmlSpoofs)
-    				group.addEditor(s);
-    			otherSpoofs.add(group);
-    		}
-    		
-    		return otherSpoofs;
-    	} else if(spoof instanceof HtmlEditorSpoof) {
-    		return Lists.singleton((Spoof)new HtmlSpoof((HtmlEditorSpoof) spoof));
-    	} else {
-    		return Lists.singleton(spoof);
-    	}
+            for(Spoof s : spoofs) {
+                if(s instanceof ImageSpoof)
+                    imageSpoofs.add((ImageSpoof)s);
+                else if(s instanceof HtmlEditorSpoof)
+                    htmlSpoofs.add((HtmlEditorSpoof)s);
+                else otherSpoofs.add(s);
+            }
+            
+            // Fold ImageSpoofs up
+            if(imageSpoofs.size() > 0) {
+                ImageSpoof first = imageSpoofs.remove(0);
+                for(ImageSpoof next : imageSpoofs) {
+                    first.mergeImageSpoof(next);
+                }
+                otherSpoofs.add(first);
+            }
+            
+            // Group HtmlEditorSpoofs up
+            if(htmlSpoofs.size() > 0) {
+                HtmlSpoof group = new HtmlSpoof();
+                for(HtmlEditorSpoof s : htmlSpoofs)
+                    group.addEditor(s);
+                otherSpoofs.add(group);
+            }
+            
+            return otherSpoofs;
+        } else if(spoof instanceof HtmlEditorSpoof) {
+            return Lists.singleton((Spoof)new HtmlSpoof((HtmlEditorSpoof) spoof));
+        } else {
+            return Lists.singleton(spoof);
+        }
     }
 }
