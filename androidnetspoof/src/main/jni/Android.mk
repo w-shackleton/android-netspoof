@@ -6,6 +6,7 @@ include $(MY_LOCAL_PATH)/libpcap/Android.mk
 include $(MY_LOCAL_PATH)/libnet/Android.mk
 include $(MY_LOCAL_PATH)/arpspoof/Android.mk
 include $(MY_LOCAL_PATH)/arp-scan/Android.mk
+include $(MY_LOCAL_PATH)/iptables/Android.mk
 
 LOCAL_PATH := $(MY_LOCAL_PATH)
 include $(CLEAR_VARS)
