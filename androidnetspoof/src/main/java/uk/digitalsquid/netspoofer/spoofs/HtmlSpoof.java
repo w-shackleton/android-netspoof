@@ -41,52 +41,52 @@ import uk.digitalsquid.netspoofer.proxy.HttpResponse;
  */
 public class HtmlSpoof extends Spoof {
 
-	private static final long serialVersionUID = -1966412296143206193L;
-	
-	private List<HtmlEditorSpoof> editors = new ArrayList<HtmlEditorSpoof>();
+    private static final long serialVersionUID = -1966412296143206193L;
+    
+    private List<HtmlEditorSpoof> editors = new ArrayList<HtmlEditorSpoof>();
 
-	public HtmlSpoof() {
-		super("(Internal HTML transformer)", "all HTML transformations grouped together");
-	}
-	public HtmlSpoof(HtmlEditorSpoof s) {
-		this();
-		addEditor(s);
-	}
+    public HtmlSpoof() {
+        super("(Internal HTML transformer)", "all HTML transformations grouped together");
+    }
+    public HtmlSpoof(HtmlEditorSpoof s) {
+        this();
+        addEditor(s);
+    }
 
-	@Override
-	public void modifyRequest(HttpRequest request) {
-	}
+    @Override
+    public void modifyRequest(HttpRequest request) {
+    }
 
-	@Override
-	public void modifyResponse(HttpResponse response, HttpRequest request) {
-		List<String> contentType = response.getHeader("Content-Type");
-		if(contentType == null) return;
-		boolean isHtml = false;
-		for(String type : contentType) {
-			if(type.toLowerCase(Locale.ENGLISH).startsWith("text/html"))
-				isHtml = true;
-		}
-		if(!isHtml) return;
-		
-		Document doc = Jsoup.parse(new String(response.getContent()));
-		Elements bodys = doc.select("body");
-		Element body = bodys.size() > 0 ? bodys.get(0) : null;
-		
-		for(HtmlEditorSpoof editor : editors) {
-			editor.modifyDocument(doc, body);
-		}
-		
-		// Convert back to raw data
-		byte[] bytes;
-		try {
-			bytes = doc.toString().getBytes("UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			bytes = doc.toString().getBytes();
-		}
-		response.setContent(bytes);
-	}
-	
-	public void addEditor(HtmlEditorSpoof editor) {
-		editors.add(editor);
-	}
+    @Override
+    public void modifyResponse(HttpResponse response, HttpRequest request) {
+        List<String> contentType = response.getHeader("Content-Type");
+        if(contentType == null) return;
+        boolean isHtml = false;
+        for(String type : contentType) {
+            if(type.toLowerCase(Locale.ENGLISH).startsWith("text/html"))
+                isHtml = true;
+        }
+        if(!isHtml) return;
+        
+        Document doc = Jsoup.parse(new String(response.getContent()));
+        Elements bodys = doc.select("body");
+        Element body = bodys.size() > 0 ? bodys.get(0) : null;
+        
+        for(HtmlEditorSpoof editor : editors) {
+            editor.modifyDocument(doc, body);
+        }
+        
+        // Convert back to raw data
+        byte[] bytes;
+        try {
+            bytes = doc.toString().getBytes("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            bytes = doc.toString().getBytes();
+        }
+        response.setContent(bytes);
+    }
+    
+    public void addEditor(HtmlEditorSpoof editor) {
+        editors.add(editor);
+    }
 }

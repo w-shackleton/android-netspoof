@@ -40,52 +40,52 @@ import uk.digitalsquid.netspoofer.proxy.HttpResponse;
  *
  */
 public class CustomGSearchSpoof extends Spoof {
-	private static final long serialVersionUID = 8490503138296852028L;
+    private static final long serialVersionUID = 8490503138296852028L;
 
-	public CustomGSearchSpoof() {
-		super("Custom Google search change", "Change the text in google searches");
-	}
-	
-	private String customFilter = "% in my pants";
-	
-	@Override
-	public Dialog displayExtraDialog(final Context context, final OnExtraDialogDoneListener onDone) {
-		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-		AlertDialog.Builder alert = new AlertDialog.Builder(context);
+    public CustomGSearchSpoof() {
+        super("Custom Google search change", "Change the text in google searches");
+    }
+    
+    private String customFilter = "% in my pants";
+    
+    @Override
+    public Dialog displayExtraDialog(final Context context, final OnExtraDialogDoneListener onDone) {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        AlertDialog.Builder alert = new AlertDialog.Builder(context);
 
-		alert.setTitle("Search change pattern");
-		alert.setMessage("Enter the text to change the google search to. Put '%' to enter the original search query.");
+        alert.setTitle("Search change pattern");
+        alert.setMessage("Enter the text to change the google search to. Put '%' to enter the original search query.");
 
-		final EditText input = new EditText(context);
-		alert.setView(input);
-		input.setText(prefs.getString("gSearchText", ""));
+        final EditText input = new EditText(context);
+        alert.setView(input);
+        input.setText(prefs.getString("gSearchText", ""));
 
-		alert.setPositiveButton("Done", new OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				customFilter = input.getText().toString().replace('\n', '+').replace('\t', '+').replace(' ', '+');
-				prefs.edit().putString("gSearchText", input.getText().toString()).commit();
-				onDone.onDone();
-			}
-		});
+        alert.setPositiveButton("Done", new OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                customFilter = input.getText().toString().replace('\n', '+').replace('\t', '+').replace(' ', '+');
+                prefs.edit().putString("gSearchText", input.getText().toString()).commit();
+                onDone.onDone();
+            }
+        });
 
-		return alert.create();
-	}
+        return alert.create();
+    }
 
-	@Override
-	public void modifyRequest(HttpRequest request) {
-		if(request.getHost().contains(".google."));
-     	Uri uri = request.getUri();
+    @Override
+    public void modifyRequest(HttpRequest request) {
+        if(request.getHost().contains(".google."));
+        Uri uri = request.getUri();
 
-		String userQuery = uri.getQueryParameter("q");
-		String newQuery = customFilter.replace("%", userQuery).replace(' ', '+');
+        String userQuery = uri.getQueryParameter("q");
+        String newQuery = customFilter.replace("%", userQuery).replace(' ', '+');
 
-     	Uri.Builder builder = uri.buildUpon();
-     	builder.appendQueryParameter("q", newQuery);
-     	request.setUri(builder.build());
-	}
+        Uri.Builder builder = uri.buildUpon();
+        builder.appendQueryParameter("q", newQuery);
+        request.setUri(builder.build());
+    }
 
-	@Override
-	public void modifyResponse(HttpResponse response, HttpRequest request) {
-	}
+    @Override
+    public void modifyResponse(HttpResponse response, HttpRequest request) {
+    }
 }

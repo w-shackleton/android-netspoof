@@ -32,39 +32,39 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
 public class About extends Activity implements OnClickListener {
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.about);
-		
-		findViewById(R.id.website).setOnClickListener(this);
-		findViewById(R.id.donate).setOnClickListener(this);
-		findViewById(R.id.reportBug).setOnClickListener(this);
-		
-		// Google analytics
-		Tracker t = ((App)getApplication()).getTracker();
-		if(t != null) {
-			t.setScreenName(getClass().getCanonicalName());
-			t.send(new HitBuilders.AppViewBuilder().build());
-		}
-	}
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.about);
+        
+        findViewById(R.id.website).setOnClickListener(this);
+        findViewById(R.id.donate).setOnClickListener(this);
+        findViewById(R.id.reportBug).setOnClickListener(this);
+        
+        // Google analytics
+        Tracker t = ((App)getApplication()).getTracker();
+        if(t != null) {
+            t.setScreenName(getClass().getCanonicalName());
+            t.send(new HitBuilders.AppViewBuilder().build());
+        }
+    }
 
-	@Override
-	public void onClick(View v) {
-		Intent intent;
-		switch(v.getId()) {
-		case R.id.website:
-			intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://digitalsquid.co.uk/netspoof"));
-			startActivity(intent);
-			break;
-		case R.id.reportBug:
-			intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/w-shackleton/android-netspoof/issues/new"));
-			startActivity(intent);
-			break;
-		case R.id.donate:
-			intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://digitalsquid.co.uk/netspoof/donate"));
-			startActivity(intent);
-			break;
-		}
-	}
+    @Override
+    public void onClick(View v) {
+        Intent intent;
+        switch(v.getId()) {
+        case R.id.website:
+            intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://digitalsquid.co.uk/netspoof"));
+            startActivity(intent);
+            break;
+        case R.id.reportBug:
+            intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/w-shackleton/android-netspoof/issues/new"));
+            startActivity(intent);
+            break;
+        case R.id.donate:
+            intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://digitalsquid.co.uk/netspoof/donate"));
+            startActivity(intent);
+            break;
+        }
+    }
 }

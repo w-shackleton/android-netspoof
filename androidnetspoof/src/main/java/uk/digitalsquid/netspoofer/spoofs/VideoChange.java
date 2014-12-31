@@ -37,51 +37,51 @@ import uk.digitalsquid.netspoofer.proxy.HttpResponse;
  *
  */
 public class VideoChange extends Spoof {
-	private static final long serialVersionUID = 8490503138296852028L;
-	
-	private final boolean custom;
+    private static final long serialVersionUID = 8490503138296852028L;
+    
+    private final boolean custom;
 
-	public VideoChange(Context context, boolean custom) {
-		super(context.getResources().getString(
-				custom ? R.string.spoof_video_custom : R.string.spoof_video),
-				context.getResources().getString(
-						custom ? R.string.spoof_video_custom_description :
-							R.string.spoof_video_description));
-		this.custom = custom;
-	}
-	
-	private String videoId = "dQw4w9WgXcQ";
-	
-	@Override
-	public Intent activityForResult(Context context) {
-		if(!custom) return null;
-		return new Intent(context, YoutubeSelector.class);
-	}
-	
-	@Override
-	public boolean activityFinished(Context context, Intent result) {
-		videoId = result.getStringExtra(YoutubeSelector.CODE);
-		if(videoId == null) return false; // No video selected
-		else return true;
-	}
-
-	@Override
-	public Dialog displayExtraDialog(Context context,
-			OnExtraDialogDoneListener onDone) {
-		return null;
-	}
-
-    public void modifyRequest( HttpRequest request) {
-     	if(!request.getHost().toLowerCase().contains("youtube.com")) return;
-     	if(!request.getPath().toLowerCase().startsWith("/watch")) return;
-     	
-     	Uri uri = request.getUri();
-     	Uri.Builder builder = uri.buildUpon();
-     	builder.appendQueryParameter("v", videoId);
-     	request.setUri(builder.build());
+    public VideoChange(Context context, boolean custom) {
+        super(context.getResources().getString(
+                custom ? R.string.spoof_video_custom : R.string.spoof_video),
+                context.getResources().getString(
+                        custom ? R.string.spoof_video_custom_description :
+                            R.string.spoof_video_description));
+        this.custom = custom;
+    }
+    
+    private String videoId = "dQw4w9WgXcQ";
+    
+    @Override
+    public Intent activityForResult(Context context) {
+        if(!custom) return null;
+        return new Intent(context, YoutubeSelector.class);
+    }
+    
+    @Override
+    public boolean activityFinished(Context context, Intent result) {
+        videoId = result.getStringExtra(YoutubeSelector.CODE);
+        if(videoId == null) return false; // No video selected
+        else return true;
     }
 
-	@Override
-	public void modifyResponse(HttpResponse response, HttpRequest request) {
-	}
+    @Override
+    public Dialog displayExtraDialog(Context context,
+            OnExtraDialogDoneListener onDone) {
+        return null;
+    }
+
+    public void modifyRequest( HttpRequest request) {
+        if(!request.getHost().toLowerCase().contains("youtube.com")) return;
+        if(!request.getPath().toLowerCase().startsWith("/watch")) return;
+        
+        Uri uri = request.getUri();
+        Uri.Builder builder = uri.buildUpon();
+        builder.appendQueryParameter("v", videoId);
+        request.setUri(builder.build());
+    }
+
+    @Override
+    public void modifyResponse(HttpResponse response, HttpRequest request) {
+    }
 }

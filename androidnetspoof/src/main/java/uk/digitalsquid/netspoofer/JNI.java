@@ -33,15 +33,15 @@ package uk.digitalsquid.netspoofer;
  *
  */
 public class JNI {
-	static {
-		System.loadLibrary("netspooflib");
-	}
-	
-	/**
-	 * Chmod glibc function setting a file to 0755
-	 * @param filename
-	 * @param permissions
-	 * @return
-	 */
-	public static native int setExecutable(String filename);
+    static {
+        System.loadLibrary("netspooflib");
+    }
+    
+    /**
+     * Chmod glibc function setting a file to 0755
+     * @param filename
+     * @param permissions
+     * @return
+     */
+    public static native int setExecutable(String filename);
 }

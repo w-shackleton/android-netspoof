@@ -41,60 +41,60 @@ import uk.digitalsquid.netspoofer.proxy.HttpResponse;
  */
 public class MultiSpoof extends Spoof implements LogConf {
 
-	public MultiSpoof() {
-		// TODO: Localise
-		super("Multiple spoofs", "Run multiple spoofs at once. May run slowly.");
-	}
-	
-	private ArrayList<Spoof> selectedSpoofs;
-	private ArrayList<Spoof> finalSpoofs;
+    public MultiSpoof() {
+        // TODO: Localise
+        super("Multiple spoofs", "Run multiple spoofs at once. May run slowly.");
+    }
+    
+    private ArrayList<Spoof> selectedSpoofs;
+    private ArrayList<Spoof> finalSpoofs;
 
-	private static final long serialVersionUID = -848683524539301592L;
+    private static final long serialVersionUID = -848683524539301592L;
 
-	@Override
-	public Intent activityForResult(Context context) {
-		Intent ret = new Intent(context, SpoofSelector.class);
-		ret.setAction(Intent.ACTION_PICK);
-		return ret;
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public boolean activityFinished(Context context, Intent intent) {
-		selectedSpoofs = (ArrayList<Spoof>) intent.getSerializableExtra("uk.digitalsquid.netspoof.SpoofSelector.spoofs");
-		return true;
-	}
+    @Override
+    public Intent activityForResult(Context context) {
+        Intent ret = new Intent(context, SpoofSelector.class);
+        ret.setAction(Intent.ACTION_PICK);
+        return ret;
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public boolean activityFinished(Context context, Intent intent) {
+        selectedSpoofs = (ArrayList<Spoof>) intent.getSerializableExtra("uk.digitalsquid.netspoof.SpoofSelector.spoofs");
+        return true;
+    }
 
-	@Override
-	public Intent activityForResult2(Context context) {
-		Intent ret = new Intent(context, MultiSpoofDialogRunner.class);
-		ret.putExtra(MultiSpoofDialogRunner.SPOOF_LIST, selectedSpoofs);
-		return ret;
-	}
+    @Override
+    public Intent activityForResult2(Context context) {
+        Intent ret = new Intent(context, MultiSpoofDialogRunner.class);
+        ret.putExtra(MultiSpoofDialogRunner.SPOOF_LIST, selectedSpoofs);
+        return ret;
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public boolean activityFinished2(Context context, Intent result) {
-		finalSpoofs = (ArrayList<Spoof>) result.getSerializableExtra(MultiSpoofDialogRunner.SPOOF_LIST);
-		return true;
-	}
-	
-	@Override public Dialog displayExtraDialog(Context context, OnExtraDialogDoneListener onDone) { return null; }
-	
-	public ArrayList<Spoof> getSpoofs() {
-		return finalSpoofs;
-	}
-	
-	// These functions do nothing; MultiSpoof is never actually used (its inner
-	// spoofs are expanded before runtime)
+    @SuppressWarnings("unchecked")
+    @Override
+    public boolean activityFinished2(Context context, Intent result) {
+        finalSpoofs = (ArrayList<Spoof>) result.getSerializableExtra(MultiSpoofDialogRunner.SPOOF_LIST);
+        return true;
+    }
+    
+    @Override public Dialog displayExtraDialog(Context context, OnExtraDialogDoneListener onDone) { return null; }
+    
+    public ArrayList<Spoof> getSpoofs() {
+        return finalSpoofs;
+    }
+    
+    // These functions do nothing; MultiSpoof is never actually used (its inner
+    // spoofs are expanded before runtime)
 
-	@Override
-	public void modifyRequest(HttpRequest request) {
-		Log.e(TAG, "MultiSpoof.modifyRequest called!");
-	}
+    @Override
+    public void modifyRequest(HttpRequest request) {
+        Log.e(TAG, "MultiSpoof.modifyRequest called!");
+    }
 
-	@Override
-	public void modifyResponse(HttpResponse response, HttpRequest request) {
-		Log.e(TAG, "MultiSpoof.modifyResponse called!");
-	}
+    @Override
+    public void modifyResponse(HttpResponse response, HttpRequest request) {
+        Log.e(TAG, "MultiSpoof.modifyResponse called!");
+    }
 }
