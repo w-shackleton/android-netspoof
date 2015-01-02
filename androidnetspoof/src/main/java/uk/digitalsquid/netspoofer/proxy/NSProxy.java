@@ -22,6 +22,7 @@
 package uk.digitalsquid.netspoofer.proxy;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.util.Log;
@@ -47,9 +48,11 @@ public class NSProxy implements LogConf {
     
     protected final List<Spoof> spoofs;
 
-    public NSProxy(List<Spoof> spoofs) {
+    public NSProxy(Context context, List<Spoof> spoofs) {
         this.spoofs = spoofs;
-        
+        for (Spoof spoof : this.spoofs) {
+            spoof.transientInit(context);
+        }
     }
     
     private static final int LAUNCH_FAIL = 1;
