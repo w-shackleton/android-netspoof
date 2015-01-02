@@ -46,7 +46,7 @@ import uk.digitalsquid.netspoofer.proxy.HttpRequest;
 import uk.digitalsquid.netspoofer.proxy.HttpResponse;
 
 /**
- * A custom version of the Google spoof which allows the user to enter their own google search query.
+ * A custom version of the image change spoof
  * @author Will Shackleton <will@digitalsquid.co.uk>
  *
  */
@@ -78,7 +78,7 @@ public class CustomGalleryImageChange extends Spoof implements LogConf {
     }
     
     private final int mode;
-    
+
     public CustomGalleryImageChange(Context context, int mode) {
         super(getTitle(context, mode), getDescription(context, mode));
         this.mode = mode;
@@ -97,21 +97,29 @@ public class CustomGalleryImageChange extends Spoof implements LogConf {
         }
     }
     
-    private File customImage;
-    private byte[] imageData;
+    private String customImage;
+    private transient byte[] imageData;
     private String mimeType;
     
     @Override
     public boolean activityFinished(final Context context, Intent result) {
         super.activityFinished(context, result);
-        final Uri customImageURI = result.getData();
-        try {
-            customImage = new File(new URI(customImageURI.toString()));
-        } catch (URISyntaxException e) {
-            Log.e(TAG, "Failed to load custom image", e);
-        }
-        
+        customImage = result.getData().toString();
         return true;
+    }
+
+    @Override
+    public void transientInit(Context context) {
+        // Load image
+        synchronized(LOAD_SYNC) {
+            if(imageData == null) {
+                try {
+                    loadImage(context.getContentResolver().openInputStream(Uri.parse(customImage)));
+                } catch (FileNotFoundException e) {
+                    Log.e(TAG, "Failed to load custom image", e);
+                }
+            }
+        }
     }
 
     @Override
@@ -131,18 +139,7 @@ public class CustomGalleryImageChange extends Spoof implements LogConf {
                 isImage = true;
         }
         if(!isImage) return;
-        
-        // Load image
-        synchronized(LOAD_SYNC) {
-            if(imageData == null) {
-                try {
-                    loadImage(new FileInputStream(customImage));
-                } catch (FileNotFoundException e) {
-                    Log.e(TAG, "Failed to load custom image", e);
-                }
-            }
-        }
-        
+
         // Set new content
         response.changeHeader("Content-Type", mimeType);
         response.setContent(imageData);

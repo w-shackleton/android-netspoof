@@ -43,6 +43,12 @@ public abstract class Spoof implements Serializable, Comparable<Spoof> {
         this.description = description;
         this.title = title;
     }
+
+    /**
+     * Reinitialises this spoof after it has been deserialised
+     * @param context
+     */
+    public void transientInit(Context context) { }
     
     public Dialog displayExtraDialog(Context context, OnExtraDialogDoneListener onDone) {
         return null;

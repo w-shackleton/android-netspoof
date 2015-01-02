@@ -141,7 +141,7 @@ public class RunManager implements LogConf {
             ProcessRunner.writeEnvConfigFile(context, env);
             
             // Start proxy
-            proxy = new NSProxy(spoof.getSpoofs());
+            proxy = new NSProxy(context, spoof.getSpoofs());
             proxy.start();
 
             su = pb.start();
