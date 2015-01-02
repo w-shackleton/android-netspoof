@@ -1,6 +1,6 @@
 // config.h to support arp-scan on Android
 
-#define DATADIR "."
+#define DATADIR "../bindata"
 
 /* Define to the appropriate type for 64-bit ints. */
 #define ARP_INT64 long int

@@ -327,6 +327,7 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf, OnUp
                 fi.installScript("iptables", R.raw.iptables);
                 fi.installScript("spoof", R.raw.spoof);
 
+                fi.installBinary("arp-scan");
                 fi.installBinary("arpspoof");
 
                 // Remove old debimg file

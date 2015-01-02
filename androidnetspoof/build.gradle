@@ -47,6 +47,7 @@ task ndkBinariesToJar(type: Zip, dependsOn: 'ndkBuild', description: 'Create a J
     baseName 'ndk-binaries'
     extension 'jar'
     from(new File(buildDir, 'libs')) {
+        include '**/arp-scan'
         include '**/arpspoof'
     }
     into 'assets/binaries/'
