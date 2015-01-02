@@ -37,12 +37,14 @@ import uk.digitalsquid.netspoofer.JNI;
 
 public final class FileInstaller implements LogConf {
     private static final String BIN_DIR = "/bin";
+    private static final String DATA_DIR = "/bindata";
     private final Context context;
     
     public FileInstaller(Context context) throws FileNotFoundException {
         this.context = context;
         try {
-        new File(context.getFilesDir().getParent() + BIN_DIR).mkdir();
+            new File(context.getFilesDir().getParent() + BIN_DIR).mkdir();
+            new File(context.getFilesDir().getParent() + DATA_DIR).mkdir();
         } catch (NullPointerException e) {
             // One of the above fileops failed, most likely due to broken phone.
             Log.e(TAG, "Failed to create binary directory!");
@@ -75,18 +77,14 @@ public final class FileInstaller implements LogConf {
     }
 
     /**
-     * Installs a binary from the assets folder.
+     * Installs an asset from the assets folder.
      * @param binaryName
      */
-    public void installBinary(String binaryName) throws IOException {
-        String path = String.format("binaries/%s/%s", Build.CPU_ABI, binaryName);
-
-        String filename = getScriptPath(binaryName);
-
+    public void installAsset(String path, String dest) throws IOException {
         InputStream is = context.getAssets().open(path);
-        File outFile = new File(filename);
+        File outFile = new File(dest);
         outFile.createNewFile();
-        Log.d(TAG, String.format("Copying from %s to %s", path, filename));
+        Log.d(TAG, String.format("Copying from %s to %s", path, dest));
         byte buf[] = new byte[1024];
         int len;
         OutputStream out = new FileOutputStream(outFile);
@@ -95,16 +93,46 @@ public final class FileInstaller implements LogConf {
         }
         out.close();
         is.close();
+    }
+
+    /**
+     * Installs a binary from the assets folder.
+     * @param binaryName
+     */
+    public void installBinary(String binaryName) throws IOException {
+        String path = String.format("binaries/%s/%s", Build.CPU_ABI, binaryName);
+        String dest = getScriptPath(binaryName);
+
+        installAsset(path, dest);
 
         // Mark as executable
-        JNI.setExecutable(filename);
+        JNI.setExecutable(dest);
     }
-    
+
+    /**
+     * Installs a file from the assets folder.
+     * @param binaryName
+     */
+    public void installData(String subdir, String filename) throws IOException {
+        String path = String.format("data/%s/%s", subdir, filename);
+        String dest = getDataPath(filename);
+
+        installAsset(path, dest);
+    }
+
     public static String getScriptPath(Context context, String scriptName) {
         return new File(context.getFilesDir().getParent() + BIN_DIR).getAbsolutePath() + "/" + scriptName;
     }
 
+    public static String getDataPath(Context context, String file) {
+        return new File(context.getFilesDir().getParent() + DATA_DIR).getAbsolutePath() + "/" + file;
+    }
+
     private String getScriptPath(String scriptName) {
         return getScriptPath(context, scriptName);
+    }
+
+    private String getDataPath(String scriptName) {
+        return getDataPath(context, scriptName);
     }
 }

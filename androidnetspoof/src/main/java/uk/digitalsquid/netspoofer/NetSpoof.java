@@ -329,6 +329,9 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf, OnUp
 
                 fi.installBinary("arp-scan");
                 fi.installBinary("arpspoof");
+                fi.installData("arp-scan", "ieee-iab.txt");
+                fi.installData("arp-scan", "ieee-oui.txt");
+                fi.installData("arp-scan", "mac-vendor.txt");
 
                 // Remove old debimg file
                 if(getExternalFilesDir(null) != null) {
@@ -342,12 +345,11 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf, OnUp
                     imgFolder.delete();
                 }
             } catch (FileNotFoundException e) {
-                e.printStackTrace();
+                Log.e(TAG, "Failed to install scripts.", e);
             } catch (NotFoundException e) {
-                e.printStackTrace();
+                Log.e(TAG, "Failed to install scripts.", e);
             } catch (IOException e) {
-                e.printStackTrace();
-                Log.e(TAG, "Failed to install scripts.");
+                Log.e(TAG, "Failed to install scripts.", e);
             }
         }
     };
