@@ -29,7 +29,7 @@ dependencies {
 }
 
 tasks.withType(JavaCompile) {
-    compileTask -> compileTask.dependsOn ndkLibsToJar,ndkBinariesToJar
+    compileTask -> compileTask.dependsOn ndkLibsToJar, ndkBinariesToJar, ndkDataToJar
 }
 
 task ndkLibsToJar(type: Zip, dependsOn: 'ndkBuild', description: 'Create a JAR of the native libs') {
@@ -47,9 +47,22 @@ task ndkBinariesToJar(type: Zip, dependsOn: 'ndkBuild', description: 'Create a J
     baseName 'ndk-binaries'
     extension 'jar'
     from(new File(buildDir, 'libs')) {
+        include '**/arp-scan'
         include '**/arpspoof'
     }
     into 'assets/binaries/'
+}
+
+task ndkDataToJar(type: Zip, dependsOn: 'ndkBuild', description: 'Create a JAR of the native binaries') {
+    destinationDir new File(buildDir, 'libs')
+    baseName 'ndk-data'
+    extension 'jar'
+    from(new File('src/main/jni/arp-scan')) {
+        include '**/ieee-iab.txt'
+        include '**/ieee-oui.txt'
+        include '**/mac-vendor.txt'
+    }
+    into 'assets/data/'
 }
 
 task ndkBuild(type: Exec, description: 'Compile JNI source via NDK') {
