@@ -24,6 +24,7 @@ package uk.digitalsquid.netspoofer;
 import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -48,8 +49,6 @@ import android.widget.Toast;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
-import java.io.IOException;
-import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -60,8 +59,11 @@ import java.util.concurrent.TimeUnit;
 
 import uk.digitalsquid.netspoofer.config.LogConf;
 import uk.digitalsquid.netspoofer.config.NetHelpers;
+import uk.digitalsquid.netspoofer.entities.Range;
+import uk.digitalsquid.netspoofer.entities.Victim;
 import uk.digitalsquid.netspoofer.misc.AsyncTaskHelper;
 import uk.digitalsquid.netspoofer.spoofs.SpoofData;
+import uk.digitalsquid.netspoofer.tasks.ArpScan;
 
 public class VictimSelector extends Activity implements OnClickListener, LogConf {
     public static final String EXTRA_SPOOFDATA = "uk.digitalsquid.netspoofer.VictimSelector.SPOOFDATA";
@@ -129,56 +131,13 @@ public class VictimSelector extends Activity implements OnClickListener, LogConf
     private void stopAllTasks() {
         Log.v(TAG, "VictimSelector stopping");
         hostnameFinder.cancel(true);
-        if(scanners != null) {
-            for(IPScanner s : scanners)
-                s.cancel(true);
+        if(scanner != null) {
+            scanner.cancel(true);
         }
     }
     
     private VictimListAdapter victimListAdapter;
-    
-    public static class Victim implements Comparable<Victim>, Serializable {
-        private static final long serialVersionUID = -8815727249378333391L;
-        private final InetAddress ip;
-        private String name;
-        
-        public Victim(InetAddress ip) {
-            this.ip = ip;
-        }
 
-        public InetAddress getIp() {
-            return ip;
-        }
-
-        public String getIpString() {
-            return ip.getHostAddress();
-        }
-        
-        /**
-         * Gets the predetermined hostname. This will initially be <code>null</code>, but will be filled in later by the lookup thread.
-         * @return
-         */
-        public String getHostname() {
-            return name;
-        }
-        
-        public void setHostname(String name) {
-            this.name = name;
-        }
-        
-        @Override
-        public int compareTo(Victim another) {
-            byte[] me = ip.getAddress();
-            byte[] other = another.getIp().getAddress();
-            for(int i = 0; i < me.length && i < other.length; i++) {
-                if(me[i] != other[i]) {
-                    return me[i] - other[i];
-                }
-            }
-            return 0;
-        }
-    }
-    
     private class VictimListAdapter extends BaseAdapter implements OnItemClickListener {
         private final LayoutInflater inflater;
         List<Victim> victims = new ArrayList<Victim>();
@@ -234,8 +193,8 @@ public class VictimSelector extends Activity implements OnClickListener, LogConf
                 convertView.setEnabled(true);
                 break;
             default:
-                holder.vIp.setText(getItem(position).ip.getHostAddress());
-                holder.vText.setText(getItem(position).getHostname());
+                holder.vIp.setText(getItem(position).getIp().getHostAddress());
+                holder.vText.setText(getItem(position).getMac() + ": " + getItem(position).getVendor());
                 break;
             }
             return convertView;
@@ -283,71 +242,32 @@ public class VictimSelector extends Activity implements OnClickListener, LogConf
             notifyDataSetChanged();
         }
     }
+
+    private ScannerPrinter scanner;
     
-    private IPScanner[] scanners;
-    
-    private class IPScanner extends AsyncTask<Void, Victim, Void> {
-        
-        private final long ipFrom, ipTo;
-        
-        private boolean running = true;
-        
-        public IPScanner(long ipFrom, long ipTo) {
-            this.ipFrom = ipFrom;
-            this.ipTo = ipTo;
+    private class ScannerPrinter extends ArpScan {
+        public ScannerPrinter(Context context) {
+            super(context);
         }
 
-        @Override
-        protected Void doInBackground(Void... params) {
-            Log.d(TAG, String.format("Starting scanning IPs %d to %d.", ipFrom, ipTo));
-            for(long ip = ipFrom; ip < ipTo; ip++) {
-                if(isCancelled()) return null;
-                try {
-                    InetAddress addr = NetHelpers.reverseInetFromInt(ip);
-                    if(addr.isReachable(100)) {
-                        Victim v = new Victim(addr);
-                        hostnameFindQueue.add(v); // Get hostname async-ly
-                        publishProgress(v);
-                    }
-                } catch (UnknownHostException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            return null;
-        }
-        
         @Override
         protected void onProgressUpdate(Victim... victims) {
             victimListAdapter.addDevicesToList(victims);
         }
-        
+
         @Override
         protected void onPostExecute(Void ret) {
-            Log.d(TAG, String.format("Finished scanning IPs %d to %d.", ipFrom, ipTo));
-            running = false;
+            Log.d(TAG, "Finished scanning IPs");
             onScannerFinish();
-        }
-
-        public boolean isRunning() {
-            return running;
         }
     }
     
     private void onScannerFinish() {
-        boolean allFinished = true;
-        for(IPScanner scanner : scanners) {
-            if(scanner.isRunning()) allFinished = false;
-        }
-        if(allFinished) {
-            Log.i(TAG, "All scanners finished");
-            scanProgressBar.setVisibility(View.INVISIBLE);
-            scanProgressText.setText("");
-            scanProgressRefresh.setEnabled(true);
-            
-            setProgressBarIndeterminateVisibility(false);
-        }
+        scanProgressBar.setVisibility(View.INVISIBLE);
+        scanProgressText.setText("");
+        scanProgressRefresh.setEnabled(true);
+
+        setProgressBarIndeterminateVisibility(false);
     }
     
     private void startScanners() {
@@ -356,40 +276,21 @@ public class VictimSelector extends Activity implements OnClickListener, LogConf
         long ip = spoof.getMyIpReverseInt();
         long baseIp = ip & spoof.getMySubnetReverseInt(); // Bottom possble IP
         long topIp = baseIp | (0xffffffffL >> spoof.getMySubnet()); // Top possible IP
-        /*
-         * A little note here. The logical way to store IP addrs in ints (the 'reverse' commands)
-         * is the opposite to the one used by Android functions (the non reverse ones). The difference
-         * is the endianness.
-         */
-        
-        // Create as many scanners as user asked.
-        int numScanners;
+
+        ScannerPrinter scanner = new ScannerPrinter(this);
         try {
-        numScanners = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("ipScanThreads", "4"));
-        } catch(NumberFormatException e) {
-            numScanners = 4;
+            AsyncTaskHelper.execute(scanner, new Range(
+                    NetHelpers.reverseInetFromInt(baseIp),
+                    NetHelpers.reverseInetFromInt(topIp)));
+
+            scanProgressBar.setVisibility(View.VISIBLE);
+            scanProgressText.setText(R.string.scanning);
+            scanProgressRefresh.setEnabled(false);
+
+            setProgressBarIndeterminateVisibility(true);
+        } catch (UnknownHostException e) {
+            Log.e(TAG, "Failed to look up IPs", e);
         }
-        if(numScanners < 1) numScanners = 1;
-        if(numScanners > 40) numScanners = 40;
-        scanners = new IPScanner[numScanners];
-        
-        long range = (topIp - baseIp) / scanners.length;
-        for(int i = 0; i < scanners.length - 1; i++) {
-            scanners[i] = new IPScanner(baseIp + (range * i), baseIp + (range * (i+1)));
-        }
-        // Make sure that none are left out.
-        scanners[scanners.length - 1] = new IPScanner(baseIp + (range * (scanners.length - 1)), topIp + 1);
-        
-        // Start
-        for(IPScanner scanner : scanners) {
-            AsyncTaskHelper.execute(scanner);
-        }
-        
-        scanProgressBar.setVisibility(View.VISIBLE);
-        scanProgressText.setText(R.string.scanning);
-        scanProgressRefresh.setEnabled(false);
-        
-        setProgressBarIndeterminateVisibility(true);
     }
 
     @Override
@@ -446,9 +347,9 @@ public class VictimSelector extends Activity implements OnClickListener, LogConf
         startActivity(intent);
     }
     
-    LinkedBlockingQueue<Victim> hostnameFindQueue = new LinkedBlockingQueue<VictimSelector.Victim>();
+    LinkedBlockingQueue<Victim> hostnameFindQueue = new LinkedBlockingQueue<Victim>();
     
-    private final AsyncTask<Void, Victim, Void> hostnameFinder = new AsyncTask<Void, VictimSelector.Victim, Void>() {
+    private final AsyncTask<Void, Victim, Void> hostnameFinder = new AsyncTask<Void, Victim, Void>() {
         @Override
         protected Void doInBackground(Void... params) {
             Log.i(TAG, "Starting to find hostnames");
