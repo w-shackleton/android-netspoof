@@ -49,6 +49,7 @@ task ndkBinariesToJar(type: Zip, dependsOn: 'ndkBuild', description: 'Create a J
     from(new File(buildDir, 'libs')) {
         include '**/arp-scan'
         include '**/arpspoof'
+        include '**/iptables'
     }
     into 'assets/binaries/'
 }
