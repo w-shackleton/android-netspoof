@@ -186,7 +186,7 @@ public final class NetHelpers implements LogConf {
             if(route.getDestination().equals("0.0.0.0")) {
                 gateway = route.getGateway();
             }
-            if(route.getGateway().equals("0.0.0.0")) {
+            if(route.getGateway().equals("0.0.0.0") && !route.getGenmask().equals("255.255.255.255")) {
                 subnet = route.getGenmask();
             }
         }
