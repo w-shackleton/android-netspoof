@@ -54,5 +54,8 @@
         <activity android:name="YoutubeSelector" android:label="@string/selectvideo">
         </activity>
         <activity android:name="MultiSpoofDialogRunner" android:label="@string/configuring"></activity>
+        <activity
+            android:name="com.google.android.gms.ads.AdActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"/>
     </application>
 </manifest>
