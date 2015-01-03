@@ -4,3 +4,6 @@
 [submodule "androidnetspoof/src/main/jni/arp-scan/arp-scan"]
 	path = androidnetspoof/src/main/jni/arp-scan/arp-scan
 	url = https://github.com/w-shackleton/arp-scan.git
+[submodule "androidnetspoof/src/main/jni/iptables/custom-android-iptables"]
+	path = androidnetspoof/src/main/jni/iptables/custom-android-iptables
+	url = https://github.com/w-shackleton/custom-android-iptables.git
