@@ -112,7 +112,7 @@ public class CustomGalleryImageChange extends Spoof implements LogConf {
     public void transientInit(Context context) {
         // Load image
         synchronized(LOAD_SYNC) {
-            if(imageData == null) {
+            if(imageData == null && customImage != null) {
                 try {
                     loadImage(context.getContentResolver().openInputStream(Uri.parse(customImage)));
                 } catch (FileNotFoundException e) {
