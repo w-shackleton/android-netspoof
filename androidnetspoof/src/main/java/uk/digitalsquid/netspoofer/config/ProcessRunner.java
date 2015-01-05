@@ -22,94 +22,17 @@
 package uk.digitalsquid.netspoofer.config;
 
 import android.content.Context;
-import android.os.Build;
 import android.util.Log;
 
-import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 public final class ProcessRunner implements LogConf {
     private ProcessRunner() {}
-    
-    public static final int runProcess(Context context, String... args) throws IOException {
-        return runProcess(context, null, args);
-    }
-
-    /**
-     * Runs a process with the given environment and args
-     * @param env
-     * @param args
-     * @return
-     * @throws IOException
-     */
-    public static final int runProcess(Context context, Map<String, String> env, String... args) throws IOException {
-        return runProcess(context, env, (List<String>) null, args);
-    }
-    
-    /**
-     * Runs a process with an environment and saves the output to output.
-     * @param env The environment
-     * @param output A list to put the command's output in.
-     * @param args The program args
-     * @return
-     * @throws IOException
-     */
-    public static final int runProcess(Context context, Map<String, String> env, List<String> output, String... args) throws IOException {
-        Process proc;
-        if(Build.VERSION.SDK_INT >= 9) { // 2.2 doesn't like this method
-            ProcessBuilder pb = new ProcessBuilder(args);
-            writeEnvConfigFile(context, env);
-            proc = pb.start();
-        } else {
-            if(env != null) {
-                Map<String, String> systemEnv = System.getenv(); // We also must include this
-                Map<String, String> combinedEnv = new HashMap<String, String>();
-                combinedEnv.putAll(env);
-                combinedEnv.putAll(systemEnv);
-                
-                String[] envArray = new String[combinedEnv.size()];
-                int i = 0;
-                for(String key : combinedEnv.keySet()) {
-                    envArray[i++] = String.format("%s=%s", key, combinedEnv.get(key));
-                }
-                proc = Runtime.getRuntime().exec(args, envArray);
-            } else {
-                proc = Runtime.getRuntime().exec(args);
-            }
-        }
-        BufferedReader cout = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-        BufferedReader cerr = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
-        boolean running = true;
-        while(running) {
-            while(cout.ready()) {
-                String msg = cout.readLine();
-                if(output != null) output.add(msg);
-                Log.d(TAG, "cout: " + msg);
-            }
-            while(cerr.ready()) {
-                String msg = cerr.readLine();
-                if(output != null) output.add(msg);
-                Log.d(TAG, "cerr: " + msg);
-            }
-            try {
-                proc.exitValue();
-                running = false;
-                cout.close();
-                cerr.close();
-                return proc.exitValue();
-            }
-            catch (IllegalThreadStateException e) { } // Not done
-            try { Thread.sleep(50); } catch (InterruptedException e) { }
-        }
-        return 0;
-    }
     
     /**
      * Writes the <code>config</code> file with the env paramaters.

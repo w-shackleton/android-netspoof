@@ -74,15 +74,16 @@ public class CustomGSearchSpoof extends Spoof {
 
     @Override
     public void modifyRequest(HttpRequest request) {
-        if(request.getHost().contains(".google."));
-        Uri uri = request.getUri();
+        if(request.getHost().contains(".google.")) {
+            Uri uri = request.getUri();
 
-        String userQuery = uri.getQueryParameter("q");
-        String newQuery = customFilter.replace("%", userQuery).replace(' ', '+');
+            String userQuery = uri.getQueryParameter("q");
+            String newQuery = customFilter.replace("%", userQuery).replace(' ', '+');
 
-        Uri.Builder builder = uri.buildUpon();
-        builder.appendQueryParameter("q", newQuery);
-        request.setUri(builder.build());
+            Uri.Builder builder = uri.buildUpon();
+            builder.appendQueryParameter("q", newQuery);
+            request.setUri(builder.build());
+        }
     }
 
     @Override

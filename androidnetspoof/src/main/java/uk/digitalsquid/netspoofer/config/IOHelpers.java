@@ -22,14 +22,10 @@
 package uk.digitalsquid.netspoofer.config;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
 
 public final class IOHelpers {
     private IOHelpers() {}
@@ -50,73 +46,5 @@ public final class IOHelpers {
         }
         reader.close();
         return out.toString();
-    }
-    
-    /**
-     * Reads a whole file into an array of lines.
-     * @param filename
-     * @return
-     * @throws IOException 
-     */
-    public static final List<String> readFileToLines(String filename) throws IOException {
-        FileReader reader = new FileReader(filename);
-        BufferedReader br = new BufferedReader(reader);
-        
-        List<String> lines = new ArrayList<String>();
-        String line;
-        while((line = br.readLine()) != null) {
-            lines.add(line);
-        }
-        br.close();
-        reader.close();
-        return lines;
-    }
-    
-    public static final List<String> runProcessOutputToLines(List<String> args) throws IOException {
-        ProcessBuilder pb = new ProcessBuilder(args);
-        
-        pb.redirectErrorStream(true);
-        Process proc = pb.start();
-        BufferedReader cout = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-        try {
-            proc.waitFor();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        List<String> lines = new ArrayList<String>();
-        String line;
-        while((line = cout.readLine()) != null) {
-            lines.add(line);
-        }
-        cout.close();
-        return lines;
-    }
-    
-    public static final int runProcess(List<String> args) throws IOException {
-        ProcessBuilder pb = new ProcessBuilder(args);
-        
-        Process proc = pb.start();
-        try {
-            return proc.waitFor();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return -1;
-    }
-    
-    public static final void deleteFolder(File dir) {
-        if(!dir.exists()) return;
-        if(!dir.isDirectory()) {
-            dir.delete();
-            return;
-        }
-        for(String child : dir.list()) {
-            File sub = new File(dir, child);
-            if(sub.isDirectory()) {
-                deleteFolder(sub);
-                sub.delete();
-            }
-            else sub.delete();
-        }
     }
 }

@@ -62,7 +62,6 @@ import java.util.List;
 import uk.digitalsquid.netspoofer.NetSpoofService.NetSpoofServiceBinder;
 import uk.digitalsquid.netspoofer.config.LogConf;
 import uk.digitalsquid.netspoofer.misc.CheckedLinearLayout;
-import uk.digitalsquid.netspoofer.servicestatus.SpoofList;
 import uk.digitalsquid.netspoofer.spoofs.Spoof;
 import uk.digitalsquid.netspoofer.spoofs.Spoof.OnExtraDialogDoneListener;
 
@@ -77,8 +76,7 @@ public class SpoofSelector extends Activity implements OnClickListener, OnItemCl
     private ListView spoofList;
     
     boolean haveSpoofList = false;
-    boolean gettingSpoofList = false;
-    
+
     boolean multiChoice = false;
     List<Spoof> multiSpoofList;
     
@@ -155,10 +153,7 @@ public class SpoofSelector extends Activity implements OnClickListener, OnItemCl
                 showStartingDialog();
                 break;
             case NetSpoofService.STATUS_LOADED:
-                if(!gettingSpoofList) {
-                    gettingSpoofList = true;
-                    SpoofSelector.this.service.requestSpoofs();
-                }
+                setSpoofs(SpoofSelector.this.service.getSpoofs());
                 break;
             }
         }
@@ -180,9 +175,8 @@ public class SpoofSelector extends Activity implements OnClickListener, OnItemCl
                     break;
                 case NetSpoofService.STATUS_LOADED:
                     if(startingDialog != null) startingDialog.cancel();
-                    if(!gettingSpoofList) {
-                        gettingSpoofList = true;
-                        if(SpoofSelector.this.service != null) SpoofSelector.this.service.requestSpoofs();
+                    if (!haveSpoofList) {
+                        setSpoofs(SpoofSelector.this.service.getSpoofs());
                     }
                     break;
                 case NetSpoofService.STATUS_FAILED:
@@ -195,17 +189,6 @@ public class SpoofSelector extends Activity implements OnClickListener, OnItemCl
                     break;
                 }
             } else if(intent.getAction().equals(NetSpoofService.INTENT_SPOOFLIST)) {
-                SpoofList spoofs = (SpoofList) intent.getSerializableExtra(NetSpoofService.INTENT_EXTRA_SPOOFLIST);
-                if(multiChoice) {
-                    multiSpoofList = new ArrayList<Spoof>();
-                    for(Spoof s : spoofs.getSpoofs()) {
-                        multiSpoofList.add(s);
-                    }
-                    Collections.sort(multiSpoofList);
-                    spoofList.setAdapter(new ArrayAdapter<Spoof>(SpoofSelector.this, android.R.layout.simple_list_item_multiple_choice, multiSpoofList));
-                } else {
-                    spoofListAdapter.setSpoofs(spoofs.getSpoofs());
-                }
             }
         }
     };
@@ -430,6 +413,19 @@ public class SpoofSelector extends Activity implements OnClickListener, OnItemCl
             setResult(RESULT_CANCELED);
             finish();
             break;
+        }
+    }
+
+    private void setSpoofs(ArrayList<Spoof> spoofs) {
+        if(multiChoice) {
+            multiSpoofList = new ArrayList<Spoof>();
+            for(Spoof s : spoofs) {
+                multiSpoofList.add(s);
+            }
+            Collections.sort(multiSpoofList);
+            spoofList.setAdapter(new ArrayAdapter<Spoof>(SpoofSelector.this, android.R.layout.simple_list_item_multiple_choice, multiSpoofList));
+        } else {
+            spoofListAdapter.setSpoofs(spoofs);
         }
     }
 }
