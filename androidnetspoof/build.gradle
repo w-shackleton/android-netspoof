@@ -72,5 +72,6 @@ task ndkBuild(type: Exec, description: 'Compile JNI source via NDK') {
     commandLine "$ndkDir/ndk-build",
             'NDK_PROJECT_PATH=build',
             'APP_BUILD_SCRIPT=src/main/jni/Android.mk',
-            'NDK_APPLICATION_MK=src/main/jni/Application.mk'
+            'NDK_APPLICATION_MK=src/main/jni/Application.mk',
+            '-j8'
 }
