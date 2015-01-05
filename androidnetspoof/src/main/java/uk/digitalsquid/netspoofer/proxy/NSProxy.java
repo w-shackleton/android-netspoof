@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import uk.digitalsquid.netspoofer.config.LogConf;
+import uk.digitalsquid.netspoofer.misc.AsyncTaskHelper;
 import uk.digitalsquid.netspoofer.misc.MagicInputStream;
 import uk.digitalsquid.netspoofer.spoofs.Spoof;
 
@@ -56,13 +57,10 @@ public class NSProxy implements LogConf {
     }
     
     private static final int LAUNCH_FAIL = 1;
-    
+
     @SuppressLint("NewApi")
     public void start() {
-        if(Build.VERSION.SDK_INT <= 10)
-            launchTask.execute();
-        else
-            launchTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        AsyncTaskHelper.execute(launchTask);
     }
     
     public void stop() {

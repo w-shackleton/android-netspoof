@@ -67,9 +67,6 @@ public final class NetHelpers implements LogConf {
             ((long)(ip[3]&0xFF) << 24);
     }
     
-    public static final InetAddress reverseInetFromInt(int ip) throws UnknownHostException {
-        return reverseInetFromInt((long)ip);
-    }
     public static final InetAddress reverseInetFromInt(long ip) throws UnknownHostException {
         return InetAddress.getByAddress(new byte[] {
                 (byte) ((ip >>>24) & 0xFF),
@@ -234,33 +231,5 @@ public final class NetHelpers implements LogConf {
             Log.e(TAG, "Failed to read route info", e);
             return new ArrayList<RouteEntry>();
         }
-    }
-
-    /**
-     * Checks for a file's existence on an HTTP server.
-     * @param file
-     * @param isFail If the redirected url = isFail, returns false
-     * @return
-     */
-    public static final boolean checkFileExistsOnWeb(String file, String isFail) {
-        try {
-            URL upgradeUrl = new URL(file);
-            HttpURLConnection.setFollowRedirects(true);
-            HttpURLConnection conn = (HttpURLConnection) upgradeUrl.openConnection();
-            conn.setConnectTimeout(5000);
-            conn.setRequestMethod("HEAD");
-            
-            int code = conn.getResponseCode();
-            URL url = conn.getURL();
-            
-            if(isFail == null) isFail = "";
-            
-            return code == HttpURLConnection.HTTP_OK && !url.toExternalForm().equals(isFail);
-        } catch (MalformedURLException e) {
-            Log.e(TAG, "Malformed URL", e);
-        } catch (IOException e) {
-            Log.d(TAG, "Failed to check for HTTP file, probably no internet.");
-        }
-        return false;
     }
 }

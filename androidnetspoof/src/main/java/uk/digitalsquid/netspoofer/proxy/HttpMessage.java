@@ -99,11 +99,11 @@ public class HttpMessage {
         headers.remove(key);
         addHeader(key, val);
     }
-    
+
     /**
      * Reads from in until all content is read.
      * @param in
-     * @throws IOException 
+     * @throws IOException
      */
     public void readAllContent(InputStream in) throws IOException {
         ByteArrayOutputStream arr = new ByteArrayOutputStream();
@@ -114,12 +114,12 @@ public class HttpMessage {
         }
         content = arr.toByteArray();
     }
-    
+
     /**
      * Reads from in for the specified content-length
      * @param in
      * @param total The total content length to read.
-     * @throws IOException 
+     * @throws IOException
      */
     public void readAllContent(InputStream in, int total) throws IOException {
         byte[] data = new byte[total];

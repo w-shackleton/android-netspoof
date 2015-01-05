@@ -32,6 +32,7 @@ import android.os.Handler;
 import android.util.Log;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -45,8 +46,8 @@ import uk.digitalsquid.netspoofer.servicestatus.InitialiseStatus;
 import uk.digitalsquid.netspoofer.servicestatus.NewLogOutput;
 import uk.digitalsquid.netspoofer.servicestatus.Notifyer;
 import uk.digitalsquid.netspoofer.servicestatus.ServiceStatus;
-import uk.digitalsquid.netspoofer.servicestatus.SpoofList;
 import uk.digitalsquid.netspoofer.spoofs.SpoofData;
+import uk.digitalsquid.netspoofer.spoofs.Spoof;
 
 public class NetSpoofService extends Service implements LogConf {
     public static final int STATUS_LOADING = 0;
@@ -61,7 +62,6 @@ public class NetSpoofService extends Service implements LogConf {
     public static final String INTENT_SPOOFLIST = "uk.digitalsquid.netspoofer.NetSpoofService.SpoofList";
     public static final String INTENT_NEWLOGOUTPUT = "uk.digitalsquid.netspoofer.NetSpoofService.NewLogOutput";
     public static final String INTENT_EXTRA_STATUS = "uk.digitalsquid.netspoofer.NetSpoofService.status";
-    public static final String INTENT_EXTRA_SPOOFLIST = "uk.digitalsquid.netspoofer.NetSpoofService.spooflist";
     public static final String INTENT_EXTRA_LOGOUTPUT = "uk.digitalsquid.netspoofer.NetSpoofService.logoutput";
     
     private static final int NS_RUNNING = 1;
@@ -117,6 +117,7 @@ public class NetSpoofService extends Service implements LogConf {
     }
     
     private void start() {
+        runner = new RunManager(this, new HardwareConfig(getBaseContext()));
         AsyncTaskHelper.execute(mainLoopManager, new HardwareConfig(getBaseContext()));
         setStatus(STATUS_LOADING);
         
@@ -132,18 +133,11 @@ public class NetSpoofService extends Service implements LogConf {
         super.onDestroy();
     }
     
-    public final void requestSpoofs() {
-        try {
-            tasks.add(new ServiceMsg(ServiceMsg.MESSAGE_GETSPOOFS));
-        } catch(IllegalStateException e) {
-            e.printStackTrace();
+    public final ArrayList<Spoof> getSpoofs() {
+        if (runner == null) {
+            return null;
         }
-    }
-    
-    private void sendSpoofList(SpoofList spoofs) {
-        Intent intent = new Intent(INTENT_SPOOFLIST);
-        intent.putExtra(INTENT_EXTRA_SPOOFLIST, spoofs);
-        sendBroadcast(intent);
+        return runner.getSpoofList();
     }
     
     public void startSpoof(SpoofData spoof) {
@@ -167,6 +161,8 @@ public class NetSpoofService extends Service implements LogConf {
         intent.putExtra(INTENT_EXTRA_LOGOUTPUT, logOutput);
         sendBroadcast(intent);
     }
+
+    private RunManager runner;
     
     private final BlockingQueue<ServiceMsg> tasks = new LinkedBlockingQueue<ServiceMsg>();
     
@@ -175,8 +171,6 @@ public class NetSpoofService extends Service implements LogConf {
         @Override
         protected Void doInBackground(HardwareConfig... params) {
             Log.i(TAG, "Setting up system...");
-            final RunManager runner = new RunManager(NetSpoofService.this, params[0]);
-            
             publishProgress(new InitialiseStatus(STATUS_LOADED));
             if(isCancelled()) {
                 Log.i(TAG, "Stop initiated, stopping...");
@@ -198,10 +192,6 @@ public class NetSpoofService extends Service implements LogConf {
                         break;
                     case ServiceMsg.MESSAGE_STOP:
                         running = false;
-                        break;
-                    case ServiceMsg.MESSAGE_GETSPOOFS:
-                        SpoofList list = new SpoofList(runner.getSpoofList());
-                        publishProgress(list);
                         break;
                     }
                 } catch (InterruptedException e) {
@@ -289,8 +279,6 @@ public class NetSpoofService extends Service implements LogConf {
             if(s instanceof InitialiseStatus) {
                 InitialiseStatus is = (InitialiseStatus) s;
                 setStatus(is.status);
-            } else if(s instanceof SpoofList) {
-                sendSpoofList((SpoofList)s);
             } else if(s instanceof NewLogOutput) {
                 sendLogOutput((NewLogOutput) s);
             } else if(s instanceof Notifyer) {
