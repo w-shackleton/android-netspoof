@@ -33,9 +33,15 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.URL;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import uk.digitalsquid.netspoofer.config.LogConf;
 import uk.digitalsquid.netspoofer.misc.AsyncTaskHelper;
@@ -77,15 +83,43 @@ public class NSProxy implements LogConf {
         @SuppressLint("NewApi")
         @Override
         protected Integer doInBackground(Void... arg0) {
+            final int procs = Runtime.getRuntime().availableProcessors();
+            final BlockingQueue<Runnable> queue = new ArrayBlockingQueue<Runnable>(procs * 20);
+            final ThreadPoolExecutor threadPool = new ThreadPoolExecutor(
+                    procs,
+                    procs * 5,
+                    1,
+                    TimeUnit.MINUTES,
+                    queue);
             try {
                 ss = new ServerSocket(3128);
                 while(!isCancelled()) {
-                    StartParams params = new StartParams();
-                    params.socket = ss.accept();
-                    Log.v(TAG, "New socket accepted");
+                    Socket socket;
+                    try {
+                        socket = ss.accept();
+                    } catch (SocketException e) {
+                        // Socket closed
+                        break;
+                    }
+                    Log.v(TAG, "New socket accepted, queue size is " + queue.size());
                     
-                    ProxyTask task = new ProxyTask(params);
-                    task.start();
+                    ProxyTask task = new ProxyTask(socket);
+                    threadPool.execute(task);
+                    threadPool.setRejectedExecutionHandler(new RejectedExecutionHandler() {
+                        @Override
+                        public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
+                            if (executor.isTerminating()) {
+                                Log.i(TAG, "Rejected job ignored during shutdown of thread pool");
+                            } else {
+                                // Block until job can be placed in queue
+                                try {
+                                    queue.put(r);
+                                } catch (InterruptedException e) {
+                                    Log.i(TAG, "Failed to add job to queue");
+                                }
+                            }
+                        }
+                    });
                 }
             } catch (IOException e) {
                 Log.e(TAG, "Socket accepting failed", e);
@@ -102,37 +136,24 @@ public class NSProxy implements LogConf {
         }
     };
     
-    /**
-     * Parameters for starting a {@link ProxyTask}.
-     * @author Will Shackleton <will@digitalsquid.co.uk>
-     *
-     */
-    static class StartParams {
-        Socket socket;
-    }
-    
     private static final byte[] NEWLINE = new byte[] {'\r','\n'};
 
     private int num = 1;
     
-    // TODO: Use a thread pool here.
-    private class ProxyTask extends Thread {
+    private class ProxyTask implements Runnable {
         
-        private final StartParams params;
+        private final Socket socket;
         
-        public ProxyTask(StartParams params) {
-            super("Proxy thread " + num++);
-            this.params = params;
+        public ProxyTask(Socket socket) {
+            this.socket = socket;
         }
         
         @Override
         public void run() {
-            doInBackground(params);
+            doInBackground(socket);
         }
 
-        protected int doInBackground(StartParams params) {
-            Log.i(TAG, "New communication thread started");
-            Socket socket = params.socket;
+        protected int doInBackground(Socket socket) {
             MagicInputStream input = null;
             BufferedOutputStream output = null;
             try {

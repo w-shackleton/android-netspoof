@@ -175,7 +175,7 @@ public class SpoofSelector extends Activity implements OnClickListener, OnItemCl
                     break;
                 case NetSpoofService.STATUS_LOADED:
                     if(startingDialog != null) startingDialog.cancel();
-                    if (!haveSpoofList) {
+                    if (!haveSpoofList && SpoofSelector.this.service != null) {
                         setSpoofs(SpoofSelector.this.service.getSpoofs());
                     }
                     break;
