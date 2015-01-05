@@ -23,8 +23,6 @@ package uk.digitalsquid.netspoofer.entities;
 import java.io.Serializable;
 import java.net.InetAddress;
 
-import uk.digitalsquid.netspoofer.VictimSelector;
-
 /**
  * A potential victim. Contains information about IP, name, vendor and so on.
  */

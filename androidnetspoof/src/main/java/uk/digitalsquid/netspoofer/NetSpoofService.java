@@ -46,8 +46,8 @@ import uk.digitalsquid.netspoofer.servicestatus.InitialiseStatus;
 import uk.digitalsquid.netspoofer.servicestatus.NewLogOutput;
 import uk.digitalsquid.netspoofer.servicestatus.Notifyer;
 import uk.digitalsquid.netspoofer.servicestatus.ServiceStatus;
-import uk.digitalsquid.netspoofer.spoofs.SpoofData;
 import uk.digitalsquid.netspoofer.spoofs.Spoof;
+import uk.digitalsquid.netspoofer.spoofs.SpoofData;
 
 public class NetSpoofService extends Service implements LogConf {
     public static final int STATUS_LOADING = 0;

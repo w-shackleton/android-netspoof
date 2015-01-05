@@ -26,8 +26,8 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
-import uk.digitalsquid.netspoofer.entities.Victim;
 import uk.digitalsquid.netspoofer.config.NetHelpers;
+import uk.digitalsquid.netspoofer.entities.Victim;
 
 public class SpoofData implements Serializable {
     private static final long serialVersionUID = -690081983763949966L;

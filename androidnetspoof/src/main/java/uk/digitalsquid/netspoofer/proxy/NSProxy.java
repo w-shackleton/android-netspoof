@@ -24,7 +24,6 @@ package uk.digitalsquid.netspoofer.proxy;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.util.Log;
 
 import java.io.BufferedInputStream;
