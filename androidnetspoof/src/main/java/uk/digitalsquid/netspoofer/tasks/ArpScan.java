@@ -55,7 +55,9 @@ public abstract class ArpScan extends AsyncTask<Range<InetAddress>, Victim, Void
         // Run arp-scan
         try {
             ProcessBuilder pb = new ProcessBuilder(FileFinder.SU, "-c",
-                    String.format("%s -Nxg %s-%s", FileInstaller.getScriptPath(context, "arp-scan"),
+                    String.format("cd %s; %s -Nxg %s-%s",
+                            FileInstaller.getDataPath(context, ""),
+                            FileInstaller.getScriptPath(context, "arp-scan"),
                             start.getHostAddress(),
                             end.getHostAddress()));
             Process proc = pb.start();
