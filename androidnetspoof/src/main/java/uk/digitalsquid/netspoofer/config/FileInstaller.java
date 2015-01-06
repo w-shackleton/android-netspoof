@@ -39,6 +39,9 @@ public final class FileInstaller implements LogConf {
     private static final String BIN_DIR = "/bin";
     private static final String DATA_DIR = "/bindata";
     private final Context context;
+
+    public static class ABINotSupportedException extends IOException {
+    }
     
     public FileInstaller(Context context) throws FileNotFoundException {
         this.context = context;
@@ -49,6 +52,27 @@ public final class FileInstaller implements LogConf {
             // One of the above fileops failed, most likely due to broken phone.
             Log.e(TAG, "Failed to create binary directory!");
         }
+    }
+
+    private String acceptedAbi;
+
+    private String findAcceptedAbi() throws ABINotSupportedException {
+        if (acceptedAbi != null) {
+            return acceptedAbi;
+        }
+        for (String abi : new String[] { Build.CPU_ABI, Build.CPU_ABI2 }) {
+            try {
+                String[] contents = context.getAssets().list(String.format("binaries/%s", abi));
+                if (contents.length == 0) {
+                    continue;
+                }
+                acceptedAbi = abi;
+                return abi;
+            } catch (IOException e) {
+                continue;
+            }
+        }
+        throw new ABINotSupportedException();
     }
     
     private void installFile(String filename, boolean executable, int id) throws Resources.NotFoundException, IOException {
@@ -100,7 +124,7 @@ public final class FileInstaller implements LogConf {
      * @param binaryName
      */
     public void installBinary(String binaryName) throws IOException {
-        String path = String.format("binaries/%s/%s", Build.CPU_ABI, binaryName);
+        String path = String.format("binaries/%s/%s", findAcceptedAbi(), binaryName);
         String dest = getScriptPath(binaryName);
 
         installAsset(path, dest);

@@ -66,7 +66,8 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf, OnUp
     static final int DIALOG_CHANGELOG = 8;
 
     static final int DIALOG_UPDATE_AVAILABLE = 9;
-    
+    static final int DIALOG_INVALID_ABI = 10;
+
     private Button startButton;
     
     private boolean showChangelog = false;
@@ -217,6 +218,19 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf, OnUp
                 });
                 dialog = builder.create();
                 break;
+            case DIALOG_INVALID_ABI:
+                builder = new AlertDialog.Builder(this);
+                builder.setMessage(String.format(
+                        "This phone uses a CPU that is not supported by Network Spoofer (%s)",
+                        Build.CPU_ABI))
+                        .setCancelable(false)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                finish();
+                            }
+                        });
+                dialog = builder.create();
+                break;
         }
         return dialog;
     }
@@ -295,7 +309,7 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf, OnUp
         private void installFiles() {
             try {
                 FileInstaller fi = new FileInstaller(getBaseContext());
-                
+
                 fi.installScript("spoof", R.raw.spoof);
 
                 fi.installBinary("arp-scan");
@@ -307,16 +321,18 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf, OnUp
                 fi.installData("arp-scan", "mac-vendor.txt");
 
                 // Remove old debimg file
-                if(getExternalFilesDir(null) != null) {
+                if (getExternalFilesDir(null) != null) {
                     File imgFolder = new File(
                             getExternalFilesDir(null).getAbsolutePath() + "/img");
                     String[] files = imgFolder.list();
-                    if(files != null) {
-                        for(String file : files)
+                    if (files != null) {
+                        for (String file : files)
                             new File(imgFolder, file).delete();
                     }
                     imgFolder.delete();
                 }
+            } catch (FileInstaller.ABINotSupportedException e) {
+                publishProgress(DIALOG_INVALID_ABI);
             } catch (FileNotFoundException e) {
                 Log.e(TAG, "Failed to install scripts.", e);
             } catch (NotFoundException e) {
