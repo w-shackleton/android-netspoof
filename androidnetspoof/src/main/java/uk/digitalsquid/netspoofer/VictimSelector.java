@@ -193,8 +193,15 @@ public class VictimSelector extends Activity implements OnClickListener, LogConf
                 convertView.setEnabled(true);
                 break;
             default:
-                holder.vIp.setText(getItem(position).getIp().getHostAddress());
-                holder.vText.setText(getItem(position).getMac() + ": " + getItem(position).getVendor());
+                Victim victim = getItem(position);
+                if (victim.getHostname() == null ||
+                        victim.getIp().getHostAddress().equals(victim.getHostname())) {
+                    holder.vIp.setText(victim.getIp().getHostAddress());
+                    holder.vText.setText(victim.getMac() + ": " + victim.getVendor());
+                } else {
+                    holder.vIp.setText(victim.getIp().getHostAddress() + " - " + victim.getHostname());
+                    holder.vText.setText(victim.getMac() + ": " + victim.getVendor());
+                }
                 break;
             }
             return convertView;
@@ -253,6 +260,13 @@ public class VictimSelector extends Activity implements OnClickListener, LogConf
         @Override
         protected void onProgressUpdate(Victim... victims) {
             victimListAdapter.addDevicesToList(victims);
+            for (Victim victim : victims) {
+                try {
+                    hostnameFindQueue.put(victim);
+                } catch (InterruptedException e) {
+                    // Oh well
+                }
+            }
         }
 
         @Override
@@ -356,7 +370,7 @@ public class VictimSelector extends Activity implements OnClickListener, LogConf
             while(!isCancelled()) {
                 Victim victim = null;
                 try {
-                    victim = hostnameFindQueue.poll(100, TimeUnit.MILLISECONDS);
+                    victim = hostnameFindQueue.poll(1000, TimeUnit.MILLISECONDS);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
