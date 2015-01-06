@@ -121,7 +121,7 @@
     <string name="customTextDesc">Enter custom text values to change. Blank fields are ignored.</string>
     <string name="configuring">Configuring&#8230;</string>
     <string name="lookingupSite">Finding website&#8230;</string>
-    <string name="customwebsitedesc">Please enter a website to redirect to, not including http:// (eg. kittenwar.com).</string>
+    <string name="customwebsitedesc">Please enter a website to redirect to, eg. kittenwar.com.</string>
     <string name="warningTitle">Don\'t be evil!</string>
     <string name="warningText">Remember, only run Network Spoofer when you have permission to do so. Don\'t run at work, university, school etc. without the permission of your network administrators.</string>
     <string name="useLocalFile">Use Local File</string>

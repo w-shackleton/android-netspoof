@@ -109,15 +109,15 @@ public class RedirectSpoof extends Spoof implements LogConf {
                     ok = (Button) dialog.findViewById(R.id.ok),
                     cancel = (Button) dialog.findViewById(R.id.cancel);
 
-            String userEntry = input.getText().toString();
-            if(userEntry.equals("")) userEntry = "http://blueballfixed.ytmnd.com/";
-            prefs.edit().putString("redirectUrl", userEntry).commit();
-            
-            setRedirect(userEntry);
-            
             ok.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    String userEntry = input.getText().toString();
+                    if(userEntry.equals("")) userEntry = "http://blueballfixed.ytmnd.com/";
+                    prefs.edit().putString("redirectUrl", userEntry).commit();
+
+                    setRedirect(userEntry);
+
                     dialog.dismiss();
                     onDone.onDone();
                 }
