@@ -34,9 +34,9 @@
     <string name="agreementPositive">Agree</string>
     <string name="agreementNegative">Exit</string>
     <string name="changelog">New in this release:\n
-        * No download file required!\n
-        * LOADS of new features (just press start and go)\n
-        * The old download file (no longer required) has been deleted to save space
+        * More device support\n
+        * Faster spoofing\n
+        * Better network scanning
     </string>
     
     <string name="updateAvailableTitle">Update Available</string>
