@@ -56,13 +56,21 @@ public final class FileInstaller implements LogConf {
 
     private String acceptedAbi;
 
+    private String findAcceptedPlatform() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            return "android-16";
+        }
+        return "android-9";
+    }
+
     private String findAcceptedAbi() throws ABINotSupportedException {
         if (acceptedAbi != null) {
             return acceptedAbi;
         }
         for (String abi : new String[] { Build.CPU_ABI, Build.CPU_ABI2 }) {
             try {
-                String[] contents = context.getAssets().list(String.format("binaries/%s", abi));
+                String[] contents = context.getAssets().list(
+                        String.format("binaries/%s/%s", findAcceptedPlatform(), abi));
                 if (contents.length == 0) {
                     continue;
                 }
@@ -124,7 +132,8 @@ public final class FileInstaller implements LogConf {
      * @param binaryName
      */
     public void installBinary(String binaryName) throws IOException {
-        String path = String.format("binaries/%s/%s", findAcceptedAbi(), binaryName);
+        String path = String.format("binaries/%s/%s/%s",
+                findAcceptedPlatform(), findAcceptedAbi(), binaryName);
         String dest = getScriptPath(binaryName);
 
         installAsset(path, dest);
