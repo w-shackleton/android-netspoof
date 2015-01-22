@@ -29,7 +29,7 @@ dependencies {
 }
 
 tasks.withType(JavaCompile) {
-    compileTask -> compileTask.dependsOn ndkLibsToJar, ndkBinariesToJar, ndkDataToJar
+    compileTask -> compileTask.dependsOn ndkLibsToJar, ndkBinariesToJar, ndkBinariesToJar16, ndkDataToJar
 }
 
 task ndkLibsToJar(type: Zip, dependsOn: 'ndkBuild', description: 'Create a JAR of the native libs') {
@@ -42,6 +42,7 @@ task ndkLibsToJar(type: Zip, dependsOn: 'ndkBuild', description: 'Create a JAR o
     into 'lib/'
 }
 
+
 task ndkBinariesToJar(type: Zip, dependsOn: 'ndkBuild', description: 'Create a JAR of the native binaries') {
     destinationDir new File(buildDir, 'libs')
     baseName 'ndk-binaries'
@@ -51,10 +52,23 @@ task ndkBinariesToJar(type: Zip, dependsOn: 'ndkBuild', description: 'Create a J
         include '**/arpspoof'
         include '**/iptables'
     }
-    into 'assets/binaries/'
+    into 'assets/binaries/android-9'
 }
 
-task ndkDataToJar(type: Zip, dependsOn: 'ndkBuild', description: 'Create a JAR of the native binaries') {
+task ndkBinariesToJar16(type: Zip, dependsOn: 'ndkBuild16', description: 'Create a JAR of the native binaries for Android 16+') {
+    destinationDir new File(buildDir, 'libs')
+    baseName 'ndk-binaries-16'
+    extension 'jar'
+    from(new File(buildDir, 'android-16/libs')) {
+        include '**/arp-scan'
+        include '**/arpspoof'
+        include '**/iptables'
+    }
+    into 'assets/binaries/android-16'
+}
+
+
+task ndkDataToJar(type: Zip, dependsOn: 'ndkBuild', description: 'Create a JAR of the native data') {
     destinationDir new File(buildDir, 'libs')
     baseName 'ndk-data'
     extension 'jar'
@@ -66,6 +80,7 @@ task ndkDataToJar(type: Zip, dependsOn: 'ndkBuild', description: 'Create a JAR o
     into 'assets/data/'
 }
 
+
 task ndkBuild(type: Exec, description: 'Compile JNI source via NDK') {
     def ndkDir = project.plugins.findPlugin('com.android.application').getNdkFolder()
     println(ndkDir)
@@ -73,5 +88,15 @@ task ndkBuild(type: Exec, description: 'Compile JNI source via NDK') {
             'NDK_PROJECT_PATH=build',
             'APP_BUILD_SCRIPT=src/main/jni/Android.mk',
             'NDK_APPLICATION_MK=src/main/jni/Application.mk',
+            '-j8'
+}
+
+task ndkBuild16(type: Exec, description: 'Compile JNI source via NDK for Android 16+') {
+    def ndkDir = project.plugins.findPlugin('com.android.application').getNdkFolder()
+    println(ndkDir)
+    commandLine "$ndkDir/ndk-build",
+            'NDK_PROJECT_PATH=build/android-16',
+            'APP_BUILD_SCRIPT=src/main/jni/Android.mk',
+            'NDK_APPLICATION_MK=src/main/jni/Application-16.mk',
             '-j8'
 }
