@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/android-netspoof.iml" filepath="$PROJECT_DIR$/android-netspoof.iml" />
+      <module fileurl="file://$PROJECT_DIR$/androidnetspoof/androidnetspoof.iml" filepath="$PROJECT_DIR$/androidnetspoof/androidnetspoof.iml" />
+      <module fileurl="file://$PROJECT_DIR$/androidsupportv4preferencefragment/androidsupportv4preferencefragment.iml" filepath="$PROJECT_DIR$/androidsupportv4preferencefragment/androidsupportv4preferencefragment.iml" />
+    </modules>
+  </component>
+</project>
+
