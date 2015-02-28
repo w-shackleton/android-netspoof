@@ -21,6 +21,8 @@
 
 package uk.digitalsquid.netspoofer.config;
 
+import android.net.DhcpInfo;
+import android.os.Build;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -63,7 +65,16 @@ public final class NetHelpers implements LogConf {
             ((long)(ip[2]&0xFF) << 16) +
             ((long)(ip[3]&0xFF) << 24);
     }
-    
+
+    public static final InetAddress inetFromInt(long ip) throws UnknownHostException {
+        return InetAddress.getByAddress(new byte[] {
+                (byte) ((ip >> 0 ) & 0xFF),
+                (byte) ((ip >> 8 ) & 0xFF),
+                (byte) ((ip >> 16) & 0xFF),
+                (byte) ((ip >>>24) & 0xFF),
+        });
+    }
+
     public static final InetAddress reverseInetFromInt(long ip) throws UnknownHostException {
         return InetAddress.getByAddress(new byte[] {
                 (byte) ((ip >>>24) & 0xFF),
@@ -161,10 +172,11 @@ public final class NetHelpers implements LogConf {
     /**
      * 
      * @param iface
+     * @param info a DhcpInfo to use on Lollipop devices
      * @return
      * @throws UnknownHostException
      */
-    public static final GatewayData getDefaultGateway(NetworkInterface iface) throws UnknownHostException {
+    public static final GatewayData getDefaultGateway(NetworkInterface iface, DhcpInfo info) throws UnknownHostException {
         if(iface == null) throw new IllegalArgumentException("iface is null");
         
         try { FileFinder.initialise(); } catch (FileNotFoundException e1) { }
@@ -184,6 +196,13 @@ public final class NetHelpers implements LogConf {
                 subnet = route.getGenmask();
             }
         }
+
+        // Lollipop, use DhcpInfo
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT && info != null) {
+            gateway = inetFromInt(info.gateway & 0xFFFFFFFFL).getHostAddress();
+            subnet = inetFromInt(info.netmask & 0xFFFFFFFFL).getHostAddress();
+        }
+
         return new GatewayData(InetAddress.getByName(gateway), subnet);
     }
 

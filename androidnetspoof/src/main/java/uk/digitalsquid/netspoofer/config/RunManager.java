@@ -159,11 +159,15 @@ public class RunManager implements LogConf {
     public void stopSpoof(SpoofData spoof) throws IOException {
         if(!spoofRunning) return; // Don't do anything.
         synchronized(spoofLock) {
-            cin.write("\n");
-            cin.flush();
+            if (cin != null) {
+                cin.write("\n");
+                cin.flush();
+            }
             
             try {
-                su.waitFor();
+                if (su != null) {
+                    su.waitFor();
+                }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -224,12 +228,12 @@ public class RunManager implements LogConf {
     public synchronized ArrayList<String> getNewSpoofOutput() throws IOException {
         ArrayList<String> items = new ArrayList<String>();
         
-        while(cerr.ready()) {
+        while(cerr != null && cerr.ready()) {
             String line = cerr.readLine();
             Log.v(TAG, "cerr: " + line);
             items.add(line);
         }
-        while(cout.ready()) {
+        while(cout != null && cout.ready()) {
             String line = cout.readLine();
             Log.v(TAG, "cout: " + line);
             items.add(line);

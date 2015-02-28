@@ -98,7 +98,7 @@ public class RouterSelector extends Activity implements OnClickListener, LogConf
         wm = (WifiManager) getSystemService(Context.WIFI_SERVICE);
         wL = wm.createWifiLock(WifiManager.WIFI_MODE_FULL, "android-netspoof");
         wL.acquire();
-        
+
         if(wm.getConnectionInfo().getSupplicantState() == SupplicantState.COMPLETED) getAndSetWifiInfo();
         
         IntentFilter wifiFilter = new IntentFilter();
@@ -306,7 +306,7 @@ public class RouterSelector extends Activity implements OnClickListener, LogConf
         try {
             wifiIP = NetHelpers.inetFromInt(ip);
             wifiIface = NetHelpers.getIface(wifiIP);
-            wifiGateway = NetHelpers.getDefaultGateway(wifiIface);
+            wifiGateway = NetHelpers.getDefaultGateway(wifiIface, wm.getDhcpInfo());
             gatewayListAdapter.setWifiGateway(wifiGateway.getGateway().getHostAddress());
             if(!autoNextStepStarted && PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("autoChooseRouter", false)) {
                 autoNextStepStarted = true;
