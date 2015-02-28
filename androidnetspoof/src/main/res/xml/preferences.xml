@@ -34,6 +34,5 @@
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/prefs_optout">
         <CheckBoxPreference android:defaultValue="false" android:summary="@string/prefs_stats_desc" android:key="notrack" android:title="@string/prefs_stats"></CheckBoxPreference>
-        <CheckBoxPreference android:defaultValue="false" android:summary="@string/prefs_advert_desc" android:key="noadverts" android:title="@string/prefs_advert"></CheckBoxPreference>
     </PreferenceCategory>
 </PreferenceScreen>
