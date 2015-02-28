@@ -265,7 +265,11 @@ public class NSProxy implements LogConf {
             for(String value : entry.getValue())
                 connection.addRequestProperty(entry.getKey(), value);
         }
-        
+        if (request.getMethod().equals("POST")) {
+            // Write post data if it exists
+            connection.getOutputStream().write(request.getContent());
+        }
+
         HttpResponse response = new HttpResponse();
         response.setResponseCode(connection.getResponseCode());
         response.setResponseMessage(connection.getResponseMessage());
