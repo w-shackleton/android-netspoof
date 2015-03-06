@@ -1,6 +1,8 @@
 Network Spoofer
 ===============
 
+[![Build Status](https://travis-ci.org/w-shackleton/android-netspoof.svg)](https://travis-ci.org/w-shackleton/android-netspoof)
+
 Network Spoofer lets you change websites on other people's computers from an Android phone.
 
 Features include:
