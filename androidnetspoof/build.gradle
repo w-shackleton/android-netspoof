@@ -82,7 +82,7 @@ task ndkDataToJar(type: Zip, dependsOn: 'ndkBuild', description: 'Create a JAR o
 
 
 task ndkBuild(type: Exec, description: 'Compile JNI source via NDK') {
-    def ndkDir = project.plugins.findPlugin('com.android.application').getNdkFolder()
+    def ndkDir = project.plugins.findPlugin('com.android.application').sdkHandler.getNdkFolder()
     println(ndkDir)
     commandLine "$ndkDir/ndk-build",
             'NDK_PROJECT_PATH=build',
@@ -92,7 +92,7 @@ task ndkBuild(type: Exec, description: 'Compile JNI source via NDK') {
 }
 
 task ndkBuild16(type: Exec, description: 'Compile JNI source via NDK for Android 16+') {
-    def ndkDir = project.plugins.findPlugin('com.android.application').getNdkFolder()
+    def ndkDir = project.plugins.findPlugin('com.android.application').sdkHandler.getNdkFolder()
     println(ndkDir)
     commandLine "$ndkDir/ndk-build",
             'NDK_PROJECT_PATH=build/android-16',
