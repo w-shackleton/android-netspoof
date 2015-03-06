@@ -1,3 +1,7 @@
+env:
+  matrix:
+  - ANDROID_TARGET=android-19  ANDROID_ABI=armeabi-v7a
+
 before_install:
   - date
   - ./travis-ci/setup.sh
