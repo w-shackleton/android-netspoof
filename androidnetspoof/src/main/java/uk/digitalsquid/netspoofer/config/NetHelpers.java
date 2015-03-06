@@ -48,16 +48,7 @@ public final class NetHelpers implements LogConf {
             return null;
         }
     }
-    
-    public static final InetAddress inetFromInt(int ip) throws UnknownHostException {
-        return InetAddress.getByAddress(new byte[] {
-                (byte) ((ip >> 0 ) & 0xFF),
-                (byte) ((ip >> 8 ) & 0xFF),
-                (byte) ((ip >> 16) & 0xFF),
-                (byte) ((ip >>>24) & 0xFF),
-                        });
-    }
-    
+
     public static final long inetFromByte(byte[] ip) {
         return
             ((long)(ip[0]&0xFF) << 0 ) +
