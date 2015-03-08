@@ -116,8 +116,6 @@ public class RunManager implements LogConf {
             final String victim = spoof.getVictimString();
             final String spoofParams = String.format("%s %s", victim, router);
             
-            ArrayList<String> output = new ArrayList<String>();
-
             ProcessBuilder pb = new ProcessBuilder(FileFinder.SU, "-c",
                     FileInstaller.getScriptPath(context, "spoof") + " " + FileInstaller.getScriptPath(context, "config") + " " +
                     spoofParams); // Pass config script as arg.

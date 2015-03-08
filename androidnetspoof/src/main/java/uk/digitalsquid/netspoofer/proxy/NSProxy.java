@@ -23,7 +23,6 @@ package uk.digitalsquid.netspoofer.proxy;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.util.Log;
 
 import java.io.BufferedInputStream;
@@ -44,7 +43,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import uk.digitalsquid.netspoofer.config.LogConf;
-import uk.digitalsquid.netspoofer.misc.AsyncTaskHelper;
 import uk.digitalsquid.netspoofer.misc.MagicInputStream;
 import uk.digitalsquid.netspoofer.spoofs.Spoof;
 
@@ -54,6 +52,9 @@ public class NSProxy implements LogConf {
     
     protected final List<Spoof> spoofs;
 
+    private boolean launchTaskCancelled = false;
+    private Object launchTaskCancelledSync = new Object();
+
     public NSProxy(Context context, List<Spoof> spoofs) {
         this.spoofs = spoofs;
         for (Spoof spoof : this.spoofs) {
@@ -61,15 +62,15 @@ public class NSProxy implements LogConf {
         }
     }
     
-    private static final int LAUNCH_FAIL = 1;
-
     @SuppressLint("NewApi")
     public void start() {
-        AsyncTaskHelper.execute(launchTask);
+        launchTask.start();
     }
     
     public void stop() {
-        launchTask.cancel(true);
+        synchronized (launchTaskCancelledSync) {
+            launchTaskCancelled = true;
+        }
         try {
             ss.close();
         } catch (IOException e) { }
@@ -77,12 +78,11 @@ public class NSProxy implements LogConf {
     
     private ServerSocket ss;
     
-    private AsyncTask<Void, Void, Integer> launchTask =
-            new AsyncTask<Void, Void, Integer> () {
+    private Thread launchTask =
+            new Thread() {
 
-        @SuppressLint("NewApi")
-        @Override
-        protected Integer doInBackground(Void... arg0) {
+        public void run() {
+            Log.i(TAG, "Starting proxy server");
             final int procs = Runtime.getRuntime().availableProcessors();
             final BlockingQueue<Runnable> queue = new ArrayBlockingQueue<Runnable>(procs * 20);
             final ThreadPoolExecutor threadPool = new ThreadPoolExecutor(
@@ -123,7 +123,7 @@ public class NSProxy implements LogConf {
                 }
             } catch (IOException e) {
                 Log.e(TAG, "Socket accepting failed", e);
-                return LAUNCH_FAIL;
+                return;
             } finally {
                 if(ss != null)
                     try {
@@ -132,7 +132,12 @@ public class NSProxy implements LogConf {
                         Log.e(TAG, "Failed to close proxy socket", e);
                     }
             }
-            return 0;
+        }
+
+        public boolean isCancelled() {
+            synchronized (launchTaskCancelledSync) {
+                return launchTaskCancelled;
+            }
         }
     };
     
