@@ -153,7 +153,7 @@ public class ImageSpoof extends Spoof implements LogConf {
     }
     private static Random RAND = new Random();
     
-    private static Object LOCK = new Object();
+    private static final Object LOCK = new Object();
     
     protected void redrawImage(Canvas out, Bitmap in) {
         // Handle all matrix functions first

@@ -95,7 +95,7 @@ public class SpoofRunning extends Activity implements OnClickListener, LogConf {
     @Override
     protected void onStart() {
         super.onStart();
-        statusFilter = new IntentFilter();
+        IntentFilter statusFilter = new IntentFilter();
         statusFilter.addAction(NetSpoofService.INTENT_STATUSUPDATE);
         statusFilter.addAction(NetSpoofService.INTENT_NEWLOGOUTPUT);
         registerReceiver(statusReceiver, statusFilter);
@@ -126,8 +126,7 @@ public class SpoofRunning extends Activity implements OnClickListener, LogConf {
     
     private ArrayList<String> logList = new ArrayList<String>();
     private static final int LOG_LENGTH = 10;
-    
-    private IntentFilter statusFilter;
+
     private final BroadcastReceiver statusReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {

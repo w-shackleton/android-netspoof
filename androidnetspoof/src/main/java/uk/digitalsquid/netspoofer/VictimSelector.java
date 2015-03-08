@@ -237,9 +237,7 @@ public class VictimSelector extends Activity implements OnClickListener, LogConf
         }
         
         public void addDevicesToList(Victim[] victimList) {
-            for(Victim victim : victimList) {
-                victims.add(victim);
-            }
+            Collections.addAll(victims, victimList);
             Collections.sort(victims);
             notifyDataSetChanged();
         }
@@ -251,7 +249,7 @@ public class VictimSelector extends Activity implements OnClickListener, LogConf
     }
 
     private ScannerPrinter scanner;
-    
+
     private class ScannerPrinter extends ArpScan {
         public ScannerPrinter(Context context) {
             super(context);
@@ -291,17 +289,16 @@ public class VictimSelector extends Activity implements OnClickListener, LogConf
         long baseIp = ip & spoof.getMySubnetReverseInt(); // Bottom possble IP
         long topIp = baseIp | (0xffffffffL >> spoof.getMySubnet()); // Top possible IP
 
-        ScannerPrinter scanner = new ScannerPrinter(this);
+        scanner = new ScannerPrinter(this);
         try {
-            AsyncTaskHelper.execute(scanner, new Range(
-                    NetHelpers.reverseInetFromInt(baseIp),
-                    NetHelpers.reverseInetFromInt(topIp)));
-
             scanProgressBar.setVisibility(View.VISIBLE);
             scanProgressText.setText(R.string.scanning);
             scanProgressRefresh.setEnabled(false);
-
             setProgressBarIndeterminateVisibility(true);
+
+            AsyncTaskHelper.execute(scanner, new Range<InetAddress>(
+                    NetHelpers.reverseInetFromInt(baseIp),
+                    NetHelpers.reverseInetFromInt(topIp)));
         } catch (UnknownHostException e) {
             Log.e(TAG, "Failed to look up IPs", e);
         }

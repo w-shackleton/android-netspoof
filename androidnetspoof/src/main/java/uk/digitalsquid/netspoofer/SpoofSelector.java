@@ -103,8 +103,8 @@ public class SpoofSelector extends Activity implements OnClickListener, OnItemCl
             spoofList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
             spoofList.setItemsCanFocus(false);
         }
-        
-        statusFilter = new IntentFilter();
+
+        IntentFilter statusFilter = new IntentFilter();
         statusFilter.addAction(NetSpoofService.INTENT_STATUSUPDATE);
         statusFilter.addAction(NetSpoofService.INTENT_SPOOFLIST);
         registerReceiver(statusReceiver, statusFilter);
@@ -163,8 +163,7 @@ public class SpoofSelector extends Activity implements OnClickListener, OnItemCl
             service = null;
         }
     };
-    
-    private IntentFilter statusFilter;
+
     private final BroadcastReceiver statusReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -188,7 +187,6 @@ public class SpoofSelector extends Activity implements OnClickListener, OnItemCl
                     showDialog(DIALOG_FAIL_LOAD);
                     break;
                 }
-            } else if(intent.getAction().equals(NetSpoofService.INTENT_SPOOFLIST)) {
             }
         }
     };
@@ -204,10 +202,7 @@ public class SpoofSelector extends Activity implements OnClickListener, OnItemCl
         startingDialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
             @Override
             public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_SEARCH && event.getRepeatCount() == 0) {
-                    return true;
-                }
-                return false;
+                return keyCode == KeyEvent.KEYCODE_SEARCH && event.getRepeatCount() == 0;
             }
         });
         startingDialog.show();

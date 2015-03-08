@@ -228,7 +228,7 @@ public class RouterSelector extends Activity implements OnClickListener, LogConf
                 }
                 break;
             case ITEM_PASSIVE:
-                    goToNextStep(true);
+                    goToNextStep();
                 break;
             case ITEM_OTHER:
                 showDialog(DIALOG_CUSTOMIP);
@@ -322,7 +322,7 @@ public class RouterSelector extends Activity implements OnClickListener, LogConf
         }
     }
     
-    private void goToNextStep(boolean runningPassively) {
+    private void goToNextStep() {
         Intent intent = new Intent(this, SpoofRunning.class); 
         intent.putExtra(SpoofRunning.EXTRA_SPOOFDATA, new SpoofData(spoof, true));
         startActivity(intent);

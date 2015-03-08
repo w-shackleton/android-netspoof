@@ -45,7 +45,7 @@ public final class FileFinder implements LogConf {
      * Searches for the iptables executable
      * @return
      */
-    private static final String findIptables(boolean useLocal, SharedPreferences prefs) {
+    private static String findIptables(boolean useLocal, SharedPreferences prefs) {
         if(useLocal && prefs != null) {
             if(prefs.getBoolean("builtiniptables", true)) {
                 Log.i(TAG, "Using local copy of iptables");
@@ -67,7 +67,7 @@ public final class FileFinder implements LogConf {
      * Searches for the su executable
      * @return
      */
-    private static final String findSu(SharedPreferences prefs) {
+    private static String findSu(SharedPreferences prefs) {
         if(prefs != null) {
             String customPath = prefs.getString("pathToSu", "");
             if(!customPath.equals("") && new File(customPath).exists()) return customPath;
