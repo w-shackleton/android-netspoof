@@ -53,7 +53,7 @@ public class NSProxy implements LogConf {
     protected final List<Spoof> spoofs;
 
     private boolean launchTaskCancelled = false;
-    private Object launchTaskCancelledSync = new Object();
+    private final Object launchTaskCancelledSync = new Object();
 
     public NSProxy(Context context, List<Spoof> spoofs) {
         this.spoofs = spoofs;

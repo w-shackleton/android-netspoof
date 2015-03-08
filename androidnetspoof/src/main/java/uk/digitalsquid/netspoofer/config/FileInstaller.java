@@ -77,7 +77,6 @@ public final class FileInstaller implements LogConf {
                 acceptedAbi = abi;
                 return abi;
             } catch (IOException e) {
-                continue;
             }
         }
         throw new ABINotSupportedException();

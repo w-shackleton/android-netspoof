@@ -224,13 +224,9 @@ public abstract class PreferenceFragment extends Fragment implements
      */
     public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen,
             Preference preference) {
-        //if (preference.getFragment() != null &&
-    	if (
-                getActivity() instanceof OnPreferenceStartFragmentCallback) {
-            return ((OnPreferenceStartFragmentCallback)getActivity()).onPreferenceStartFragment(
-                    this, preference);
-        }
-        return false;
+        return getActivity() instanceof OnPreferenceStartFragmentCallback &&
+                ((OnPreferenceStartFragmentCallback) getActivity()).
+                        onPreferenceStartFragment(this, preference);
     }
 	
     /**

@@ -82,7 +82,7 @@ public class CustomTextChange extends ContentChange {
      * @param position
      * @param value
      */
-    private final void setValue(SharedPreferences prefs, boolean old, int position, String value) {
+    private void setValue(SharedPreferences prefs, boolean old, int position, String value) {
         if(old) {
             final String key = String.format("TEXT%dOLD", position);
             changeValues.put(key, value);

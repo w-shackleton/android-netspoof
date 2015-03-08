@@ -20,6 +20,8 @@
  */
 package uk.digitalsquid.netspoofer.entities;
 
+import android.support.annotation.NonNull;
+
 import java.io.Serializable;
 import java.net.InetAddress;
 
@@ -47,7 +49,7 @@ public class Victim implements Comparable<Victim>, Serializable {
     }
 
     @Override
-    public int compareTo(Victim another) {
+    public int compareTo(@NonNull Victim another) {
         byte[] me = ip.getAddress();
         byte[] other = another.getIp().getAddress();
         for(int i = 0; i < me.length && i < other.length; i++) {

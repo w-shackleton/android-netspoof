@@ -67,8 +67,7 @@ public class NetSpoofService extends Service implements LogConf {
     private static final int NS_RUNNING = 1;
     
     private NotificationManager notificationManager;
-    private Notification notification;
-    
+
     public class NetSpoofServiceBinder extends Binder {
         public NetSpoofService getService() {
             return NetSpoofService.this;
@@ -230,13 +229,11 @@ public class NetSpoofService extends Service implements LogConf {
                 
                 if(isCancelled()) {
                     stopSpoof(runner, spoof);
-                    running = false;
                     break;
                 }
                 
                 if(runner.checkIfStopped()) {
                     finishSpoof(runner, spoof);
-                    running = false;
                     break;
                 }
                 
@@ -259,7 +256,6 @@ public class NetSpoofService extends Service implements LogConf {
                 e.printStackTrace();
                 Log.e(TAG, "Failed to stop spoof.");
                 publishProgress(new InitialiseStatus(STATUS_STARTED));
-                return;
             }
         }
         
@@ -288,7 +284,7 @@ public class NetSpoofService extends Service implements LogConf {
                 case Notifyer.STATUS_SHOW:
                     switch(n.getNotificationType()) {
                     case NS_RUNNING:
-                        notification = new Notification(R.drawable.status, getString(R.string.spoofRunning), System.currentTimeMillis());
+                        Notification notification = new Notification(R.drawable.status, getString(R.string.spoofRunning), System.currentTimeMillis());
                         notification.flags = notification.flags | Notification.FLAG_ONGOING_EVENT;
                         
                         Intent notificationIntent = new Intent(NetSpoofService.this, NetSpoofService.class);

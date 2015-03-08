@@ -24,6 +24,7 @@ package uk.digitalsquid.netspoofer.spoofs;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -97,7 +98,7 @@ public abstract class Spoof implements Serializable, Comparable<Spoof> {
     public Map<String, String> getCustomEnv() {return new HashMap<String, String>();}
     
     @Override
-    public int compareTo(Spoof other) {
+    public int compareTo(@NonNull Spoof other) {
         return getTitle().compareTo(other.getTitle());
     }
     

@@ -97,7 +97,7 @@ public class RunManager implements LogConf {
     }
 
     private boolean spoofRunning = false;
-    private Object spoofLock = new Object();
+    private final Object spoofLock = new Object();
     
     Process su;
     BufferedReader cout;
