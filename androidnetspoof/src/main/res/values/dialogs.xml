@@ -34,7 +34,7 @@
     <string name="agreementPositive">Agree</string>
     <string name="agreementNegative">Exit</string>
     <string name="changelog">New in this release:\n
-        * Experimental Lollipop support
+        * More lollipop support
     </string>
     
     <string name="updateAvailableTitle">Update Available</string>
