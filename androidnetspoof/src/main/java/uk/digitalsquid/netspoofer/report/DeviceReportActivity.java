@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.FileProvider;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,9 +36,11 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 
 import java.io.File;
+import java.io.IOException;
 
 import uk.digitalsquid.netspoofer.Preferences;
 import uk.digitalsquid.netspoofer.R;
+import uk.digitalsquid.netspoofer.config.LogConf;
 
 public class DeviceReportActivity extends FragmentActivity {
 
@@ -75,7 +78,7 @@ public class DeviceReportActivity extends FragmentActivity {
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class PlaceholderFragment extends Fragment implements View.OnClickListener {
+    public static class PlaceholderFragment extends Fragment implements View.OnClickListener, LogConf {
 
         public PlaceholderFragment() {
         }
@@ -102,7 +105,13 @@ public class DeviceReportActivity extends FragmentActivity {
                             logs.isChecked(),
                             allLogs.isChecked(),
                             networkConfig.isChecked());
-                    File file = report.generate();
+                    File file;
+                    try {
+                        file = report.generate();
+                    } catch (IOException e) {
+                        Log.e(TAG, "Failed to generate report", e);
+                        break;
+                    }
                     Uri contentUri = FileProvider.getUriForFile(getActivity(),
                             "uk.digitalsquid.netspoofer.report",
                             file);
