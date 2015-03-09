@@ -1,0 +1,24 @@
+#!/system/bin/sh
+
+# Collects information about the network
+
+# IPTABLES is defined in the passed in script
+. $1
+shift
+
+echo
+echo "##### iptables -L -v"
+$IPTABLES -L -v
+echo
+echo "##### iptables -L -t nat -v"
+$IPTABLES -L -t nat -v
+echo
+echo "##### iptables -L -t mangle -v"
+$IPTABLES -L -t mangle -v
+
+echo
+echo "##### ifconfig eth0"
+ifconfig eth0
+echo
+echo "##### ifconfig wlan0"
+ifconfig wlan0

@@ -1,3 +1,24 @@
+/*
+ * This file is part of Network Spoofer for Android.
+ * Network Spoofer lets you change websites on other people’s computers
+ * from an Android phone.
+ * Copyright (C) 2014 Will Shackleton <will@digitalsquid.co.uk>
+ *
+ * Network Spoofer is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Network Spoofer is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Network Spoofer, in the file COPYING.
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package uk.digitalsquid.netspoofer.report;
 
 import android.content.Intent;
@@ -9,6 +30,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 
 import uk.digitalsquid.netspoofer.Preferences;
 import uk.digitalsquid.netspoofer.R;
@@ -49,16 +71,33 @@ public class DeviceReportActivity extends FragmentActivity {
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class PlaceholderFragment extends Fragment {
+    public static class PlaceholderFragment extends Fragment implements View.OnClickListener {
 
         public PlaceholderFragment() {
         }
+
+        private CheckBox logs, allLogs, networkConfig;
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_device_report, container, false);
+            logs = (CheckBox) rootView.findViewById(R.id.logs);
+            allLogs = (CheckBox) rootView.findViewById(R.id.all_logs);
+            networkConfig = (CheckBox) rootView.findViewById(R.id.network_config);
             return rootView;
+        }
+
+        @Override
+        public void onClick(View view) {
+            switch(view.getId()) {
+                case R.id.submit:
+                    DeviceReport report = new DeviceReport(
+                            logs.isChecked(),
+                            allLogs.isChecked(),
+                            networkConfig.isChecked());
+                    break;
+            }
         }
     }
 }
