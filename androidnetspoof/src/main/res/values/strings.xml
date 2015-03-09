@@ -77,6 +77,13 @@
     <string name="performance">Performance</string>
     <string name="ipScanThreads">IP scanners</string>
     <string name="ipScanThreadsDesc">The number of simultaneous threads for scanning the local network - can make the process faster</string>
+
+    <string name="device_report">Generate device report</string>
+    <string name="device_report_welcome">Welcome to the device report generator. This will generate a file you can send to the developers to help them debug Network Spoofer on your device.</string>
+    <string name="device_report_logs">Network Spoofer logs</string>
+    <string name="device_report_all_logs">Entire system logs</string>
+    <string name="device_report_network_config">Network configuration</string>
+
     <string name="about">About</string>
     <string name="aboutSplash">About\nTerms\nDonate</string>
     <string name="gotosite">Go to website</string>
@@ -137,4 +144,7 @@
     <string name="advert_text">Network Spoofer is maintained in the my spare time, for free. I understand that people hate adverts (as do I) so please consider donating if you like this app!</string>
     <string name="donate">Donate</string>
     <string name="disable_adverts">Disable Adverts</string>
+    <string name="title_activity_device_report">Send a device report</string>
+    <string name="action_settings">Settings</string>
+    <string name="submit">Submit Report</string>
 </resources>
