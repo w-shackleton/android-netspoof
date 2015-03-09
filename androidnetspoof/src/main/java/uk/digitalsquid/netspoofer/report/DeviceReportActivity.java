@@ -22,15 +22,19 @@
 package uk.digitalsquid.netspoofer.report;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.FileProvider;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+
+import java.io.File;
 
 import uk.digitalsquid.netspoofer.Preferences;
 import uk.digitalsquid.netspoofer.R;
@@ -85,6 +89,7 @@ public class DeviceReportActivity extends FragmentActivity {
             logs = (CheckBox) rootView.findViewById(R.id.logs);
             allLogs = (CheckBox) rootView.findViewById(R.id.all_logs);
             networkConfig = (CheckBox) rootView.findViewById(R.id.network_config);
+            rootView.findViewById(R.id.submit).setOnClickListener(this);
             return rootView;
         }
 
@@ -93,9 +98,21 @@ public class DeviceReportActivity extends FragmentActivity {
             switch(view.getId()) {
                 case R.id.submit:
                     DeviceReport report = new DeviceReport(
+                            getActivity(),
                             logs.isChecked(),
                             allLogs.isChecked(),
                             networkConfig.isChecked());
+                    File file = report.generate();
+                    Uri contentUri = FileProvider.getUriForFile(getActivity(),
+                            "uk.digitalsquid.netspoofer.report",
+                            file);
+                    Intent shareIntent = new Intent();
+                    shareIntent.setAction(Intent.ACTION_SEND);
+                    shareIntent.setType("application/zip");
+                    shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
+                    shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    startActivity(Intent.createChooser(shareIntent,
+                            getActivity().getString(R.string.send_via)));
                     break;
             }
         }

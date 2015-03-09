@@ -3,6 +3,7 @@ package uk.digitalsquid.netspoofer.report;
 import android.content.Context;
 import android.util.Log;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +21,11 @@ public class DeviceReport implements LogConf {
     private byte[] logs;
     private byte[] netConf;
 
+    private final File directory;
+
     public DeviceReport(Context context, boolean logs, boolean allLogs, boolean networkConfig) {
+        directory = new File(context.getFilesDir(), "public/");
+        directory.mkdir();
         if (logs || allLogs) {
             try {
                 this.logs = runLogcat(allLogs);
@@ -77,5 +82,15 @@ public class DeviceReport implements LogConf {
         byte[] result = IOHelpers.readFileContentsToByte(proc.getInputStream());
         proc.destroy();
         return result;
+    }
+
+    public File generate() {
+        File report = new File(directory, "report.zip");
+        try {
+            report.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return report;
     }
 }
