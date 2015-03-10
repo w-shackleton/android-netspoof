@@ -67,8 +67,8 @@ public class DeviceReport implements LogConf {
     }
 
     private static byte[] runCollectNetConf(Context context) throws IOException {
-        ProcessBuilder pb = new ProcessBuilder(
-                FileInstaller.getScriptPath(context, "collect_netconf"),
+        ProcessBuilder pb = new ProcessBuilder(FileFinder.SU, "-c",
+                FileInstaller.getScriptPath(context, "collect_netconf") + " " +
                         FileInstaller.getScriptPath(context, "config")); // Pass config script as arg.
         pb.redirectErrorStream(true);
 
