@@ -58,6 +58,7 @@ import uk.digitalsquid.netspoofer.config.FileFinder;
 import uk.digitalsquid.netspoofer.config.FileInstaller;
 import uk.digitalsquid.netspoofer.config.LogConf;
 import uk.digitalsquid.netspoofer.misc.AsyncTaskHelper;
+import uk.digitalsquid.netspoofer.report.DeviceReportActivity;
 
 public class NetSpoof extends Activity implements OnClickListener, LogConf, OnUpdateListener {
     static final int DIALOG_ROOT = 3;
@@ -245,14 +246,17 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf, OnUp
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case R.id.netSpoofMenuItemPrefs:
-            startActivity(new Intent(this, Preferences.class));
-            return true;
-        case R.id.netSpoofMenuItemAbout:
-            startActivity(new Intent(this, About.class));
-            return true;
-        default:
-            return super.onOptionsItemSelected(item);
+            case R.id.netSpoofMenuItemPrefs:
+                startActivity(new Intent(this, Preferences.class));
+                return true;
+            case R.id.netSpoofMenuItemAbout:
+                startActivity(new Intent(this, About.class));
+                return true;
+            case R.id.netSpoofMenuItemDeviceReport:
+                startActivity(new Intent(this, DeviceReportActivity.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
         
@@ -311,6 +315,7 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf, OnUp
                 FileInstaller fi = new FileInstaller(getBaseContext());
 
                 fi.installScript("spoof", R.raw.spoof);
+                fi.installScript("collect_netconf", R.raw.collect_netconf);
 
                 fi.installBinary("arp-scan");
                 fi.installBinary("arpspoof");

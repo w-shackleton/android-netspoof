@@ -18,44 +18,97 @@
  * You should have received a copy of the GNU General Public License
  * along with Network Spoofer, in the file COPYING.
  * If not, see <http://www.gnu.org/licenses/>.
- * -->
-
+ *
+-->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="uk.digitalsquid.netspoofer"
     android:versionCode="221"
-    android:versionName="2.2.1">
-    <uses-sdk android:minSdkVersion="10" android:targetSdkVersion="19"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    android:versionName="2.2.1" >
+
+    <uses-sdk
+        android:minSdkVersion="10"
+        android:targetSdkVersion="19" />
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_SUPERUSER" />
 
-    <application android:icon="@drawable/icon" android:label="@string/app_name" android:name="App" android:allowBackup="true">
-        <activity android:name=".NetSpoof"
-                  android:label="@string/app_name" android:screenOrientation="portrait">
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18" />
+
+    <application
+        android:name=".App"
+        android:allowBackup="true"
+        android:icon="@drawable/icon"
+        android:label="@string/app_name" >
+        <activity
+            android:name=".NetSpoof"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SpoofSelector" android:label="@string/selecthack">
+        <activity
+            android:name=".SpoofSelector"
+            android:label="@string/selecthack" >
             <intent-filter>
-                <action android:name="android.intent.action.PICK"></action>
+                <action android:name="android.intent.action.PICK" />
             </intent-filter>
         </activity>
-        <service android:name="NetSpoofService"></service>
-        <activity android:name="RouterSelector" android:label="@string/selectgateway" android:noHistory="true"></activity>
-        <activity android:label="@string/selectvictim" android:name="VictimSelector" android:noHistory="true"></activity>
-        <activity android:label="@string/app_name" android:name="SpoofRunning" android:screenOrientation="portrait"></activity>
-        <activity android:label="@string/preferences" android:name="Preferences"></activity>
-        <activity android:name="About" android:theme="@style/AboutTheme" android:label="@string/about"></activity>
-        <activity android:name="YoutubeSelector" android:label="@string/selectvideo">
+
+        <service android:name=".NetSpoofService" />
+
+        <activity
+            android:name=".RouterSelector"
+            android:label="@string/selectgateway"
+            android:noHistory="true" />
+        <activity
+            android:name=".VictimSelector"
+            android:label="@string/selectvictim"
+            android:noHistory="true" />
+        <activity
+            android:name=".SpoofRunning"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Preferences"
+            android:label="@string/preferences" />
+        <activity
+            android:name=".About"
+            android:label="@string/about"
+            android:theme="@style/AboutTheme" />
+        <activity
+            android:name=".YoutubeSelector"
+            android:label="@string/selectvideo" >
         </activity>
-        <activity android:name="MultiSpoofDialogRunner" android:label="@string/configuring"></activity>
+        <activity
+            android:name=".MultiSpoofDialogRunner"
+            android:label="@string/configuring" />
         <activity
             android:name="com.google.android.gms.ads.AdActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"/>
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
+        <activity
+            android:name=".report.DeviceReportActivity"
+            android:label="@string/title_activity_device_report" >
+        </activity>
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="uk.digitalsquid.netspoofer.report"
+            android:grantUriPermissions="true"
+            android:exported="false">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths" />
+        </provider>
     </application>
+
 </manifest>

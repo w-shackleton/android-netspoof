@@ -22,6 +22,7 @@
 package uk.digitalsquid.netspoofer.config;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -46,5 +47,15 @@ public final class IOHelpers {
         }
         reader.close();
         return out.toString();
+    }
+
+    public static final byte[] readFileContentsToByte(InputStream in) throws IOException {
+        ByteArrayOutputStream result = new ByteArrayOutputStream();
+        byte[] buffer = new byte[4096];
+        int read;
+        while ((read = in.read(buffer)) != -1) {
+            result.write(buffer, 0, read);
+        }
+        return result.toByteArray();
     }
 }
