@@ -149,5 +149,8 @@
     <string name="action_settings">Settings</string>
     <string name="submit">Submit Report</string>
     <string name="send_via">Send via</string>
-    <string name="device_report_send">Please email this report to nsreport@digitalsquid.co.uk. It\'s best to also file a bug report, and reference the following code in said report:</string>
+    <string name="device_report_send">Please email this report to nsreport@digitalsquid.co.uk. It\'s best to also file a bug report and reference the following code in your report:</string>
+    <string name="device_report_success">Great! Now just file a bug report on Github, referencing the following code.</string>
+    <string name="device_report_check_duplicate">Be sure to check if your issue is already described in an existing bug. If so, comment with the code and mention that it also affects you.</string>
+    <string name="go_to_bugs">Go to bug reports</string>
 </resources>
