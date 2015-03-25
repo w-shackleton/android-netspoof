@@ -28,10 +28,13 @@ public class DeviceReport implements LogConf {
     private byte[] netConf;
 
     private String deviceInfo;
+    private String code;
 
     private final File directory;
 
-    public DeviceReport(Context context, boolean info, boolean logs, boolean allLogs, boolean networkConfig) {
+    public DeviceReport(Context context, String code, boolean info, boolean logs, boolean allLogs, boolean networkConfig) {
+        this.code = code;
+
         directory = new File(context.getFilesDir(), "public/");
         directory.mkdir();
         Log.i(TAG, String.format("Collecting logs. info: %b, logs: %b, allLogs: %b, networkConfig: %b",
@@ -147,8 +150,11 @@ public class DeviceReport implements LogConf {
     }
 
     public File generate() throws IOException {
-        File report = new File(directory, "report.zip");
+        File report = new File(directory, code + ".zip");
         ZipOutputStream zip = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(report)));
+
+        zip.putNextEntry(new ZipEntry("code.txt"));
+        zip.write(code.getBytes());
 
         if (logs != null) {
             zip.putNextEntry(new ZipEntry("logs.txt"));

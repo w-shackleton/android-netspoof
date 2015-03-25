@@ -65,6 +65,20 @@
                 android:text="@string/device_report_network_config"
                 android:id="@+id/network_config"
                 android:checked="true" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/device_report_send" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:id="@+id/code"
+                android:text="&lt;code>"
+                android:textIsSelectable="true" />
         </LinearLayout>
     </ScrollView>
 

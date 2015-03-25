@@ -34,6 +34,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.TextView;
 
 import java.io.File;
 import java.io.IOException;
@@ -84,6 +85,8 @@ public class DeviceReportActivity extends FragmentActivity {
         }
 
         private CheckBox info, logs, allLogs, networkConfig;
+        private TextView codeView;
+        private String code;
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -93,6 +96,16 @@ public class DeviceReportActivity extends FragmentActivity {
             logs = (CheckBox) rootView.findViewById(R.id.logs);
             allLogs = (CheckBox) rootView.findViewById(R.id.all_logs);
             networkConfig = (CheckBox) rootView.findViewById(R.id.network_config);
+
+            codeView = (TextView) rootView.findViewById(R.id.code);
+            try {
+                code = new CHBSGenerator(getActivity()).generate();
+            } catch (IOException e) {
+                Log.e(TAG, "Failed to generate code", e);
+                code = "correct-horse-battery-staple";
+            }
+            codeView.setText(code.replace('-', ' '));
+
             rootView.findViewById(R.id.submit).setOnClickListener(this);
             return rootView;
         }
@@ -103,6 +116,7 @@ public class DeviceReportActivity extends FragmentActivity {
                 case R.id.submit:
                     DeviceReport report = new DeviceReport(
                             getActivity(),
+                            code,
                             info.isChecked(),
                             logs.isChecked(),
                             allLogs.isChecked(),
@@ -122,6 +136,7 @@ public class DeviceReportActivity extends FragmentActivity {
                     shareIntent.setType("application/zip");
                     shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
                     shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    shareIntent.putExtra(Intent.EXTRA_EMAIL, new String[] { "nsreport@digitalsquid.co.uk" });
                     startActivity(Intent.createChooser(shareIntent,
                             getActivity().getString(R.string.send_via)));
                     break;

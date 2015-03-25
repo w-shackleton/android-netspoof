@@ -149,4 +149,5 @@
     <string name="action_settings">Settings</string>
     <string name="submit">Submit Report</string>
     <string name="send_via">Send via</string>
+    <string name="device_report_send">Please email this report to nsreport@digitalsquid.co.uk. It\'s best to also file a bug report, and reference the following code in said report:</string>
 </resources>
