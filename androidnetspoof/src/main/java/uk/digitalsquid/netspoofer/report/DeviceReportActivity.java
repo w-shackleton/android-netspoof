@@ -83,12 +83,13 @@ public class DeviceReportActivity extends FragmentActivity {
         public PlaceholderFragment() {
         }
 
-        private CheckBox logs, allLogs, networkConfig;
+        private CheckBox info, logs, allLogs, networkConfig;
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_device_report, container, false);
+            info = (CheckBox) rootView.findViewById(R.id.device_info);
             logs = (CheckBox) rootView.findViewById(R.id.logs);
             allLogs = (CheckBox) rootView.findViewById(R.id.all_logs);
             networkConfig = (CheckBox) rootView.findViewById(R.id.network_config);
@@ -102,6 +103,7 @@ public class DeviceReportActivity extends FragmentActivity {
                 case R.id.submit:
                     DeviceReport report = new DeviceReport(
                             getActivity(),
+                            info.isChecked(),
                             logs.isChecked(),
                             allLogs.isChecked(),
                             networkConfig.isChecked());

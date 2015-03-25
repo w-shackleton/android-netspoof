@@ -80,6 +80,7 @@
 
     <string name="device_report">Generate device report</string>
     <string name="device_report_welcome">Welcome to the device report generator. This will generate a file you can send to the developers to help them debug Network Spoofer on your device.</string>
+    <string name="device_report_info">Device information</string>
     <string name="device_report_logs">Network Spoofer logs</string>
     <string name="device_report_all_logs">Entire system logs</string>
     <string name="device_report_network_config">Network configuration</string>

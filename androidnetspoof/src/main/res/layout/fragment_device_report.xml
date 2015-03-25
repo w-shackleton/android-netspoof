@@ -41,6 +41,13 @@
             <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/device_report_info"
+                android:id="@+id/device_info"
+                android:checked="true" />
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="@string/device_report_logs"
                 android:id="@+id/logs"
                 android:checked="true" />
