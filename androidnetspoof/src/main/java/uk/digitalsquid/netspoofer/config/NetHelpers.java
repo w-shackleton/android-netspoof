@@ -191,7 +191,7 @@ public final class NetHelpers implements LogConf {
         // Lollipop, use DhcpInfo
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT && info != null) {
             gateway = inetFromInt(info.gateway & 0xFFFFFFFFL).getHostAddress();
-            subnet = inetFromInt(info.netmask & 0xFFFFFFFFL).getHostAddress();
+            // subnet = inetFromInt(info.netmask & 0xFFFFFFFFL).getHostAddress();
         }
 
         return new GatewayData(InetAddress.getByName(gateway), subnet);
