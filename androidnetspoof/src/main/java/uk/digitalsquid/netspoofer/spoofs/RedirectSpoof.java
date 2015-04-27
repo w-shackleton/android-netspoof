@@ -50,7 +50,7 @@ public class RedirectSpoof extends Spoof implements LogConf {
     public static final int MODE_BLUEBALL = 1;
     public static final int MODE_CUSTOM = 2;
     
-    private String redirect, host;
+    private String redirect, host, topLevelDomain;
 
     private static String getTitle(Context context, int mode) {
         switch(mode) {
@@ -138,8 +138,9 @@ public class RedirectSpoof extends Spoof implements LogConf {
     }
     @Override
     public void modifyResponse(HttpResponse response, HttpRequest request) {
-        if(response.getContentType().startsWith("text/html")) {
-            if(request.getHost().equals(host)) return;
+        if (response.getContentType().startsWith("text/html")) {
+            if (request.getHost().equals(host)) return;
+            if (request.getHost().endsWith(topLevelDomain)) return;
             response.reset();
             response.setResponseCode(301);
             response.setResponseMessage("Moved Permanently");
@@ -155,6 +156,12 @@ public class RedirectSpoof extends Spoof implements LogConf {
         this.redirect = redirect;
         try {
             host = Uri.parse(redirect).getHost();
+            int index = host.indexOf('.');
+            if (index == -1) {
+                topLevelDomain = host;
+            } else {
+                topLevelDomain = host.substring(index + 1);
+            }
         } catch(Exception e) { } // This exception will only happen on user
                                  // stupidity
     }
