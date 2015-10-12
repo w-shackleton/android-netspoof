@@ -91,36 +91,38 @@
     <orderEntry type="jdk" jdkName="Android API 22 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="mediarouter-v7-22.2.0" level="project" />
-    <orderEntry type="library" exported="" name="play-services-cast-7.8.0" level="project" />
-    <orderEntry type="library" exported="" name="play-services-gcm-7.8.0" level="project" />
     <orderEntry type="library" exported="" name="jsoup-1.8.1" level="project" />
-    <orderEntry type="library" exported="" name="play-services-games-7.8.0" level="project" />
-    <orderEntry type="library" exported="" name="play-services-wallet-7.8.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-measurement-8.1.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-appindexing-8.1.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-base-8.1.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-location-8.1.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-identity-8.1.0" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-22.2.0" level="project" />
-    <orderEntry type="library" exported="" name="play-services-drive-7.8.0" level="project" />
-    <orderEntry type="library" exported="" name="play-services-ads-7.8.0" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-22.2.0" level="project" />
-    <orderEntry type="library" exported="" name="play-services-analytics-7.8.0" level="project" />
-    <orderEntry type="library" exported="" name="play-services-appindexing-7.8.0" level="project" />
-    <orderEntry type="library" exported="" name="play-services-appinvite-7.8.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-vision-8.1.0" level="project" />
     <orderEntry type="library" exported="" name="ndk-libs" level="project" />
-    <orderEntry type="library" exported="" name="play-services-safetynet-7.8.0" level="project" />
-    <orderEntry type="library" exported="" name="play-services-7.8.0" level="project" />
-    <orderEntry type="library" exported="" name="play-services-base-7.8.0" level="project" />
-    <orderEntry type="library" exported="" name="play-services-fitness-7.8.0" level="project" />
-    <orderEntry type="library" exported="" name="play-services-vision-7.8.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-drive-8.1.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-analytics-8.1.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-8.1.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-cast-8.1.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-appinvite-8.1.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-ads-8.1.0" level="project" />
     <orderEntry type="library" exported="" name="support-v4-22.2.0" level="project" />
-    <orderEntry type="library" exported="" name="play-services-nearby-7.8.0" level="project" />
-    <orderEntry type="library" exported="" name="play-services-location-7.8.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-appstate-8.1.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-gcm-8.1.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-safetynet-8.1.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-games-8.1.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-wallet-8.1.0" level="project" />
     <orderEntry type="library" exported="" name="ndk-binaries" level="project" />
+    <orderEntry type="library" exported="" name="play-services-basement-8.1.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-maps-8.1.0" level="project" />
     <orderEntry type="library" exported="" name="ndk-data" level="project" />
-    <orderEntry type="library" exported="" name="play-services-appstate-7.8.0" level="project" />
-    <orderEntry type="library" exported="" name="play-services-wearable-7.8.0" level="project" />
-    <orderEntry type="library" exported="" name="play-services-identity-7.8.0" level="project" />
-    <orderEntry type="library" exported="" name="play-services-panorama-7.8.0" level="project" />
-    <orderEntry type="library" exported="" name="play-services-plus-7.8.0" level="project" />
-    <orderEntry type="library" exported="" name="play-services-maps-7.8.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-nearby-8.1.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-panorama-8.1.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-fitness-8.1.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-wearable-8.1.0" level="project" />
     <orderEntry type="library" exported="" name="ndk-binaries-16" level="project" />
+    <orderEntry type="library" exported="" name="play-services-plus-8.1.0" level="project" />
     <orderEntry type="module" module-name="androidsupportv4preferencefragment" exported="" />
   </component>
 </module>
