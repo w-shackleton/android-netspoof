@@ -125,7 +125,10 @@ public class DeviceReport implements LogConf {
                 "Build.TIME: %s\n" +
                 "Build.TYPE: %s\n" +
                 "Build.UNKNOWN: %s\n" +
-                "Build.USER: %s\n",
+                "Build.USER: %s\n" +
+                "\n" +
+                "su location: %s\n" +
+                "iptables location: %s\n",
 
                 Build.BOARD,
                 Build.BOOTLOADER,
@@ -146,7 +149,9 @@ public class DeviceReport implements LogConf {
                 Build.TIME,
                 Build.TYPE,
                 Build.UNKNOWN,
-                Build.USER);
+                Build.USER,
+                FileFinder.SU,
+                FileFinder.IPTABLES);
     }
 
     public File generate() throws IOException {

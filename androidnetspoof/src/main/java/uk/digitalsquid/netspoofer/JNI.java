@@ -23,10 +23,10 @@ package uk.digitalsquid.netspoofer;
 
 /**
  * <p>
- * Application JNI interfaces. Not used <strong>at the moment</strong> for any purpose, but could be in the future.
+ * Application JNI interfaces.
  * </p>
  * <p>
- * Also used to force Android Market to filter by CPUs that this application actually supports, currently armel.
+ * Also used to force Google Play to filter by CPUs that this application actually supports.
  * </p>
  * 
  * @author Will Shackleton <will@digitalsquid.co.uk>
@@ -40,8 +40,7 @@ public class JNI {
     /**
      * Chmod glibc function setting a file to 0755
      * @param filename
-     * @param permissions
-     * @return
+     * @return 1 on success, 0 on failure
      */
     public static native int setExecutable(String filename);
 }
