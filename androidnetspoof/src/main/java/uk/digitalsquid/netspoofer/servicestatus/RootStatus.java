@@ -19,29 +19,14 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-package uk.digitalsquid.netspoofer.root;
+package uk.digitalsquid.netspoofer.servicestatus;
 
-import android.content.Context;
+import uk.digitalsquid.netspoofer.root.RootChecker;
 
-/**
- * Checks that the device has root access.
- */
-public class RootChecker {
+public class RootStatus extends ServiceStatus {
+    public final RootChecker.RootCheckResult rootCheckResult;
 
-    private Context mContext;
-
-    public RootChecker(Context context) {
-        mContext = context;
-    }
-
-    public enum RootCheckResult {
-        ERROR,
-        UNAVAILABLE,
-        BINARY_NO_EXEC,
-        AVAILABLE
-    }
-
-    public RootCheckResult check() {
-        return RootCheckResult.BINARY_NO_EXEC;
+    public RootStatus(RootChecker.RootCheckResult rootCheckResult) {
+        this.rootCheckResult = rootCheckResult;
     }
 }

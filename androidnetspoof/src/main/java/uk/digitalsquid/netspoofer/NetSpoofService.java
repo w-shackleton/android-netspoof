@@ -40,11 +40,13 @@ import uk.digitalsquid.netspoofer.config.HardwareConfig;
 import uk.digitalsquid.netspoofer.config.LogConf;
 import uk.digitalsquid.netspoofer.config.RunManager;
 import uk.digitalsquid.netspoofer.misc.AsyncTaskHelper;
+import uk.digitalsquid.netspoofer.root.RootChecker;
 import uk.digitalsquid.netspoofer.servicemsg.ServiceMsg;
 import uk.digitalsquid.netspoofer.servicemsg.SpoofStarter;
 import uk.digitalsquid.netspoofer.servicestatus.InitialiseStatus;
 import uk.digitalsquid.netspoofer.servicestatus.NewLogOutput;
 import uk.digitalsquid.netspoofer.servicestatus.Notifyer;
+import uk.digitalsquid.netspoofer.servicestatus.RootStatus;
 import uk.digitalsquid.netspoofer.servicestatus.ServiceStatus;
 import uk.digitalsquid.netspoofer.spoofs.Spoof;
 import uk.digitalsquid.netspoofer.spoofs.SpoofData;
@@ -67,6 +69,8 @@ public class NetSpoofService extends Service implements LogConf {
     private static final int NS_RUNNING = 1;
     
     private NotificationManager notificationManager;
+
+    private RootStatus mRootStatus;
 
     public class NetSpoofServiceBinder extends Binder {
         public NetSpoofService getService() {
@@ -161,6 +165,13 @@ public class NetSpoofService extends Service implements LogConf {
         sendBroadcast(intent);
     }
 
+    /**
+     * Gets the current root status. Returns <code>null</code> if we haven't yet checked.
+     */
+    public RootStatus getRootStatus() {
+        return mRootStatus;
+    }
+
     private RunManager runner;
     
     private final BlockingQueue<ServiceMsg> tasks = new LinkedBlockingQueue<ServiceMsg>();
@@ -170,13 +181,18 @@ public class NetSpoofService extends Service implements LogConf {
         @Override
         protected Void doInBackground(HardwareConfig... params) {
             Log.i(TAG, "Setting up system...");
+
+            // Check for root
+            publishProgress(mRootStatus =
+                    new RootStatus(new RootChecker(NetSpoofService.this).check()));
+
             publishProgress(new InitialiseStatus(STATUS_LOADED));
             if(isCancelled()) {
                 Log.i(TAG, "Stop initiated, stopping...");
                 Log.i(TAG, "Done.");
                 return null;
             }
-            
+
             // Main point. Process requests from task list.
             boolean running = true;
             while(running || !isCancelled()) {
