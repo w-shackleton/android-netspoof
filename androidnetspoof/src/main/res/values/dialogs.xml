@@ -34,8 +34,7 @@
     <string name="agreementPositive">Agree</string>
     <string name="agreementNegative">Exit</string>
     <string name="changelog">New in this release:\n
-        * Experimental Lollipop 5.1 support\n
-        * Fixed the blue ball machine
+        * Android Lollipop 5.1 support - more advanced root checking for root apps that are disabled by default.
     </string>
     
     <string name="updateAvailableTitle">Update Available</string>
