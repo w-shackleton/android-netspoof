@@ -156,10 +156,9 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf, OnUp
         switch(id) {
             case DIALOG_ROOT:
                 builder = new AlertDialog.Builder(this);
-                builder.setMessage("Please root your phone before using this application. Search the internet for instructions on how to do this for your phone.\nA custom firmware (such as CyanogenMod) is also recommended.\n" +
-                "If the 'su' application is somewhere else on your phone, please specify it in the settings.")
+                builder.setMessage(R.string.no_root)
                     .setCancelable(false)
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) { }
                     });
                 dialog = builder.create();
@@ -316,6 +315,7 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf, OnUp
 
                 fi.installScript("spoof", R.raw.spoof);
                 fi.installScript("collect_netconf", R.raw.collect_netconf);
+                fi.installScript("rootcheck", R.raw.rootcheck);
 
                 fi.installBinary("arp-scan");
                 fi.installBinary("arpspoof");

@@ -62,6 +62,8 @@ import java.util.List;
 import uk.digitalsquid.netspoofer.NetSpoofService.NetSpoofServiceBinder;
 import uk.digitalsquid.netspoofer.config.LogConf;
 import uk.digitalsquid.netspoofer.misc.CheckedLinearLayout;
+import uk.digitalsquid.netspoofer.root.RootChecker;
+import uk.digitalsquid.netspoofer.servicestatus.RootStatus;
 import uk.digitalsquid.netspoofer.spoofs.Spoof;
 import uk.digitalsquid.netspoofer.spoofs.Spoof.OnExtraDialogDoneListener;
 
@@ -154,6 +156,7 @@ public class SpoofSelector extends Activity implements OnClickListener, OnItemCl
                 break;
             case NetSpoofService.STATUS_LOADED:
                 setSpoofs(SpoofSelector.this.service.getSpoofs());
+                processRootStatus(SpoofSelector.this.service.getRootStatus());
                 break;
             }
         }
@@ -177,6 +180,7 @@ public class SpoofSelector extends Activity implements OnClickListener, OnItemCl
                     if (!haveSpoofList && SpoofSelector.this.service != null) {
                         setSpoofs(SpoofSelector.this.service.getSpoofs());
                     }
+                    processRootStatus(SpoofSelector.this.service.getRootStatus());
                     break;
                 case NetSpoofService.STATUS_FAILED:
                     try {
@@ -206,6 +210,14 @@ public class SpoofSelector extends Activity implements OnClickListener, OnItemCl
             }
         });
         startingDialog.show();
+    }
+
+    private void processRootStatus(RootStatus status) {
+        if (status.rootCheckResult != RootChecker.RootCheckResult.AVAILABLE) {
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("status", status.rootCheckResult);
+            showDialog(DIALOG_NO_ROOT, bundle);
+        }
     }
     
     private SpoofListAdapter spoofListAdapter;
@@ -312,7 +324,8 @@ public class SpoofSelector extends Activity implements OnClickListener, OnItemCl
     }
     
     private static final int DIALOG_FAIL_LOAD = 1;
-    
+    private static final int DIALOG_NO_ROOT = 2;
+
     /**
      * The ID used for result intents returned by custom spoofs.
      */
@@ -327,20 +340,51 @@ public class SpoofSelector extends Activity implements OnClickListener, OnItemCl
     @Override
     public Dialog onCreateDialog(int id, Bundle bundle) {
         super.onCreateDialog(id, bundle);
+        Builder builder;
+        int msg = 0;
+        int title = 0;
         switch(id) {
-        case DIALOG_FAIL_LOAD:
-            Builder builder = new Builder(this);
-            builder.setTitle(R.string.loadfailedtitle);
-            builder.setMessage(R.string.loadfailed);
-            builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    finish();
+            case DIALOG_FAIL_LOAD:
+                msg = R.string.loadfailed;
+                title = R.string.loadfailedtitle;
+                break;
+            case DIALOG_NO_ROOT:
+                RootChecker.RootCheckResult status =
+                        (RootChecker.RootCheckResult) bundle.getSerializable("status");
+                title = R.string.no_root_title;
+                switch (status) {
+                    case UNAVAILABLE:
+                        msg = R.string.no_root;
+                        break;
+                    case AVAILABLE:
+                        Log.e(TAG, "Hit AVAILABLE in error dialog");
+                        break;
+                    case BINARY_NO_EXEC:
+                        msg = R.string.no_working_root;
+                        break;
+                    case ERROR:
+                    default:
+                        msg = R.string.loadfailed;
+                        break;
                 }
-            });
-            return builder.create();
-        default: return null;
+                break;
+            default:
+                msg = 0;
+                title = 0;
         }
+        if (title == 0 || msg == 0) {
+            return null;
+        }
+        builder = new Builder(this);
+        builder.setTitle(title);
+        builder.setMessage(msg);
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        });
+        return builder.create();
     }
     
     @Override

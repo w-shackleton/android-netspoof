@@ -1,0 +1,4 @@
+#!/system/bin/sh
+# Creates a file as root to verify that root access exists
+
+id

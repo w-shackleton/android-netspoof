@@ -61,6 +61,12 @@
     <string name="downloadingfiles">Downloading files needed to run&#8230;</string>
     <string name="loadfailedtitle">Oops!</string>
     <string name="loadfailed">Something went wrong whilst trying to load. Perhaps the SD card isn\'t plugged in, or you didn\'t accept the superuser command?\n\nCheck the log for more details.</string>
+    <string name="no_root_title">Unrooted device</string>
+    <string name="no_root">Please root your phone before using this application. Search the internet for instructions on how to do this for your phone.
+        A custom firmware (such as CyanogenMod) is also recommended.
+        If the \'su\' application is somewhere else on your phone, please specify it in the settings.
+    </string>
+    <string name="no_working_root">This device is capable of root access, but root access is not enabled. Please enable root access to use Network Spoofer.</string>
     <string name="preferences">Preferences</string>
     <string name="programPrefs">Programs</string>
     <string name="downloadUnzipped">Download uncompressed installation files</string>
