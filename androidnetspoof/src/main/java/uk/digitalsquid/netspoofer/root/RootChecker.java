@@ -22,12 +22,21 @@
 package uk.digitalsquid.netspoofer.root;
 
 import android.content.Context;
+import android.util.Log;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+import uk.digitalsquid.netspoofer.config.FileFinder;
+import uk.digitalsquid.netspoofer.config.FileInstaller;
+import uk.digitalsquid.netspoofer.config.LogConf;
 
 /**
  * Checks that the device has root access.
  */
-public class RootChecker {
-
+public class RootChecker implements LogConf {
     private Context mContext;
 
     public RootChecker(Context context) {
@@ -42,6 +51,41 @@ public class RootChecker {
     }
 
     public RootCheckResult check() {
-        return RootCheckResult.BINARY_NO_EXEC;
+        try {
+            FileFinder.initialise(mContext);
+        } catch (FileNotFoundException e) {
+            // Handle error below
+        }
+        if (FileFinder.SU == null || FileFinder.SU == "") {
+            return RootCheckResult.UNAVAILABLE;
+        }
+
+        ProcessBuilder pb = new ProcessBuilder(FileFinder.SU, "-c",
+                FileInstaller.getScriptPath(mContext, "rootcheck"));
+
+        try {
+            Process p = pb.start();
+            BufferedReader stdout = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            BufferedReader stderr = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            String idLine = stdout.readLine();
+
+            // Munch garbage
+            if (idLine != null) {
+                while (stdout.readLine() != null) ;
+            }
+            while (stderr.readLine() != null);
+
+            p.waitFor();
+
+            return idLine != null && idLine.contains("(root)") ?
+                    RootCheckResult.AVAILABLE :
+                    RootCheckResult.BINARY_NO_EXEC;
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to run root check", e);
+            return RootCheckResult.ERROR;
+        } catch (InterruptedException e) {
+            Log.e(TAG, "Failed to run root check", e);
+            return RootCheckResult.ERROR;
+        }
     }
 }

@@ -315,6 +315,7 @@ public class NetSpoof extends Activity implements OnClickListener, LogConf, OnUp
 
                 fi.installScript("spoof", R.raw.spoof);
                 fi.installScript("collect_netconf", R.raw.collect_netconf);
+                fi.installScript("rootcheck", R.raw.rootcheck);
 
                 fi.installBinary("arp-scan");
                 fi.installBinary("arpspoof");
