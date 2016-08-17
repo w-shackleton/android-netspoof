@@ -21,20 +21,20 @@
 
 package uk.digitalsquid.netspoofer;
 
+import android.app.Activity;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.preference.PreferenceFragment;
+import android.preference.PreferenceFragment;
 
-public class Preferences extends FragmentActivity {
+public class Preferences extends Activity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        FragmentManager fm = getSupportFragmentManager();
+
+        FragmentManager fm = getFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
         SettingsFragment frag = new SettingsFragment();
         transaction.replace(android.R.id.content, frag);

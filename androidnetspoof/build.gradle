@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 22
-    buildToolsVersion "22.0.1"
+    compileSdkVersion 24
+    buildToolsVersion "24"
 
     defaultConfig {
         applicationId "uk.digitalsquid.netspoofer"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 22
     }
 
@@ -17,15 +17,15 @@ android {
     }
 
     sourceSets.main.jni.srcDirs = []
+
+    useLibrary 'org.apache.http.legacy'
 }
 
 dependencies {
     compile fileTree(dir: new File(buildDir, 'libs'), include: '*.jar')
 
-    compile project(':androidsupportv4preferencefragment')
     compile 'org.jsoup:jsoup:1.8.1'
-    compile 'com.android.support:support-v4:22.2.0'
-    compile 'com.google.android.gms:play-services:+'
+    compile 'com.google.android.gms:play-services:9.0.2'
 }
 
 tasks.withType(JavaCompile) {
@@ -90,6 +90,9 @@ task ndkBuild(type: Exec, description: 'Compile JNI source via NDK') {
             'NDK_APPLICATION_MK=src/main/jni/Application.mk',
             '-j8'
 }
+
+
+
 
 task ndkBuild16(type: Exec, description: 'Compile JNI source via NDK for Android 16+') {
     def ndkDir = project.plugins.findPlugin('com.android.application').sdkHandler.getNdkFolder()

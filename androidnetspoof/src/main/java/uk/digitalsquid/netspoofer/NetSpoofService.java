@@ -300,13 +300,16 @@ public class NetSpoofService extends Service implements LogConf {
                 case Notifyer.STATUS_SHOW:
                     switch(n.getNotificationType()) {
                     case NS_RUNNING:
-                        Notification notification = new Notification(R.drawable.status, getString(R.string.spoofRunning), System.currentTimeMillis());
-                        notification.flags = notification.flags | Notification.FLAG_ONGOING_EVENT;
-                        
                         Intent notificationIntent = new Intent(NetSpoofService.this, NetSpoofService.class);
-                        PendingIntent contentIntent = PendingIntent.getActivity(NetSpoofService.this, 0, notificationIntent, 0);
-                        
-                        notification.setLatestEventInfo(NetSpoofService.this, NetSpoofService.this.getString(R.string.spoofRunning), NetSpoofService.this.getString(R.string.spoofRunningDesc), contentIntent);
+                        Notification notification = new Notification.Builder(NetSpoofService.this)
+                                .setTicker(getString(R.string.spoofRunning))
+                                .setWhen(System.currentTimeMillis())
+                                .setOngoing(true)
+                                .setContentIntent(PendingIntent.getActivity(NetSpoofService.this, 0, notificationIntent, 0))
+                                .setContentTitle(getString(R.string.spoofRunning))
+                                .setContentText(getString(R.string.spoofRunningDesc))
+                                .build();
+
                         notificationManager.notify(NS_RUNNING, notification);
                         break;
                     }
